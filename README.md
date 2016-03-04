@@ -14,7 +14,7 @@ If you are having trouble logging in, open an RDP session from another machine a
 
 ## Installation Instructions
 
-There are three seperate parts to this, if any fails then you will need to check that you have the dependencies correctly installed and are running programs in Administrator mode where applicable.  These installation instructions are temporary and will be replaced with a simple MSI installer in the future.
+There are three seperate parts to this, if any fails then you will need to check that you have the dependencies correctly installed and are running programs in Administrator mode where applicable.  *These installation instructions are temporary and will be replaced with a simple MSI installer in the future.*
 
 ### Registering the credential provider
 
