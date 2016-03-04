@@ -1,6 +1,8 @@
-Sesame provides NFC based login and logout functionality for the Microsoft Windows Operating System.
 
-#In case of emergencies
+
+NFC Sesame provides NFC based login and logout functionality for the Microsoft Windows Operating System.
+
+# In case of emergencies
 
 If you are having trouble logging in, open an RDP session from another machine and then use your username and password to login again.
 
