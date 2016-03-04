@@ -12,10 +12,9 @@ If you are having trouble logging in, open an RDP session from another machine a
 * [.Net 4.5, included with Windows 8.1 or higher](https://www.microsoft.com/en-au/download/details.aspx?id=40779)
 * [Visual C++ Redistributable Packages for Visual Studio 2013](https://www.microsoft.com/en-au/download/details.aspx?id=4078)
 
-
 ## Installation Instructions
 
-There are three seperate parts to this, if any fails then you will need to check that you have the dependencies correctly installed and are running programs in Administrator mode where applicable.
+There are three seperate parts to this, if any fails then you will need to check that you have the dependencies correctly installed and are running programs in Administrator mode where applicable.  These installation instructions are temporary and will be replaced with a simple MSI installer in the future.
 
 ### Registering the credential provider
 
@@ -56,8 +55,3 @@ To test, run ``CredUILauncher.exe`` from the previous instructions and this time
 1. Open the services console (Windows Key + R and type ``services.msc`` without the quotes and press enter) Scroll down to the ``NFCRingService`` and select "Start", its status should change to "Running".
 
 If you swipe your token now, the system should lock.
-
-Confirmed working NFC reader units:
-* ACS ACR122U
-* HID OMNIKEY 6321
-* HID OMNIKEY 5021
