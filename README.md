@@ -1,6 +1,6 @@
 Sesame provides NFC based login and logout functionality for the Microsoft Windows Operating System.
 
-*In case of emergencies: *
+#In case of emergencies
 
 If you are having trouble logging in, open an RDP session from another machine and then use your username and password to login again.
 
@@ -10,11 +10,11 @@ If you are having trouble logging in, open an RDP session from another machine a
 * Visual C++ Redistributable Packages for Visual Studio 2013 https://www.microsoft.com/en-au/download/details.aspx?id=4078
 
 
-## Installation Instructions:
+## Installation Instructions
 
 There are three seperate parts to this, if any fails then you will need to check that you have the dependencies correctly installed and are running programs in Administrator mode where applicable.
 
-### Registering the credential provider:
+### Registering the credential provider
 
 1. Extract "\NFC Credential\NFCRingCredentialProvider.dll" and "\NFC Credential\tileimage.bmp" to "C:\Windows\System32" Run "Register.reg". You may need to run it as Administrator. Windows may pop up a smart screen message. You'll need to allow this to run for the provider to function.
 
@@ -22,7 +22,7 @@ There are three seperate parts to this, if any fails then you will need to check
 
 1. Because no NFC token is registered yet, click "Cancel" to get rid of this.
 
-### Registering a token:
+### Registering a token
 
 1. Extract the "NFC Credential Registration" folder somewhere. In this folder, right-click and run "RegistryWriter.exe" as Administrator
 
@@ -36,7 +36,7 @@ There are three seperate parts to this, if any fails then you will need to check
 
 To test, run "CredUILauncher.exe" from the previous instructions and this time you should be able to swipe your NFC token to close the window.
 
-### Installing the Service:
+### Installing the Service
 
 1. Extract the entire "NFC Ring Service" folder somewhere.
 
