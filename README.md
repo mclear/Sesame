@@ -1,7 +1,7 @@
 NFC Sesame provides NFC based login and logout functionality for the Microsoft Windows Operating System.  
 
 ## Important Disclaimer
-This software is in active development and should not be used in any environment you need stability.  You may get locked out of your PC.  Your Unicorns may be exploited.  You have been warned.  We're going to be raising funds to complete development.
+This software is in active development and should not be used in any environment you need stability.  You may get locked out of your PC.  Your Unicorns may be exploited.  You have been warned.  We're going to be [raising funds](https://www.kickstarter.com/projects/mclear/526261309?token=201aa2e8) to complete development.
 
 ## In case of emergencies
 
