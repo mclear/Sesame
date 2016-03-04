@@ -9,8 +9,8 @@ If you are having trouble logging in, open an RDP session from another machine a
 
 ## Prerequisites
 * Windows 7, 8, 8.1 or 10 64-bit Windows (It will not work on a 32-bit system). 
-* .Net 4.5 (included with Windows 8.1 or higher) https://www.microsoft.com/en-au/download/details.aspx?id=40779 
-* Visual C++ Redistributable Packages for Visual Studio 2013 https://www.microsoft.com/en-au/download/details.aspx?id=4078
+* [.Net 4.5, included with Windows 8.1 or higher](https://www.microsoft.com/en-au/download/details.aspx?id=40779)
+* [Visual C++ Redistributable Packages for Visual Studio 2013](https://www.microsoft.com/en-au/download/details.aspx?id=4078)
 
 
 ## Installation Instructions
@@ -31,7 +31,7 @@ There are three seperate parts to this, if any fails then you will need to check
 
 1. Extract the ``NFC Credential Registration`` folder somewhere. In this folder, right-click and run ``RegistryWriter.exe`` as Administrator
 
-1. While holding your NFC token on the reader, click the "Read NFC Tag" button and it should fill the first field with your token's ID (It'll look something like 0400AF49363A719000)
+1. While holding your NFC token on the reader, click the "Read NFC Tag" button and it should fill the first field with your token's ID (It'll look something like ``0400AF49363A719000``)
 
 1. Enter your username and password.
 
