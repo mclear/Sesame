@@ -31,6 +31,8 @@ void Reader::Stop()
 {
 	// end thread
 	_checkLoop = false;
+	closesocket(_soc);
+	WSACleanup();
 	if (_readerThread.joinable())
 		_readerThread.join();
 }
@@ -52,6 +54,28 @@ HRESULT Reader::Initialize(NFCCredentialProvider *pProvider)
 	// start listening thread for reader events
 	_checkLoop = true;
 
+	int result;
+	result = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (result != 0) {
+		printf("WSAStartup failed with error: %d\n", result);
+		//return 1;
+		return E_UNEXPECTED; //failed
+	}
+	_soc = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (_soc == INVALID_SOCKET)
+	{
+		//std::cout << "socket is bullshit and didnt start" << std::endl;
+		WSACleanup();
+		//return 1;
+		return E_UNEXPECTED;
+	}
+
+	//result = connect(_soc, (struct sockaddr *)&destination, sizeof(destination));
+
+	//if (result != 0)
+	//	return E_UNEXPECTED;
+	//else
+	_serviceFound = true;
 	// this is where we'd start the thread to check for a valid ring
 	_readerThread = std::thread(&Reader::CheckNFC, this);
 
@@ -60,121 +84,46 @@ HRESULT Reader::Initialize(NFCCredentialProvider *pProvider)
 
 void Reader::CheckNFC()
 {
-	LONG rv;
+	struct sockaddr_in destination;
+	destination.sin_family = AF_INET;
+	destination.sin_port = htons(28416);
+	destination.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-	SCARDCONTEXT hContext;
-	LPTSTR mszReaders;
-	SCARDHANDLE hCard;
-	DWORD dwReaders, dwActiveProtocol, dwRecvLength;
+	int result = connect(_soc, (struct sockaddr *)&destination, sizeof(destination));
 
-	SCARD_IO_REQUEST pioSendPci;
-	BYTE pbRecvBuffer[50];
-	BYTE cmd1[] = { 0xFF, 0xCA, 0x00, 0x00, 0x00 };
+	for (int i = 0; i < 15; i++)
+	{
+		if (result != 0)
+			result = connect(_soc, (struct sockaddr *)&destination, sizeof(destination));
+		else
+			break;
+		std::this_thread::sleep_for(std::chrono::seconds(2));
+	}
+
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 	SHA1 sha1;
 	std::string hashed = "";
-	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-	// if all readers have come back empty
-	bool seenallblank = false;
-
-	while (_checkLoop)
+	char hex[108];
+	int newData = 0;
+	if (_soc != INVALID_SOCKET)
 	{
-		try
+		newData = recv(_soc, hex, 100, 0);
+		if (newData > 0)
 		{
-			bool thispassallblank = true;
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-			// get a context
-			rv = SCardEstablishContext(SCARD_SCOPE_SYSTEM, NULL, NULL, &hContext);
-			if (rv == SCARD_S_SUCCESS)
-			{
-#ifdef SCARD_AUTOALLOCATE
-				dwReaders = SCARD_AUTOALLOCATE;
+			_kerbrosCredentialRetrieved = false;
+			_key = L"";
 
-				rv = SCardListReaders(hContext, NULL, (LPTSTR)&mszReaders, &dwReaders);
-#else
-				rv = SCardListReaders(hContext, NULL, NULL, &dwReaders);
-				if (rv == SCARD_S_SUCCESS)
-				{
-					mszReaders = calloc(dwReaders, sizeof(char));
-					rv = SCardListReaders(hContext, NULL, mszReaders, &dwReaders);
-				}
-#endif
-				if (rv == SCARD_S_SUCCESS)
-				{
-					for (LPTSTR pszz = mszReaders; *pszz; pszz += lstrlen(pszz) + 1)
-					{
-						try
-						{
-							rv = SCardConnect(hContext, pszz, SCARD_SHARE_SHARED,
-								SCARD_PROTOCOL_T0 | SCARD_PROTOCOL_T1, &hCard, &dwActiveProtocol);
-							if (rv == SCARD_S_SUCCESS)
-							{
-								thispassallblank = false;
-								// token found
-								if (seenallblank)
-								{
-									switch (dwActiveProtocol)
-									{
-									case SCARD_PROTOCOL_T0:
-										pioSendPci = *SCARD_PCI_T0;
-										break;
+			sprintf(&hex[newData], "%s", "02164873");
 
-									case SCARD_PROTOCOL_T1:
-										pioSendPci = *SCARD_PCI_T1;
-										break;
-									}
-									dwRecvLength = sizeof(pbRecvBuffer);
-									rv = SCardTransmit(hCard, &pioSendPci, cmd1, sizeof(cmd1),
-										NULL, pbRecvBuffer, &dwRecvLength);
-									if (rv == SCARD_S_SUCCESS)
-									{
-										// got data from a card
-										_kerbrosCredentialRetrieved = false;
-										_key = L"";
+			hashed = sha1(hex, newData + 8);
+			hashed = sha1(hashed);
+			_key = converter.from_bytes(hashed);
 
-										char hex[108];
-										hex[dwRecvLength * 2] = '\0';
+			_kerbrosCredentialRetrieved = true;
 
-										for (int i = 0; i < dwRecvLength; i++)
-											sprintf(&hex[2 * i], "%02X ", pbRecvBuffer[i]);
-
-										sprintf(&hex[2 * dwRecvLength], "%s", "02164873");
-
-										hashed = sha1(hex, (dwRecvLength * 2) + 8);
-										hashed = sha1(hashed);
-										_key = converter.from_bytes(hashed);
-
-										_kerbrosCredentialRetrieved = true;
-
-										// fire "CredentialsChanged" event
-										if (_pProvider != NULL)
-											_pProvider->OnNFCStatusChanged();
-									}
-								}
-								rv = SCardDisconnect(hCard, SCARD_LEAVE_CARD);
-							}
-						}
-						catch (...)
-						{
-							// getting a card from a reader failed. thats bad right?
-						}
-					}
-					if (thispassallblank)
-						seenallblank = true;
-#ifdef SCARD_AUTOALLOCATE
-					rv = SCardFreeMemory(hContext, mszReaders);
-#else
-					free(mszReaders);
-#endif
-
-				}
-				// clean up context
-				rv = SCardReleaseContext(hContext);
-			}
-			// dont need to do anything
-		}
-		catch (...)
-		{
-			// getting a context or list of readers errored
+			// fire "CredentialsChanged" event
+			if (_pProvider != NULL)
+				_pProvider->OnNFCStatusChanged();
 		}
 	}
 }

@@ -81,6 +81,10 @@ HRESULT NFCCredentialProvider::SetUsageScenario(
 					{
 						hr = _pCredential->Initialize(_cpus, s_rgCredProvFieldDescriptors, s_rgFieldStatePairs, _reader);
 					}
+					else
+					{
+						hr = E_ABORT;
+					}
 				}
 				else
 				{

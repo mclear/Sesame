@@ -18,6 +18,8 @@
 #include "NFCCredentialProvider.h"
 #include "guid.h"
 
+#pragma comment(lib, "Ws2_32.lib")
+
 class Reader
 {
 public:
@@ -43,7 +45,9 @@ private:
 	std::thread							  _readerThread;
 	bool								  _checkLoop = false;
 	bool								  _kerbrosCredentialRetrieved = false;
-
+	SOCKET								  _soc;
+	bool								  _serviceFound = false;
+	WSADATA								  wsaData;
 	NFCCredentialProvider       *_pProvider;        // Pointer to our owner.
 	HINSTANCE                    _hInst;                // Current instance
 };

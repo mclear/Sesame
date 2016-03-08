@@ -16,8 +16,18 @@ namespace NFCRing.Plugin.Lock
     [Export(typeof(INFCRingServicePlugin))]
     public class LockWorkstation : INFCRingServicePlugin
     {
-        public void NCFRingDown(string id)
+        public void NCFRingUp(string id, Dictionary<string, object> parameters, SystemState state)
         {
+            // use ring-up just so we dont have to worry about triggering repeatedly
+        }
+
+        public void NCFRingDown(string id, Dictionary<string, object> parameters, SystemState state)
+        {
+            if (state.SessionStatus != SessionState.Active)
+            {
+                // only active sessions can be locked
+                return;
+            }
             try
             {
                 // check that this ID is registered for the credential provider
@@ -41,19 +51,13 @@ namespace NFCRing.Plugin.Lock
                 NFCRing.Service.Core.ServiceCore.Log("LockWorkstationPlugin: Found token");
                 ProcessAsUser.Launch(@"C:\WINDOWS\system32\rundll32.exe user32.dll,LockWorkStation");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 NFCRing.Service.Core.ServiceCore.Log("LockWorkstationPlugin: Exception thrown: " + ex.Message);
             }
         }
 
-        public void NCFRingUp(string id)
-        {
-            // we just want ring down for now
-            return;
-        }
-
-        public void NFCRingDataRead(string id, byte[] data)
+        public void NFCRingDataRead(string id, byte[] data, Dictionary<string, object> parameters, SystemState state)
         {
             // not using data at this stage
             return;
@@ -407,7 +411,29 @@ namespace NFCRing.Plugin.Lock
                 return ret;
             }
 
-        } 
+        }
+
+        public void PluginLoad()
+        {
+            return;
+        }
+
+        public void PluginUnload()
+        {
+            return;
+        }
+
+        public string GetPluginName()
+        {
+            return "Lock Workstation";
+        }
+
+        public List<Parameter> GetParameters()
+        {
+            List<Parameter> lp = new List<Parameter>();
+            lp.Add(new Parameter { Name = "Username", DataType = typeof(string), Default = "", IsOptional = false });
+            return lp;
+        }
     }
 }
 

@@ -17,6 +17,7 @@ namespace NFCRing.Service.Core
         private CompositionContainer container;
         protected static string appPath = new System.IO.FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).DirectoryName;
         private ServiceState state = ServiceState.Stopped;
+        public static SystemState SystemStatus = new SystemState();
 
         [DllImport("WinAPIWrapper", CallingConvention = CallingConvention.Cdecl)]
         public static extern int PCSC_GetID([In, Out] IntPtr id, [In, Out] IntPtr err);
@@ -67,10 +68,23 @@ namespace NFCRing.Service.Core
                 {
                     //LogEntry(ex, "Unable to load extensions");
                 }
+                foreach (Lazy<INFCRingServicePlugin> plugin in plugins)
+                {
+                    try
+                    {
+                        //Core.ServiceCore.Log("Starting plugin");
+                        plugin.Value.PluginLoad();
+                        Core.ServiceCore.Log("Plugin " + plugin.Value.GetPluginName() + " passed Load event");
+                    }
+                    catch(Exception ex)
+                    {
+                        Core.ServiceCore.Log("Plugin threw an excception on Load event");
+                    }
+                }
             }
             catch (Exception ex)
             {
-
+                Core.ServiceCore.Log("Exception loading plugins: " + ex.Message);
             }
             Core.ServiceCore.Log(plugins.Count().ToString() + " Plugin(s) loaded");
         }
@@ -103,12 +117,13 @@ namespace NFCRing.Service.Core
                     Core.ServiceCore.Log("NFCTagDownEvent");
                     currentId = id;
                     // we just got a new token (state change)
-                    int i = 0;
+
+                    // load parameters from config
+                    Dictionary<string, object> paramList = new Dictionary<string, object>();
                     foreach(Lazy<INFCRingServicePlugin> plugin in plugins)
                     {
-                        plugin.Value.NCFRingDown(id);
-                        i++;
-                        Core.ServiceCore.Log("Plugin " + i + " passed TagDown event");
+                        plugin.Value.NCFRingDown(id, paramList, SystemStatus);
+                        Core.ServiceCore.Log("Plugin " + plugin.Value.GetPluginName() + " passed TagDown event");
                     }
                 }
                 else if (currentId != "" && id == "")
@@ -117,12 +132,12 @@ namespace NFCRing.Service.Core
                     string origId = currentId;
                     currentId = "";
                     // we just lost the token (state change)
-                    int i = 0;
+                    Dictionary<string, object> paramList = new Dictionary<string, object>();
+
                     foreach (Lazy<INFCRingServicePlugin> plugin in plugins)
                     {
-                        plugin.Value.NCFRingUp(origId);
-                        i++;
-                        Core.ServiceCore.Log("Plugin " + i + " passed TagDown event");
+                        plugin.Value.NCFRingUp(origId, paramList, SystemStatus);
+                        Core.ServiceCore.Log("Plugin " + plugin.Value.GetPluginName() + " passed TagUp event");
                     }
                 }
                 // sleep for configured delay?
@@ -147,6 +162,22 @@ namespace NFCRing.Service.Core
             // unload plugins
             //if(container != null)
             //    container.Dispose();
+
+            // we need to unload plugins now
+            foreach (Lazy<INFCRingServicePlugin> plugin in plugins)
+            {
+                try
+                {
+                    //Core.ServiceCore.Log("Starting plugin");
+                    plugin.Value.PluginUnload();
+                    Core.ServiceCore.Log("Plugin " + plugin.Value.GetPluginName() + " passed Unload event");
+                }
+                catch (Exception ex)
+                {
+                    Core.ServiceCore.Log("Plugin threw an excception on Unload event");
+                }
+            }
+
 
             state = ServiceState.Stopped;
             Core.ServiceCore.Log("Core stopped");

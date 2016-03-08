@@ -11,6 +11,7 @@
 
 #pragma once
 #undef UNICODE
+
 #include "common.h"
 #include <windows.h>
 #include <strsafe.h>
