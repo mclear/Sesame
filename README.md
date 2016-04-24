@@ -8,17 +8,17 @@ This software is in active development and should not be used in any environment
 If you are having trouble logging in, open an RDP session from another machine and then use your username and password to login again.
 
 ## Prerequisites
-* Windows 7, 8, 8.1 or 10 64-bit Windows (It will not work on a 32-bit system). 
+* Windows 7, 8, 8.1 or 10 64-bit Windows (It will not work on a 32-bit system).
 * [.Net 4.5, included with Windows 8.1 or higher](https://www.microsoft.com/en-au/download/details.aspx?id=40779)
-* [Visual C++ Redistributable Packages for Visual Studio 2013](https://www.microsoft.com/en-au/download/details.aspx?id=4078)
+* [Visual C++ Redistributable Packages for Visual Studio 2013](https://www.microsoft.com/en-us/download/details.aspx?id=40784)
 
 ## Installation Instructions
 
-There are three seperate parts to this, if any fails then you will need to check that you have the dependencies correctly installed and are running programs in Administrator mode where applicable.  *These installation instructions are temporary and will be replaced with a simple MSI installer in the future.*
+There are three separate parts to this, if any fails then you will need to check that you have the dependencies correctly installed and are running programs in Administrator mode where applicable.  *These installation instructions are temporary and will be replaced with a simple MSI installer in the future.*
 
 ### Registering the credential provider
 
-1. Extract ``\NFC Credential\NFCRingCredentialProvider.dll`` and ``\NFC Credential\tileimage.bmp`` to ``C:\Windows\System32`` 
+1. Extract ``\NFC Credential\NFCRingCredentialProvider.dll`` and ``\NFC Credential\tileimage.bmp`` to ``C:\Windows\System32``
 
 1. Run ``Register.reg``. You may need to run it as Administrator. Windows may pop up a smart screen message. You'll need to allow this to run for the provider to function.
 
@@ -34,7 +34,7 @@ There are three seperate parts to this, if any fails then you will need to check
 
 1. Enter your username and password.
 
-1. Click "Enrol", and if successful, you should get a message box that says "Credential saved"
+1. Click "Enroll", and if successful, you should get a message box that says "Credential saved"
 
 1. Close this application.
 
