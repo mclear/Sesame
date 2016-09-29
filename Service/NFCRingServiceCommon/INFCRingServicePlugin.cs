@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,8 +35,16 @@ namespace NFCRing.Service.Common
 
     public class SystemState
     {
+        public SystemState()
+        {
+            User = "";
+            CredentialData = new Credential();
+        }
         public string User { get; set; }
         public SessionState SessionStatus { get; set; }
+        public Credential CredentialData { get; set; }
+        public bool AwaitingToken { get; set; }
+        public TcpClient RegistrationClient { get; set; }
     }
 
     public enum SessionState
@@ -43,5 +52,16 @@ namespace NFCRing.Service.Common
         Active = 1,
         LoggedOff = 2,
         Locked = 3,
+    }
+
+    public class Credential
+    {
+        public Credential()
+        {
+            ProviderActive = false;
+            Client = null;
+        }
+        public bool ProviderActive { get; set; }
+        public TcpClient Client { get; set; }
     }
 }

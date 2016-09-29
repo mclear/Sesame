@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace RegistryWriter
+namespace CredentialRegistration
 {
     static class Program
     {
@@ -16,7 +16,7 @@ namespace RegistryWriter
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new frmRegistrationApp());
         }
     }
 }

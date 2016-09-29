@@ -39,9 +39,7 @@ public:
 
 private:
 	void CheckNFC();
-	ULONG GetDataForNFCToken(std::wstring path, std::wstring* username, std::wstring* password);
 
-	std::wstring						  _key;
 	std::thread							  _readerThread;
 	bool								  _checkLoop = false;
 	bool								  _kerbrosCredentialRetrieved = false;
@@ -50,4 +48,6 @@ private:
 	WSADATA								  wsaData;
 	NFCCredentialProvider       *_pProvider;        // Pointer to our owner.
 	HINSTANCE                    _hInst;                // Current instance
+	std::string					_username;
+	std::string					_password;
 };

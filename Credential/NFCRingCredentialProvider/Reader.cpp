@@ -2,6 +2,12 @@
 #include <strsafe.h>
 #include "sha1.h"
 #include <codecvt>
+
+
+
+#include <locale>
+#include <fstream>
+#include <cstdlib>
 //#pragma comment ( lib, "cryptlib" )
 //#include "..\External\include\sha.h"
 //#include "..\External\include\aes.h"
@@ -88,42 +94,53 @@ void Reader::CheckNFC()
 	destination.sin_family = AF_INET;
 	destination.sin_port = htons(28416);
 	destination.sin_addr.s_addr = inet_addr("127.0.0.1");
-
-	int result = connect(_soc, (struct sockaddr *)&destination, sizeof(destination));
-
-	for (int i = 0; i < 15; i++)
+	while (_checkLoop)
 	{
-		if (result != 0)
-			result = connect(_soc, (struct sockaddr *)&destination, sizeof(destination));
-		else
-			break;
-		std::this_thread::sleep_for(std::chrono::seconds(2));
-	}
+		int result = connect(_soc, (struct sockaddr *)&destination, sizeof(destination));
 
-	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-	SHA1 sha1;
-	std::string hashed = "";
-	char hex[108];
-	int newData = 0;
-	if (_soc != INVALID_SOCKET)
-	{
-		newData = recv(_soc, hex, 100, 0);
-		if (newData > 0)
+		for (int i = 0; i < 15; i++)
 		{
-			_kerbrosCredentialRetrieved = false;
-			_key = L"";
+			if (result != 0)
+				result = connect(_soc, (struct sockaddr *)&destination, sizeof(destination));
+			else
+				break;
+			std::this_thread::sleep_for(std::chrono::seconds(2));
+		}
 
-			sprintf(&hex[newData], "%s", "02164873");
+		char buffer[1000];
+		int newData = 0;
+		if (_soc != INVALID_SOCKET)
+		{
 
-			hashed = sha1(hex, newData + 8);
-			hashed = sha1(hashed);
-			_key = converter.from_bytes(hashed);
+			try
+			{
+				newData = recv(_soc, buffer, 1000, 0); 
+				if (newData > 0)
+				{
+					_username = std::string(buffer, newData);
+					if (_username == " ")
+					{
+						_username = "";
+						continue;
+					}
+					newData = recv(_soc, buffer, 1000, 0);
+					{
+						_password = std::string(buffer, newData);
+						_kerbrosCredentialRetrieved = true;
+						// did we get both parts of the credential?
+						// fire "CredentialsChanged" event
 
-			_kerbrosCredentialRetrieved = true;
-
-			// fire "CredentialsChanged" event
-			if (_pProvider != NULL)
-				_pProvider->OnNFCStatusChanged();
+						if (_pProvider != NULL)
+							_pProvider->OnNFCStatusChanged();
+					}
+				}
+			}
+			catch (...)
+			{
+				//FILE* f = fopen("C:\\credex.txt", "w");
+				//fprintf(f, "%i", e);
+				//fclose(f);
+			}
 		}
 	}
 }
@@ -131,6 +148,13 @@ void Reader::CheckNFC()
 bool Reader::HasLogin()
 {
 	return _kerbrosCredentialRetrieved;
+}
+
+std::wstring StringToWString(const std::string& s)
+{
+	std::wstring temp(s.length(), L' ');
+	std::copy(s.begin(), s.end(), temp.begin());
+	return temp;
 }
 
 HRESULT Reader::GetLogin(
@@ -141,22 +165,16 @@ HRESULT Reader::GetLogin(
 	CREDENTIAL_PROVIDER_USAGE_SCENARIO cpus
 	)
 {
-	if (!_kerbrosCredentialRetrieved || _key == L"")
+	if (!_kerbrosCredentialRetrieved)
 		return E_FAIL;
 
-	std::wstring regpath = std::wstring(L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Authentication\\Credential Providers\\{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}\\" + _key);
+	std::wstring un = StringToWString(_username);
+	std::wstring pw = StringToWString(_password);
 
-	ULONG res;
-	std::wstring un;
-	std::wstring pw;
-
-	res = GetDataForNFCToken(regpath, &un, &pw);
-
-	if (res != ERROR_SUCCESS)
-		return E_FAIL;
+	_username = "";
+	_password = "";
 
 	_kerbrosCredentialRetrieved = false;
-	_key = L"";
 
 	HRESULT hr = S_OK;
 	WCHAR wsz[MAX_COMPUTERNAME_LENGTH + 1];
@@ -167,12 +185,17 @@ HRESULT Reader::GetLogin(
 		// cpus
 		hr = ProtectIfNecessaryAndCopyPassword(&pw[0], CPUS_LOGON, &pwzProtectedPassword);
 
+		//FILE* f = fopen("C:\\cred4.txt", "w+");
+		//fwprintf(f, L"%s\n", pwzProtectedPassword);
+		//fclose(f);
+
 		if (SUCCEEDED(hr))
 		{
 			KERB_INTERACTIVE_UNLOCK_LOGON kiul;
 
 			// Initialize kiul with weak references to our credential.
 			hr = KerbInteractiveUnlockLogonInit(wsz, &un[0], pwzProtectedPassword, cpus, &kiul);
+			//hr = KerbInteractiveUnlockLogonInit(wsz, &un[0], &(pass)[0], cpus, &kiul);
 
 			if (SUCCEEDED(hr))
 			{
@@ -208,32 +231,4 @@ HRESULT Reader::GetLogin(
 		hr = HRESULT_FROM_WIN32(dwErr);
 	}
 	return hr;
-}
-
-ULONG Reader::GetDataForNFCToken(std::wstring path, std::wstring* username, std::wstring* password)
-{
-	HKEY hKey;
-	WCHAR uszBuffer[512];
-	DWORD udwBufferSize = sizeof(uszBuffer);
-	WCHAR pszBuffer[512];
-	DWORD pdwBufferSize = sizeof(pszBuffer);
-	ULONG lRes = RegOpenKeyExW(HKEY_LOCAL_MACHINE, path.c_str(), 0, KEY_READ, &hKey);
-	if (lRes == ERROR_SUCCESS)
-	{
-		lRes = RegQueryValueEx(hKey, L"User", 0, NULL, (LPBYTE)uszBuffer, &udwBufferSize);
-		if (lRes == ERROR_SUCCESS)
-		{
-			*username = uszBuffer;
-
-			// only continue if the NFC token and username existed
-			//lRes = RegOpenKeyExW(HKEY_LOCAL_MACHINE, path.c_str(), 0, KEY_READ, &hKey);
-			if (lRes == ERROR_SUCCESS)
-			{
-				lRes = RegQueryValueEx(hKey, L"Data", 0, NULL, (LPBYTE)pszBuffer, &pdwBufferSize);
-				if (lRes == ERROR_SUCCESS)
-					*password = pszBuffer;
-			}
-		}
-	}
-	return lRes;
 }

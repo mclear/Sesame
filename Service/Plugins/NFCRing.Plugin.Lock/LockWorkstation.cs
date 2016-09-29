@@ -28,27 +28,10 @@ namespace NFCRing.Plugin.Lock
                 // only active sessions can be locked
                 return;
             }
+            if (state.CredentialData.ProviderActive)
+                return;
             try
             {
-                // check that this ID is registered for the credential provider
-                RegistryKey key = OpenKey(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\Credential Providers\{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}");
-
-                // i guess the credential provider isn't installed or we're not running as admin
-                if (key == null)
-                    return;
-
-                SHA1Managed sm = new SHA1Managed();
-                // add salt. this is dumb
-                byte[] hash = sm.ComputeHash(System.Text.Encoding.ASCII.GetBytes(id + "02164873"));
-                string hash1 = HashToHex(hash);
-                string newKeyName = HashToHex(sm.ComputeHash(System.Text.Encoding.ASCII.GetBytes(hash1)));
-
-                if (key.OpenSubKey(newKeyName) == null)
-                {
-                    NFCRing.Service.Core.ServiceCore.Log("LockWorkstationPlugin: Unknown token");
-                    return;
-                }
-                NFCRing.Service.Core.ServiceCore.Log("LockWorkstationPlugin: Found token");
                 ProcessAsUser.Launch(@"C:\WINDOWS\system32\rundll32.exe user32.dll,LockWorkStation");
             }
             catch (Exception ex)
