@@ -156,6 +156,11 @@ HRESULT NFCCredentialProvider::Advise(
 	UINT_PTR upAdviseContext
 	)
 {
+	//FILE *filesd;
+	//filesd = fopen("C:\\cplog.txt", "a+");
+	//fprintf(filesd,"tater\n");
+	//fclose(filesd);	
+
 	if (_credentialProviderEvents != NULL)
 	{
 		_credentialProviderEvents->Release();
@@ -171,6 +176,11 @@ HRESULT NFCCredentialProvider::Advise(
 // Called by LogonUI when the ICredentialProviderEvents callback is no longer valid.
 HRESULT NFCCredentialProvider::UnAdvise()
 {
+	//FILE *filesd;
+	//filesd = fopen("C:\\cplog.txt", "a+");
+	//fprintf(filesd,"masher\n");
+	//fclose(filesd);	
+
 	if (_credentialProviderEvents != NULL)
 		_credentialProviderEvents->Release();
 

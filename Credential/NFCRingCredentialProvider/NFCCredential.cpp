@@ -412,3 +412,9 @@ HRESULT NFCCredential::ReportResult(
 	
 	return E_NOTIMPL;
 }
+
+HRESULT NFCCredential::GetUserSid(LPWSTR *sid)
+{
+	sid = nullptr;
+	return S_FALSE;
+}
