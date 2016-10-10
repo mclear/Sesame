@@ -24,6 +24,7 @@
 #include <stdlib.h>
 
 #include <winscard.h>
+#include "log.h"
 
 #ifdef WIN32
 static char *pcsc_stringify_error(LONG rv)
@@ -48,6 +49,8 @@ NFCCredential::NFCCredential() :
 	_cRef(1),
 	_pCredProvCredentialEvents(NULL)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::Constructor");
+
 	DllAddRef();
 	_reader = NULL;
 	ZeroMemory(_rgCredProvFieldDescriptors, sizeof(_rgCredProvFieldDescriptors));
@@ -57,6 +60,8 @@ NFCCredential::NFCCredential() :
 
 NFCCredential::~NFCCredential()
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::Destructor");
+
 	for (int i = 0; i < ARRAYSIZE(_rgFieldStrings); i++)
 	{
 		CoTaskMemFree(_rgFieldStrings[i]);
@@ -76,6 +81,7 @@ HRESULT NFCCredential::Initialize(
 	Reader* rdr
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::Initialize");
 
 	HRESULT hr = S_OK;
 
@@ -108,6 +114,8 @@ HRESULT NFCCredential::Advise(
 	ICredentialProviderCredentialEvents* pcpce
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::Advise");
+
 	if (_pCredProvCredentialEvents != NULL)
 	{
 		_pCredProvCredentialEvents->Release();
@@ -121,6 +129,8 @@ HRESULT NFCCredential::Advise(
 // LogonUI calls this to tell us to release the callback.
 HRESULT NFCCredential::UnAdvise()
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::UnAdvise");
+
 	if (_pCredProvCredentialEvents)
 	{
 		_pCredProvCredentialEvents->Release();
@@ -138,6 +148,8 @@ HRESULT NFCCredential::UnAdvise()
 // selected, you would do it here.
 HRESULT NFCCredential::SetSelected(BOOL* pbAutoLogon)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::SetSelected");
+
 	*pbAutoLogon = TRUE;  
 
 	return S_OK;
@@ -148,6 +160,8 @@ HRESULT NFCCredential::SetSelected(BOOL* pbAutoLogon)
 // is to clear out the password field.
 HRESULT NFCCredential::SetDeselected()
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::SetDeselected");
+
 	// kill thread here
 	HRESULT hr = S_OK;
 
@@ -173,6 +187,8 @@ HRESULT NFCCredential::GetFieldState(
 	CREDENTIAL_PROVIDER_FIELD_INTERACTIVE_STATE* pcpfis
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::GetFieldState");
+
 	HRESULT hr;
 
 	// Validate paramters.
@@ -197,6 +213,8 @@ HRESULT NFCCredential::GetStringValue(
 	PWSTR* ppwsz
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::GetStringValue");
+
 	HRESULT hr;
 
 	// Check to make sure dwFieldID is a legitimate index.
@@ -220,6 +238,8 @@ HRESULT NFCCredential::GetBitmapValue(
 	HBITMAP* phbmp
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::GetBitmapValue");
+
 	HRESULT hr;
 
 	// Validate paramters.
@@ -253,6 +273,8 @@ HRESULT NFCCredential::GetSubmitButtonValue(
 	DWORD* pdwAdjacentTo
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::GetSubmitButtonValue");
+
 	HRESULT hr;
 
 	// Validate parameters.
@@ -277,6 +299,8 @@ HRESULT NFCCredential::SetStringValue(
 	PCWSTR pwz      
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::SetStringValue");
+
 	HRESULT hr;
 
 	// Validate parameters.
@@ -306,6 +330,8 @@ HRESULT NFCCredential::GetCheckboxValue(
 	PWSTR* ppwszLabel
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::GetCheckboxValue");
+
 	UNREFERENCED_PARAMETER(dwFieldID);
 	UNREFERENCED_PARAMETER(pbChecked);
 	UNREFERENCED_PARAMETER(ppwszLabel);
@@ -319,6 +345,8 @@ HRESULT NFCCredential::GetComboBoxValueCount(
 	DWORD* pdwSelectedItem
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::GetComboBoxValueCount");
+
 	UNREFERENCED_PARAMETER(dwFieldID);
 	UNREFERENCED_PARAMETER(pcItems);
 	UNREFERENCED_PARAMETER(pdwSelectedItem);
@@ -332,6 +360,8 @@ HRESULT NFCCredential::GetComboBoxValueAt(
 	PWSTR* ppwszItem
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::GetComboBoxValueAt");
+
 	UNREFERENCED_PARAMETER(dwFieldID);
 	UNREFERENCED_PARAMETER(dwItem);
 	UNREFERENCED_PARAMETER(ppwszItem);
@@ -344,6 +374,8 @@ HRESULT NFCCredential::SetCheckboxValue(
 	BOOL bChecked
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::SetCheckboxValue");
+
 	UNREFERENCED_PARAMETER(dwFieldID);
 	UNREFERENCED_PARAMETER(bChecked);
 
@@ -355,6 +387,8 @@ HRESULT NFCCredential::SetComboBoxSelectedValue(
 	DWORD dwSelectedItem
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::SetComboBoxSelectedValue");
+
 	UNREFERENCED_PARAMETER(dwFieldId);
 	UNREFERENCED_PARAMETER(dwSelectedItem);
 
@@ -363,6 +397,8 @@ HRESULT NFCCredential::SetComboBoxSelectedValue(
 
 HRESULT NFCCredential::CommandLinkClicked(DWORD dwFieldID)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::CommandLinkClicked");
+
 	UNREFERENCED_PARAMETER(dwFieldID);
 
 	return E_NOTIMPL;
@@ -380,6 +416,7 @@ HRESULT NFCCredential::GetSerialization(
 	CREDENTIAL_PROVIDER_STATUS_ICON* pcpsiOptionalStatusIcon
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::GetSerialization");
 
 	//KERB_INTERACTIVE_LOGON kil;
 	//ZeroMemory(&kil, sizeof(kil));
@@ -405,6 +442,8 @@ HRESULT NFCCredential::ReportResult(
 	CREDENTIAL_PROVIDER_STATUS_ICON* pcpsiOptionalStatusIcon
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::ReportResult");
+
 	UNREFERENCED_PARAMETER(ntsStatus);
 	UNREFERENCED_PARAMETER(ntsSubstatus);
 	UNREFERENCED_PARAMETER(ppwszOptionalStatusText);
@@ -415,6 +454,8 @@ HRESULT NFCCredential::ReportResult(
 
 HRESULT NFCCredential::GetUserSid(LPWSTR *sid)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredential::GetUserSid");
+
 	sid = nullptr;
 	return S_FALSE;
 }
