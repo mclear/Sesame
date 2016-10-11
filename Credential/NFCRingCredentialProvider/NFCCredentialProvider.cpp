@@ -180,6 +180,9 @@ HRESULT NFCCredentialProvider::Advise(
 	
 	_adviseContext = upAdviseContext;
 
+	if (_reader != NULL)
+		_reader->Start();
+
 	return S_OK;
 }
 

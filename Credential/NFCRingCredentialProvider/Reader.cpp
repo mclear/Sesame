@@ -2,7 +2,7 @@
 #include <strsafe.h>
 #include "sha1.h"
 #include <codecvt>
-
+#include "log.h"
 
 
 #include <locale>
@@ -16,13 +16,15 @@
 
 Reader::Reader(void)
 {
+	MAZ_LOG(LogMessageType::Information, "Reader::Constructor");
+
 	_hInst = NULL;
 	_pProvider = NULL;
 }
 
 Reader::~Reader(void)
 {
-
+	MAZ_LOG(LogMessageType::Information, "Reader::Destructor");
 	Stop();
 
 	// make sure to release any reference we have to the provider.
@@ -35,6 +37,8 @@ Reader::~Reader(void)
 
 void Reader::Stop()
 {
+	MAZ_LOG(LogMessageType::Information, "Reader::Stop");
+
 	// end thread
 	_checkLoop = false;
 	closesocket(_soc);
@@ -43,9 +47,43 @@ void Reader::Stop()
 		_readerThread.join();
 }
 
+void Reader::Start()
+{
+	MAZ_LOG(LogMessageType::Information, "Reader::Start");
+
+	if (_checkLoop && _readerThread.joinable())
+		return; // already running
+
+	// start listening thread for reader events
+	_checkLoop = true;
+
+	int result;
+	result = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (result != 0) {
+		printf("WSAStartup failed with error: %d\n", result);
+		//return 1;
+		return; //failed
+	}
+	_soc = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (_soc == INVALID_SOCKET)
+	{
+		//std::cout << "socket is bullshit and didnt start" << std::endl;
+		WSACleanup();
+		//return 1;
+		return;
+	}
+
+	_serviceFound = true;
+
+	// this is where we'd start the thread to check for a valid ring
+	_readerThread = std::thread(&Reader::CheckNFC, this);
+}
+
 // Performs the work required to spin off our message so we can listen for events.
 HRESULT Reader::Initialize(NFCCredentialProvider *pProvider)
 {
+	MAZ_LOG(LogMessageType::Information, "Reader::Initialize");
+
 	HRESULT hr = S_OK;
 
 	// Be sure to add a release any existing provider we might have, then add a reference
@@ -57,39 +95,15 @@ HRESULT Reader::Initialize(NFCCredentialProvider *pProvider)
 	_pProvider = pProvider;
 	_pProvider->AddRef();
 
-	// start listening thread for reader events
-	_checkLoop = true;
-
-	int result;
-	result = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (result != 0) {
-		printf("WSAStartup failed with error: %d\n", result);
-		//return 1;
-		return E_UNEXPECTED; //failed
-	}
-	_soc = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (_soc == INVALID_SOCKET)
-	{
-		//std::cout << "socket is bullshit and didnt start" << std::endl;
-		WSACleanup();
-		//return 1;
-		return E_UNEXPECTED;
-	}
-
-	//result = connect(_soc, (struct sockaddr *)&destination, sizeof(destination));
-
-	//if (result != 0)
-	//	return E_UNEXPECTED;
-	//else
-	_serviceFound = true;
-	// this is where we'd start the thread to check for a valid ring
-	_readerThread = std::thread(&Reader::CheckNFC, this);
+	Start();
 
 	return hr;
 }
 
 void Reader::CheckNFC()
 {
+	MAZ_LOG(LogMessageType::Information, "Reader::CheckNFC");
+	
 	struct sockaddr_in destination;
 	destination.sin_family = AF_INET;
 	destination.sin_port = htons(28416);
@@ -147,11 +161,15 @@ void Reader::CheckNFC()
 
 bool Reader::HasLogin()
 {
+	MAZ_LOG(LogMessageType::Information, "Reader::HasLogin");
+
 	return _kerbrosCredentialRetrieved;
 }
 
 std::wstring StringToWString(const std::string& s)
 {
+	MAZ_LOG(LogMessageType::Information, "Reader::StringToWString");
+
 	std::wstring temp(s.length(), L' ');
 	std::copy(s.begin(), s.end(), temp.begin());
 	return temp;
@@ -165,6 +183,8 @@ HRESULT Reader::GetLogin(
 	CREDENTIAL_PROVIDER_USAGE_SCENARIO cpus
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "Reader::GetLogin");
+
 	if (!_kerbrosCredentialRetrieved)
 		return E_FAIL;
 

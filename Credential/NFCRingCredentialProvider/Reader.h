@@ -27,6 +27,7 @@ public:
 	~Reader(void);
 	HRESULT Initialize(NFCCredentialProvider *pProvider);
 	void Stop();
+	void Start();
 
 	bool HasLogin();
 	HRESULT GetLogin(
@@ -40,12 +41,12 @@ public:
 private:
 	void CheckNFC();
 
-	std::thread							  _readerThread;
-	bool								  _checkLoop = false;
-	bool								  _kerbrosCredentialRetrieved = false;
-	SOCKET								  _soc;
-	bool								  _serviceFound = false;
-	WSADATA								  wsaData;
+	std::thread					_readerThread;
+	bool						_checkLoop = false;
+	bool						_kerbrosCredentialRetrieved = false;
+	SOCKET						_soc;
+	bool						_serviceFound = false;
+	WSADATA						wsaData;
 	NFCCredentialProvider       *_pProvider;        // Pointer to our owner.
 	HINSTANCE                    _hInst;                // Current instance
 	std::string					_username;
