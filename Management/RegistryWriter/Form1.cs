@@ -12,10 +12,14 @@ using Microsoft.Win32;
 using System.Security.Cryptography;
 using System.IO;
 using System.Reflection;
+using System.Net.Sockets;
+using System.Net;
+using NFCRing.Service.Common;
+using Newtonsoft.Json;
 
-namespace RegistryWriter
+namespace CredentialRegistration
 {
-    public partial class Form1 : Form
+    public partial class frmRegistrationApp : Form
     {
 
         [DllImport("WinAPIWrapper", CallingConvention = CallingConvention.Cdecl)]
@@ -23,7 +27,10 @@ namespace RegistryWriter
         //[DllImport("WinAPIWrapper", CallingConvention = CallingConvention.Cdecl)]
         //public static extern int CredProtectWrapper(IntPtr inputBuffer, int inputLength, [In, Out]IntPtr outputBuffer);
 
-        public Form1()
+        TcpClient client;
+        UserServerState uss;
+
+        public frmRegistrationApp()
         {
             InitializeComponent();
         }
@@ -276,6 +283,94 @@ namespace RegistryWriter
             }
             else
                 MessageBox.Show("Enrolment failed");
+        }
+
+        private void btnNetworkRegistrationStart_Click(object sender, EventArgs e)
+        {
+            if(ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.GetToken))) > 0)
+            {
+                frmNewToken nt = new frmNewToken(ref client);
+                nt.ShowDialog();
+                LoadConfig();
+            }
+        }
+
+        private void Log(string message)
+        {
+            txtLog.Text = DateTime.Now.ToShortTimeString() + " - " + message + Environment.NewLine + txtLog.Text;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            LoadConfig();
+        }
+
+        private void tvwConfig_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            string tag = (string)tvwConfig.SelectedNode.Tag;
+            
+        }
+
+        private void LoadConfig()
+        {
+            ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.GetState) { Username = ClientCommon.GetCurrentUsername() }));
+            var task = Task<string>.Factory.StartNew(() =>
+            {
+                return ServiceCommunication.ReadNetworkMessage(ref client);
+            });
+            if (task.Result == "")
+            {
+                if (MessageBox.Show("Unable to connect to service. Please make sure its running", "NFC Ring Service Registration App", MessageBoxButtons.RetryCancel) == DialogResult.Cancel)
+                {
+                    Application.Exit();
+                }
+                // RETRY ISNT GOING TO DO ANYTHING YET
+            }
+            else
+            {
+                tvwConfig.Nodes.Clear();
+                uss = JsonConvert.DeserializeObject<UserServerState>(task.Result);
+                TreeNode user = tvwConfig.Nodes.Add(uss.UserConfiguration.Username);
+                TreeNode tokens = user.Nodes.Add("Tokens");
+                foreach (KeyValuePair<string, string> tok in uss.UserConfiguration.Tokens)
+                {
+
+                    TreeNode tokenNode = tokens.Nodes.Add(tok.Value + " - " + tok.Key);
+                    tokenNode.Tag = "Token";
+                }
+                TreeNode plugins = user.Nodes.Add("Plugins");
+                foreach (PluginInfo p in uss.Plugins)
+                {
+                    TreeNode aPlugin = plugins.Nodes.Add(p.Name);
+                    aPlugin.Tag = "Plugin";
+                }
+                TreeNode events = user.Nodes.Add("Events");
+                foreach (Event ev in uss.UserConfiguration.Events)
+                {
+                    TreeNode eventNode = events.Nodes.Add(ev.PluginName + " - " + ev.Token);
+                    eventNode.Tag = "Event";
+                    foreach (KeyValuePair<string, object> param in ev.Parameters)
+                    {
+                        if (param.Value != null)
+                        {
+                            TreeNode e = eventNode.Nodes.Add(param.Key + " = " + param.Value.ToString());
+                            e.Tag = "Event";
+                        }
+                    }
+                }
+                if(uss.UserConfiguration.Tokens.Count > 0 && uss.Plugins.Count > 0)
+                {
+                    btnAddEvent.Enabled = true;
+                }
+                tvwConfig.ExpandAll();
+            }
+        }
+
+        private void btnAddEvent_Click(object sender, EventArgs e)
+        {
+            frmEventRegistration er = new frmEventRegistration(ref client, uss.UserConfiguration.Tokens, uss.Plugins);
+            er.ShowDialog();
+            LoadConfig();
         }
     }
 }

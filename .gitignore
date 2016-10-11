@@ -1,0 +1,16 @@
+*.tlog
+bin/
+**obj/**
+*.obj
+*.pdb
+*.res
+*.log
+*.idb
+*.pch
+*.sdf
+*.ipch
+*opensdf
+*.suo
+*.db
+packages/
+*.opendb

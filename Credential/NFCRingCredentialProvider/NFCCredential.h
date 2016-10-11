@@ -23,7 +23,7 @@
 
 class Reader;
 
-class NFCCredential : public ICredentialProviderCredential
+class NFCCredential : public ICredentialProviderCredential2
 {
 public:
 	// IUnknown
@@ -89,7 +89,7 @@ public:
 	IFACEMETHODIMP SetCheckboxValue(DWORD dwFieldID, BOOL bChecked);
 	IFACEMETHODIMP SetComboBoxSelectedValue(DWORD dwFieldID, DWORD dwSelectedItem);
 	IFACEMETHODIMP CommandLinkClicked(DWORD dwFieldID);
-
+	IFACEMETHODIMP GetUserSid(LPWSTR *sid);
 	IFACEMETHODIMP GetSerialization(
 		CREDENTIAL_PROVIDER_GET_SERIALIZATION_RESPONSE* pcpgsr, 
 		CREDENTIAL_PROVIDER_CREDENTIAL_SERIALIZATION* pcpcs, 

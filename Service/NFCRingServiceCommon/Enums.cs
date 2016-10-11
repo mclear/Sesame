@@ -13,4 +13,17 @@ namespace NFCRing.Service.Common
         Stopping,
         Stopped
     }
+    public enum MessageType
+    {
+        GetToken,
+        RegisterToken,
+        Token,
+        AssociatePluginToToken,
+        CancelRegistration,
+        GetUserCredential,
+        UserCredential,
+        GetState,
+        State,
+        Message
+    }
 }

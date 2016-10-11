@@ -13,12 +13,14 @@
 #include "NFCCredential.h"
 #include "Reader.h"
 #include "guid.h"
+#include "log.h"
 
 // NFCCredentialProvider ////////////////////////////////////////////////////////
 
 NFCCredentialProvider::NFCCredentialProvider():
 	_cRef(1)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::Constructor");
 	DllAddRef();
 	_reader = NULL;
 	_pCredential = NULL;
@@ -27,6 +29,8 @@ NFCCredentialProvider::NFCCredentialProvider():
 
 NFCCredentialProvider::~NFCCredentialProvider()
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::Destructor");
+
 	if (_pCredential != NULL)
 		_pCredential->Release();
 	_pCredential = NULL;
@@ -39,6 +43,8 @@ NFCCredentialProvider::~NFCCredentialProvider()
 
 void NFCCredentialProvider::OnNFCStatusChanged()
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::OnNFCStatusChanged");
+
 	if (_credentialProviderEvents != NULL)
 	{
 		_credentialProviderEvents->CredentialsChanged(_adviseContext);
@@ -56,6 +62,7 @@ HRESULT NFCCredentialProvider::SetUsageScenario(
 	)
 {
 	UNREFERENCED_PARAMETER(dwFlags);
+	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::SetUsageScenario");
 
 	HRESULT hr;
 	_cpus = cpus;
@@ -145,6 +152,7 @@ STDMETHODIMP NFCCredentialProvider::SetSerialization(
 	)
 {
 	UNREFERENCED_PARAMETER(pcpcs);
+	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::SetSerialization");
 
 	return E_NOTIMPL;
 }
@@ -156,6 +164,13 @@ HRESULT NFCCredentialProvider::Advise(
 	UINT_PTR upAdviseContext
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::Advise");
+
+	//FILE *filesd;
+	//filesd = fopen("C:\\cplog.txt", "a+");
+	//fprintf(filesd,"tater\n");
+	//fclose(filesd);	
+
 	if (_credentialProviderEvents != NULL)
 	{
 		_credentialProviderEvents->Release();
@@ -165,12 +180,21 @@ HRESULT NFCCredentialProvider::Advise(
 	
 	_adviseContext = upAdviseContext;
 
+	if (_reader != NULL)
+		_reader->Start();
+
 	return S_OK;
 }
 
 // Called by LogonUI when the ICredentialProviderEvents callback is no longer valid.
 HRESULT NFCCredentialProvider::UnAdvise()
 {
+	//FILE *filesd;
+	//filesd = fopen("C:\\cplog.txt", "a+");
+	//fprintf(filesd,"masher\n");
+	//fclose(filesd);	
+	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::UnAdvise");
+
 	if (_credentialProviderEvents != NULL)
 		_credentialProviderEvents->Release();
 
@@ -192,6 +216,8 @@ HRESULT NFCCredentialProvider::GetFieldDescriptorCount(
 	DWORD* pdwCount
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::GetFieldDescriptorCount");
+
 	*pdwCount = SFI_NUM_FIELDS;
 
 	return S_OK;
@@ -203,6 +229,8 @@ HRESULT NFCCredentialProvider::GetFieldDescriptorAt(
 	CREDENTIAL_PROVIDER_FIELD_DESCRIPTOR** ppcpfd
 	)
 {    
+	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::GetFieldDescriptorAt");
+
 	HRESULT hr;
 
 	// Verify dwIndex is a valid field.
@@ -234,9 +262,11 @@ HRESULT NFCCredentialProvider::GetCredentialCount(
 	BOOL* pbAutoLogonWithDefault
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::GetCredentialCount");
+
 	*pdwCount = 1;
 	*pdwDefault = 0;
-	*pbAutoLogonWithDefault = TRUE;
+	*pbAutoLogonWithDefault = FALSE;
 	return S_OK;
 }
 
@@ -247,6 +277,7 @@ HRESULT NFCCredentialProvider::GetCredentialAt(
 	ICredentialProviderCredential** ppcpc
 	)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::GetCredentialAt");
 	HRESULT hr;
 
 	// Validate parameters.
@@ -266,6 +297,8 @@ HRESULT NFCCredentialProvider::GetCredentialAt(
 // Boilerplate code to create our provider.
 HRESULT NFCRingCredentialProvider_CreateInstance(REFIID riid, void** ppv)
 {
+	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::NFCRingCredentialProvider_CreateInstance");
+
 	HRESULT hr;
 
 	NFCCredentialProvider* pProvider = new NFCCredentialProvider();

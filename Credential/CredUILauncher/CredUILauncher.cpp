@@ -14,7 +14,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	ULONG authBufferSize = 0;
 	CREDUI_INFO credUiInfo;
 
-	credUiInfo.pszCaptionText = TEXT("NFC Registration");
+	credUiInfo.pszCaptionText = TEXT("NFC Credential Test Program");
 	credUiInfo.pszMessageText = TEXT("Swipe your NFC Tag");
 	credUiInfo.cbSize = sizeof(credUiInfo);
 	credUiInfo.hbmBanner = NULL;
