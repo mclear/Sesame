@@ -35,18 +35,19 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.pgbAwaitingToken = new System.Windows.Forms.ProgressBar();
             this.btnRegister = new System.Windows.Forms.Button();
+            this.lblSwipe = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // txtToken
             // 
-            this.txtToken.Location = new System.Drawing.Point(94, 12);
+            this.txtToken.Location = new System.Drawing.Point(94, 32);
             this.txtToken.Name = "txtToken";
             this.txtToken.Size = new System.Drawing.Size(190, 20);
             this.txtToken.TabIndex = 0;
             // 
             // txtFriendlyName
             // 
-            this.txtFriendlyName.Location = new System.Drawing.Point(94, 38);
+            this.txtFriendlyName.Location = new System.Drawing.Point(94, 58);
             this.txtFriendlyName.Name = "txtFriendlyName";
             this.txtFriendlyName.Size = new System.Drawing.Size(190, 20);
             this.txtFriendlyName.TabIndex = 1;
@@ -54,7 +55,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 15);
+            this.label1.Location = new System.Drawing.Point(12, 35);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(52, 13);
             this.label1.TabIndex = 2;
@@ -63,7 +64,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 41);
+            this.label2.Location = new System.Drawing.Point(12, 61);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(69, 13);
             this.label2.TabIndex = 3;
@@ -71,7 +72,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(209, 75);
+            this.btnCancel.Location = new System.Drawing.Point(209, 87);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 4;
@@ -81,7 +82,7 @@
             // 
             // pgbAwaitingToken
             // 
-            this.pgbAwaitingToken.Location = new System.Drawing.Point(12, 12);
+            this.pgbAwaitingToken.Location = new System.Drawing.Point(12, 32);
             this.pgbAwaitingToken.Name = "pgbAwaitingToken";
             this.pgbAwaitingToken.Size = new System.Drawing.Size(279, 46);
             this.pgbAwaitingToken.TabIndex = 5;
@@ -89,7 +90,7 @@
             // 
             // btnRegister
             // 
-            this.btnRegister.Location = new System.Drawing.Point(119, 75);
+            this.btnRegister.Location = new System.Drawing.Point(119, 87);
             this.btnRegister.Name = "btnRegister";
             this.btnRegister.Size = new System.Drawing.Size(75, 23);
             this.btnRegister.TabIndex = 6;
@@ -97,13 +98,23 @@
             this.btnRegister.UseVisualStyleBackColor = true;
             this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
             // 
+            // lblSwipe
+            // 
+            this.lblSwipe.AutoSize = true;
+            this.lblSwipe.Location = new System.Drawing.Point(9, 9);
+            this.lblSwipe.Name = "lblSwipe";
+            this.lblSwipe.Size = new System.Drawing.Size(145, 13);
+            this.lblSwipe.TabIndex = 7;
+            this.lblSwipe.Text = "Swipe your ring on the reader";
+            // 
             // frmNewToken
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(303, 121);
-            this.Controls.Add(this.btnRegister);
+            this.Controls.Add(this.lblSwipe);
             this.Controls.Add(this.pgbAwaitingToken);
+            this.Controls.Add(this.btnRegister);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -126,5 +137,6 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.ProgressBar pgbAwaitingToken;
         private System.Windows.Forms.Button btnRegister;
+        private System.Windows.Forms.Label lblSwipe;
     }
 }

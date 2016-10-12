@@ -24,6 +24,7 @@ namespace NFCRing.Service.Common
         UserCredential,
         GetState,
         State,
-        Message
+        Message,
+        Delete
     }
 }

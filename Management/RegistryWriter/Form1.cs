@@ -308,7 +308,22 @@ namespace CredentialRegistration
         private void tvwConfig_AfterSelect(object sender, TreeViewEventArgs e)
         {
             string tag = (string)tvwConfig.SelectedNode.Tag;
-            
+            if(tag == "Event")
+            {
+                btnDeleteEvent.Enabled = true;
+            }
+            else
+            {
+                btnDeleteEvent.Enabled = false;
+            }
+            if (tag == "Token")
+            {
+                btnDeleteToken.Enabled = true;
+            }
+            else
+            {
+                btnDeleteToken.Enabled = false;
+            }
         }
 
         private void LoadConfig()
@@ -332,33 +347,42 @@ namespace CredentialRegistration
                 uss = JsonConvert.DeserializeObject<UserServerState>(task.Result);
                 TreeNode user = tvwConfig.Nodes.Add(uss.UserConfiguration.Username);
                 TreeNode tokens = user.Nodes.Add("Tokens");
-                foreach (KeyValuePair<string, string> tok in uss.UserConfiguration.Tokens)
+                if(uss.UserConfiguration.Tokens != null)
                 {
+                    foreach (KeyValuePair<string, string> tok in uss.UserConfiguration.Tokens)
+                    {
 
-                    TreeNode tokenNode = tokens.Nodes.Add(tok.Value + " - " + tok.Key);
-                    tokenNode.Tag = "Token";
+                        TreeNode tokenNode = tokens.Nodes.Add(tok.Value + " - " + tok.Key);
+                        tokenNode.Tag = "Token";
+                    }
                 }
                 TreeNode plugins = user.Nodes.Add("Plugins");
-                foreach (PluginInfo p in uss.Plugins)
+                if (uss.Plugins != null)
                 {
-                    TreeNode aPlugin = plugins.Nodes.Add(p.Name);
-                    aPlugin.Tag = "Plugin";
+                    foreach (PluginInfo p in uss.Plugins)
+                    {
+                        TreeNode aPlugin = plugins.Nodes.Add(p.Name);
+                        aPlugin.Tag = "Plugin";
+                    }
                 }
                 TreeNode events = user.Nodes.Add("Events");
-                foreach (Event ev in uss.UserConfiguration.Events)
+                if (uss.UserConfiguration.Events != null)
                 {
-                    TreeNode eventNode = events.Nodes.Add(ev.PluginName + " - " + ev.Token);
-                    eventNode.Tag = "Event";
-                    foreach (KeyValuePair<string, object> param in ev.Parameters)
+                    foreach (Event ev in uss.UserConfiguration.Events)
                     {
-                        if (param.Value != null)
+                        TreeNode eventNode = events.Nodes.Add(ev.PluginName + " - " + ev.Token);
+                        eventNode.Tag = "Event";
+                        foreach (KeyValuePair<string, object> param in ev.Parameters)
                         {
-                            TreeNode e = eventNode.Nodes.Add(param.Key + " = " + param.Value.ToString());
-                            e.Tag = "Event";
+                            if (param.Value != null)
+                            {
+                                TreeNode e = eventNode.Nodes.Add(param.Key + " = " + param.Value.ToString());
+                                //e.Tag = "Event";
+                            }
                         }
                     }
                 }
-                if(uss.UserConfiguration.Tokens.Count > 0 && uss.Plugins.Count > 0)
+                if((uss.UserConfiguration.Tokens != null && uss.UserConfiguration.Tokens.Count > 0) && (uss.Plugins != null && uss.Plugins.Count > 0))
                 {
                     btnAddEvent.Enabled = true;
                 }
@@ -371,6 +395,30 @@ namespace CredentialRegistration
             frmEventRegistration er = new frmEventRegistration(ref client, uss.UserConfiguration.Tokens, uss.Plugins);
             er.ShowDialog();
             LoadConfig();
+        }
+
+        private void btnDeleteToken_Click(object sender, EventArgs e)
+        {
+            if(tvwConfig.SelectedNode.Tag.ToString() == "Token")
+            {
+                string tokenId = uss.UserConfiguration.Tokens.Keys.ToList()[tvwConfig.SelectedNode.Index];
+                NetworkMessage nm = new NetworkMessage(MessageType.Delete) { Username = uss.UserConfiguration.Username, Token = tokenId };
+                ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(nm));
+                LoadConfig();
+            }
+            btnDeleteToken.Enabled = false;
+        }
+
+        private void btnDeleteEvent_Click(object sender, EventArgs e)
+        {
+            if (tvwConfig.SelectedNode.Tag.ToString() == "Event")
+            {
+                Event ev = uss.UserConfiguration.Events[tvwConfig.SelectedNode.Index];
+                NetworkMessage nm = new NetworkMessage(MessageType.Delete) { Username = uss.UserConfiguration.Username, Token = ev.Token, PluginName = ev.PluginName };
+                ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(nm));
+                LoadConfig();
+            }
+            btnDeleteEvent.Enabled = false;
         }
     }
 }

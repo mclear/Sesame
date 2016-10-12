@@ -52,6 +52,7 @@ namespace CredentialRegistration
                     if (tsk.Result != "")
                     {
                         ClientCommon.SetControlPropertyThreadSafe(txtToken, "Text", JsonConvert.DeserializeObject<NetworkMessage>(tsk.Result).Token);
+                        ClientCommon.SetControlPropertyThreadSafe(lblSwipe, "Visible", false);
                     }
                     else
                     {

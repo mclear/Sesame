@@ -42,6 +42,8 @@
             this.tvwConfig = new System.Windows.Forms.TreeView();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.btnAddEvent = new System.Windows.Forms.Button();
+            this.btnDeleteToken = new System.Windows.Forms.Button();
+            this.btnDeleteEvent = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -169,11 +171,35 @@
             this.btnAddEvent.UseVisualStyleBackColor = true;
             this.btnAddEvent.Click += new System.EventHandler(this.btnAddEvent_Click);
             // 
+            // btnDeleteToken
+            // 
+            this.btnDeleteToken.Enabled = false;
+            this.btnDeleteToken.Location = new System.Drawing.Point(491, 104);
+            this.btnDeleteToken.Name = "btnDeleteToken";
+            this.btnDeleteToken.Size = new System.Drawing.Size(128, 23);
+            this.btnDeleteToken.TabIndex = 13;
+            this.btnDeleteToken.Text = "Delete Token";
+            this.btnDeleteToken.UseVisualStyleBackColor = true;
+            this.btnDeleteToken.Click += new System.EventHandler(this.btnDeleteToken_Click);
+            // 
+            // btnDeleteEvent
+            // 
+            this.btnDeleteEvent.Enabled = false;
+            this.btnDeleteEvent.Location = new System.Drawing.Point(491, 133);
+            this.btnDeleteEvent.Name = "btnDeleteEvent";
+            this.btnDeleteEvent.Size = new System.Drawing.Size(128, 23);
+            this.btnDeleteEvent.TabIndex = 14;
+            this.btnDeleteEvent.Text = "Delete Event";
+            this.btnDeleteEvent.UseVisualStyleBackColor = true;
+            this.btnDeleteEvent.Click += new System.EventHandler(this.btnDeleteEvent_Click);
+            // 
             // frmRegistrationApp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(649, 411);
+            this.Controls.Add(this.btnDeleteEvent);
+            this.Controls.Add(this.btnDeleteToken);
             this.Controls.Add(this.btnAddEvent);
             this.Controls.Add(this.txtLog);
             this.Controls.Add(this.tvwConfig);
@@ -212,6 +238,8 @@
         private System.Windows.Forms.TreeView tvwConfig;
         private System.Windows.Forms.TextBox txtLog;
         private System.Windows.Forms.Button btnAddEvent;
+        private System.Windows.Forms.Button btnDeleteToken;
+        private System.Windows.Forms.Button btnDeleteEvent;
     }
 }
 

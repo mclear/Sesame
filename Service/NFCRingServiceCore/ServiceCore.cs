@@ -299,21 +299,6 @@ namespace NFCRing.Service.Core
             {
                 Log("TCP error stopping listener: " + ex.Message);
             }
-            //foreach (Client tc in Connections)
-            //{
-            //    try
-            //    {
-            //        if (tc.ClientConnection.Connected)
-            //            tc.ClientConnection.Close();
-            //        if (tc.ClientProcess.IsAlive)
-            //            tc.ClientProcess.Join();
-            //    }
-            //    catch(Exception ex)
-            //    {
-            //        Log("TCP error stopping connection: " + ex.Message);
-            //    }
-            //}
-            //Connections.Clear();
         }
 
         
@@ -494,6 +479,25 @@ namespace NFCRing.Service.Core
                                     UseNFCCredential(); // make super sure we're back to the real logins
                                     break;
                                 }
+                            case MessageType.Delete:
+                                {
+                                    Log("Deleting item");
+                                    if(String.IsNullOrEmpty(nm.Username))
+                                    {
+                                        break; // no username? lets not modify the config
+                                    }
+                                    if(!String.IsNullOrEmpty(nm.Token) && !String.IsNullOrEmpty(nm.PluginName))
+                                    {
+                                        // delete an event
+                                        RemoveEvent(nm.Username, nm.Token, nm.PluginName);
+                                    }
+                                    else if(!String.IsNullOrEmpty(nm.Token))
+                                    {
+                                        // delete a token entirely (this will also delete all its events)
+                                        RemoveToken(nm.Username, nm.Token);
+                                    }
+                                    break;
+                                }
                             default:
                                 // failed
                                 Log("Unknown network message received: " + message);
@@ -534,7 +538,20 @@ namespace NFCRing.Service.Core
                     Log("Configuration loaded from " + appPath + @"\Application.config");
                     return true;
                 }
-                Log("No configuration file to read");
+                else
+                {
+                    Log("No configuration file to read");
+                    ApplicationConfiguration = new Config();
+                    ApplicationConfiguration.Users = new List<User>();
+                    ApplicationConfiguration.Users.Add(new User()
+                    {
+                        Username = GetCurrentUsername(),
+                        Events = new List<Event>(),
+                        Salt = new Random().Next(1000000, 9999999).ToString(),
+                        Tokens = new Dictionary<string, string>()
+                    });
+                    return true;
+                }
             }
             catch(Exception ex)
             {
@@ -572,6 +589,29 @@ namespace NFCRing.Service.Core
             }
             Log("Token deregistered");
             SaveConfig();
+        }
+
+        private void RemoveEvent(string user, string token, string pluginName)
+        {
+            foreach (User u in ApplicationConfiguration.Users)
+            {
+                if (u.Username.ToLower() == user.ToLower())
+                {
+                    List<Event> remove = new List<Event>();
+                    foreach (Event e in u.Events)
+                    {
+                        if (e.Token == token && e.PluginName == pluginName)
+                            remove.Add(e);
+                    }
+                    foreach (Event e in remove)
+                    {
+                        u.Events.Remove(e);
+                    }
+                }
+            }
+            Log("Plugin deregistered");
+            SaveConfig();
+
         }
 
         private void RegisterToken(string user, string id, string name)
@@ -621,7 +661,7 @@ namespace NFCRing.Service.Core
                         {
                             PluginName = pluginName,
                             Token = tokenId,
-                            Parameters = new Dictionary<string, object>() {{ "Username", GetCurrentUsername() }, { "Password", password }}
+                            Parameters = new Dictionary<string, object>() {{ "Username", user }, { "Password", password }}
                         });
                         break;
                     }
