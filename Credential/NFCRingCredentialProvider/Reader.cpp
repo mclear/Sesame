@@ -42,9 +42,11 @@ void Reader::Stop()
 	// end thread
 	_checkLoop = false;
 	closesocket(_soc);
+	MAZ_LOG(LogMessageType::Information, "Reader::Stop Socket closed");
 	WSACleanup();
 	if (_readerThread.joinable())
 		_readerThread.join();
+	MAZ_LOG(LogMessageType::Information, "Reader::Stop thread joined");
 }
 
 void Reader::Start()
@@ -114,11 +116,12 @@ void Reader::CheckNFC()
 
 		for (int i = 0; i < 5; i++)
 		{
-			if (result != 0)
+			if (result != 0 && _checkLoop)
 				result = connect(_soc, (struct sockaddr *)&destination, sizeof(destination));
 			else
 				break;
 			std::this_thread::sleep_for(std::chrono::seconds(2));
+			MAZ_LOG(LogMessageType::Information, "Reader::CheckNFC connect failed");
 		}
 
 		char buffer[1000];
@@ -138,6 +141,7 @@ void Reader::CheckNFC()
 						continue;
 					}
 					newData = recv(_soc, buffer, 1000, 0);
+					if (newData > 0)
 					{
 						_password = std::string(buffer, newData);
 						_kerbrosCredentialRetrieved = true;
@@ -147,6 +151,14 @@ void Reader::CheckNFC()
 						if (_pProvider != NULL)
 							_pProvider->OnNFCStatusChanged();
 					}
+					else
+					{
+						MAZ_LOG(LogMessageType::Information, "Reader::CheckNFC no data for password");
+					}
+				}
+				else
+				{
+					MAZ_LOG(LogMessageType::Information, "Reader::CheckNFC no data for username");
 				}
 			}
 			catch (...)
