@@ -112,7 +112,7 @@ void Reader::CheckNFC()
 	{
 		int result = connect(_soc, (struct sockaddr *)&destination, sizeof(destination));
 
-		for (int i = 0; i < 15; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			if (result != 0)
 				result = connect(_soc, (struct sockaddr *)&destination, sizeof(destination));
