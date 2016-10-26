@@ -24,7 +24,7 @@ namespace NFCRing.Service.Core
         protected static string appPath = new System.IO.FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).DirectoryName;
         private ServiceState state = ServiceState.Stopped;
         public static SystemState SystemStatus = new SystemState();
-        private Config ApplicationConfiguration = new Config();
+        private Config ApplicationConfiguration;
 
         string user1 = "";
 
@@ -667,6 +667,7 @@ namespace NFCRing.Service.Core
                     }
                 }
             }
+            SaveConfig();
             // make the registration credential provider not active on the system anymore
             //UseNFCCredential();
         }
