@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using NFCRing.Service.Common;
 using System.Net.Sockets;
@@ -65,28 +59,6 @@ namespace CredentialRegistration
         private void btnSave_Click(object sender, EventArgs e)
         {
             NetworkMessage nm = new NetworkMessage(MessageType.AssociatePluginToToken);
-            foreach (DataGridViewRow dgvr in dgvParameters.Rows)
-            {
-                if((bool)dgvr.Cells["dgcIsOptional"].Value == false)
-                {
-                    if(dgvr.Cells["dgcValue"].Value.ToString() == "")
-                    {
-                        MessageBox.Show("Fill in the required paramters of go home");
-                        return;
-                    }
-                    else
-                    {
-                        if(dgvr.Cells["dgcName"].Value.ToString() == "Username")
-                        {
-                            nm.Username = dgvr.Cells["dgcValue"].Value.ToString();
-                        }
-                        else if (dgvr.Cells["dgcName"].Value.ToString() == "Password")
-                        {
-                            nm.Password = dgvr.Cells["dgcValue"].Value.ToString();
-                        }
-                    }
-                }
-            }
             if (cboTokens.SelectedItem.ToString() == "")
             {
                 MessageBox.Show("Select a token to register");
@@ -105,9 +77,30 @@ namespace CredentialRegistration
             {
                 nm.PluginName = cboPlugins.SelectedItem.ToString();
             }
+            foreach (DataGridViewRow dgvr in dgvParameters.Rows)
+            {
+                if((bool)dgvr.Cells["dgcIsOptional"].Value == false)
+                {
+                    if(dgvr.Cells["dgcValue"].Value.ToString() == "")
+                    {
+                        MessageBox.Show("Fill in the required paramters or go home");
+                        return;
+                    }
+                    else
+                    {
+                        if(dgvr.Cells["dgcName"].Value.ToString() == "Username")
+                        {
+                            nm.Username = dgvr.Cells["dgcValue"].Value.ToString(); // this should be a list instead of specific properties
+                        }
+                        else if (dgvr.Cells["dgcName"].Value.ToString() == "Password")
+                        {
+                            nm.Password = NFCRing.Service.Common.Crypto.Encrypt(dgvr.Cells["dgcValue"].Value.ToString(), nm.Token);
+                        }
+                    }
+                }
+            }
             if (ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(nm)) > 0)
                 this.Close();
-
         }
 
         private void btnGetPassword_Click(object sender, EventArgs e)

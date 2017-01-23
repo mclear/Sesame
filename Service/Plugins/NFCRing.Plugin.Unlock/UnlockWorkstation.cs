@@ -91,19 +91,9 @@ namespace NFCRing.Plugin.Unlock
             NFCRing.Service.Core.ServiceCore.Log("Unlock Workstation: Send data to client");
             try
             {
-                //if (state.CredentialData.Client.Connected)
-                //{
-                //    state.CredentialData.Client.GetStream().Write(System.Text.Encoding.ASCII.GetBytes(id), 0, id.Length);
-                //    state.CredentialData.Client.GetStream().Flush();
-                //}
-                //else
-                //{
-                //    state.CredentialData.ProviderActive = false;
-                //    state.CredentialData.Client = null;
-                //}
                 TcpClient tc = state.CredentialData.Client;
                 ServiceCommunication.SendNetworkMessage(ref tc, (string)parameters["Username"]);
-                ServiceCommunication.SendNetworkMessage(ref tc, Encoding.UTF8.GetString(Convert.FromBase64String((string)parameters["Password"])));
+                ServiceCommunication.SendNetworkMessage(ref tc, NFCRing.Service.Common.Crypto.Decrypt((string)parameters["Password"], id));
                 state.CredentialData.Client = tc;
             }
             catch (Exception ex)

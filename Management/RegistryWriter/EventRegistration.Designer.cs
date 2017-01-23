@@ -38,7 +38,6 @@
             this.dgcValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.btnGetPassword = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvParameters)).BeginInit();
             this.SuspendLayout();
             // 
@@ -129,22 +128,11 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // btnGetPassword
-            // 
-            this.btnGetPassword.Location = new System.Drawing.Point(29, 328);
-            this.btnGetPassword.Name = "btnGetPassword";
-            this.btnGetPassword.Size = new System.Drawing.Size(178, 23);
-            this.btnGetPassword.TabIndex = 7;
-            this.btnGetPassword.Text = "Capture Encrypted Password";
-            this.btnGetPassword.UseVisualStyleBackColor = true;
-            this.btnGetPassword.Click += new System.EventHandler(this.btnGetPassword_Click);
-            // 
             // frmEventRegistration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(539, 357);
-            this.Controls.Add(this.btnGetPassword);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.dgvParameters);
@@ -172,6 +160,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dgcName;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgcIsOptional;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgcValue;
-        private System.Windows.Forms.Button btnGetPassword;
     }
 }
