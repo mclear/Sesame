@@ -101,5 +101,11 @@ namespace NFCRing.Service.Common
             }
             return randomBytes;
         }
+
+        public static string Hash(string s)
+        {
+            byte[] hash = (new SHA1Managed()).ComputeHash(Encoding.UTF8.GetBytes(s));
+            return string.Join("", hash.Select(b => b.ToString("x2")).ToArray());
+        }
     }
 }

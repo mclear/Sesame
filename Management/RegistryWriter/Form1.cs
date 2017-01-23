@@ -328,6 +328,7 @@ namespace CredentialRegistration
 
         private void LoadConfig()
         {
+            startAgain:
             ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.GetState) { Username = ClientCommon.GetCurrentUsername() }));
             var task = Task<string>.Factory.StartNew(() =>
             {
@@ -340,6 +341,7 @@ namespace CredentialRegistration
                     Application.Exit();
                 }
                 // RETRY ISNT GOING TO DO ANYTHING YET
+                goto startAgain;
             }
             else
             {

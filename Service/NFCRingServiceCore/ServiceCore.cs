@@ -148,15 +148,16 @@ namespace NFCRing.Service.Core
                         // check config
                         foreach (User u in ApplicationConfiguration.Users)
                         {
+                            string hashedToken = Crypto.Hash(Crypto.Hash(id) + u.Salt);
                             foreach (Event e in u.Events)
                             {
-                                if (id == e.Token)
+                                if (hashedToken == e.Token)
                                 {
                                     foreach (Lazy<INFCRingServicePlugin> plugin in plugins)
                                     {
                                         if (plugin.Value.GetPluginName() == e.PluginName)
                                         {
-                                            plugin.Value.NCFRingDown(id, e.Parameters, SystemStatus);
+                                            plugin.Value.NCFRingDown(hashedToken, e.Parameters, SystemStatus);
 
                                             Log("Plugin " + plugin.Value.GetPluginName() + " passed TagDown event");
                                         }
@@ -182,15 +183,16 @@ namespace NFCRing.Service.Core
                         // check config
                         foreach(User u in ApplicationConfiguration.Users)
                         {
-                            foreach(Event e in u.Events)
+                            string hashedToken = Crypto.Hash(Crypto.Hash(id) + u.Salt);
+                            foreach (Event e in u.Events)
                             {
-                                if (origId == e.Token)
+                                if (hashedToken == e.Token)
                                 {
                                     foreach (Lazy<INFCRingServicePlugin> plugin in plugins)
                                     {
                                         if (plugin.Value.GetPluginName() == e.PluginName)
                                         {
-                                            plugin.Value.NCFRingUp(origId, e.Parameters, SystemStatus);
+                                            plugin.Value.NCFRingUp(hashedToken, e.Parameters, SystemStatus);
                                             Log("Plugin " + plugin.Value.GetPluginName() + " passed TagUp event");
                                         }
                                     }
@@ -273,6 +275,10 @@ namespace NFCRing.Service.Core
             // credential provider listener
             credentialListenThread = new Thread(new ThreadStart(listenForCredentialProvider));
             credentialListenThread.Start();
+
+            // need to use another thread to listen for incoming connections
+            registrationListenThread = new Thread(new ThreadStart(listenForRegistration));
+            registrationListenThread.Start();
         }
 
         private void StopNetwork()
@@ -328,6 +334,38 @@ namespace NFCRing.Service.Core
                 }
             }
             Log("Credential Network Inactive");
+        }
+
+        private void listenForRegistration()
+        {
+            Log("Registration Network Active");
+            if (registrationListener != null)
+                registrationListener.Start(3);
+            while (runListenLoops && registrationListener != null && (state == ServiceState.Running || state == ServiceState.Starting))
+            {
+                try
+                {
+                    TcpClient tc = registrationListener.AcceptTcpClient();
+                    // save the client to call it when an event happens (that we're listening for)
+                    Log("TCP: registration client connected");
+
+                    Thread newClientThread = new Thread(new ParameterizedThreadStart(ReadNetwork));
+                    newClientThread.Start(tc);
+                    SystemStatus.RegistrationClient = tc;
+                    //Connections.Add(new Client() { ClientConnection = tc, ClientProcess = newClientThread });
+                }
+                catch (Exception ex)
+                {
+                    // we failed to accept a connection. should log and work out why
+                    Log("TCP: Accept registration client failed: " + ex.Message);
+                }
+                if (SystemStatus.RegistrationClient == null || !SystemStatus.RegistrationClient.Connected)
+                {
+                    SystemStatus.AwaitingToken = false;
+                    SystemStatus.RegistrationClient = null;
+                }
+            }
+            Log("Registration Network Inactive");
         }
 
         public void ReadNetwork(object tc)
@@ -520,11 +558,14 @@ namespace NFCRing.Service.Core
             return true;
         }
 
-        private void RemoveToken(string user, string token)
+        private void RemoveToken(string user, string rawToken)
         {
+            string hashedToken = Crypto.Hash(rawToken);
+
             foreach (User u in ApplicationConfiguration.Users)
             {
-                if(u.Username.ToLower() == user.ToLower())
+                string token = Crypto.Hash(hashedToken + u.Salt);
+                if (u.Username.ToLower() == user.ToLower())
                 {
                     if (u.Tokens.ContainsKey(token))
                         u.Tokens.Remove(token);
@@ -567,16 +608,19 @@ namespace NFCRing.Service.Core
 
         }
 
-        private void RegisterToken(string user, string id, string name)
+        private void RegisterToken(string user, string rawToken, string name)
         {
+            // hash the token
             // remove the token registered anywhere else
             User target = null;
-            if(ApplicationConfiguration.Users != null)
+            string hashedToken = Crypto.Hash(rawToken);
+
+            if (ApplicationConfiguration.Users != null)
             {
                 foreach(User u in ApplicationConfiguration.Users)
                 {
-                    if (u.Tokens.ContainsKey(id))
-                        RemoveToken(u.Username, id);
+                    if (u.Tokens.ContainsKey(Crypto.Hash(hashedToken + u.Salt)))
+                        RemoveToken(u.Username, rawToken);
                     if (u.Username == user)
                         target = u;
                 }
@@ -596,7 +640,7 @@ namespace NFCRing.Service.Core
                 target = u;
             }
             Log("Token registered");
-            target.Tokens.Add(id, name);
+            target.Tokens.Add(Crypto.Hash(hashedToken + target.Salt), name);
             SaveConfig();
         }
 
