@@ -20,7 +20,6 @@ namespace NFCRing.Service.Common
         Token,
         AssociatePluginToToken,
         CancelRegistration,
-        GetUserCredential,
         UserCredential,
         GetState,
         State,

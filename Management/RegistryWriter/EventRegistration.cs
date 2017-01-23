@@ -102,34 +102,5 @@ namespace CredentialRegistration
             if (ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(nm)) > 0)
                 this.Close();
         }
-
-        private void btnGetPassword_Click(object sender, EventArgs e)
-        {
-            ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.GetUserCredential)));
-            string result = ServiceCommunication.ReadNetworkMessage(ref client);
-            NetworkMessage nm = JsonConvert.DeserializeObject<NetworkMessage>(result);
-            if (result == "")
-            {
-                MessageBox.Show("Failed to get credential");
-            }
-            else
-            {
-                if (nm.Type == MessageType.UserCredential)
-                {
-                    // set the parameter values in the data grid view
-                    foreach (DataGridViewRow dgvr in dgvParameters.Rows)
-                    {
-                        if (dgvr.Cells["dgcName"].Value.ToString() == "Username")
-                        {
-                            dgvr.Cells["dgcValue"].Value = nm.Username;
-                        }
-                        else if (dgvr.Cells["dgcName"].Value.ToString() == "Password")
-                        {
-                            dgvr.Cells["dgcValue"].Value = nm.Password;
-                        }
-                    }
-                }
-            }
-        }
     }
 }
