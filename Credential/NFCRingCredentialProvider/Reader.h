@@ -30,6 +30,7 @@ public:
 	void Start();
 
 	bool HasLogin();
+	void ClearLogin();
 	HRESULT GetLogin(
 		CREDENTIAL_PROVIDER_GET_SERIALIZATION_RESPONSE* pcpgsr,
 		CREDENTIAL_PROVIDER_CREDENTIAL_SERIALIZATION* pcpcs,

@@ -4,6 +4,8 @@ using System.Windows.Forms;
 using NFCRing.Service.Common;
 using System.Net.Sockets;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace CredentialRegistration
 {
@@ -12,6 +14,7 @@ namespace CredentialRegistration
         List<PluginInfo> plugins = new List<PluginInfo>();
         TcpClient client;
         Dictionary<string, string> tokens = new Dictionary<string, string>();
+        System.Threading.Timer t; // progress bar timer
 
         public frmEventRegistration(ref TcpClient client, Dictionary<string, string> tokens, List<PluginInfo> plugins)
         {
@@ -94,13 +97,52 @@ namespace CredentialRegistration
                         }
                         else if (dgvr.Cells["dgcName"].Value.ToString() == "Password")
                         {
-                            nm.Password = NFCRing.Service.Common.Crypto.Encrypt(dgvr.Cells["dgcValue"].Value.ToString(), nm.Token);
+                            nm.Password = dgvr.Cells["dgcValue"].Value.ToString(); // make this a single-hashed version of the token
                         }
                     }
                 }
             }
-            if (ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(nm)) > 0)
-                this.Close();
+            if (nm.Password != "")
+            {
+                lblSwipeEncrypt.Visible = true;
+                pgbAwaitingToken.Visible = true;
+                // need to do a progress bar and ask for a ring to encrypt credential
+                if (ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.GetToken))) > 0)
+                {
+                    // swipe ring to encrypt
+                    int value = 0;
+                    var task = Task<string>.Factory.StartNew(() => { return ServiceCommunication.ReadNetworkMessage(ref client); });
+                    t = new System.Threading.Timer((o) =>
+                    {
+                        Task<string> tsk = (Task<string>)o;
+                        if (tsk.IsCompleted)
+                        {
+                            t.Change(Timeout.Infinite, Timeout.Infinite); // stop the timer
+                            ClientCommon.SetControlPropertyThreadSafe(pgbAwaitingToken, "Visible", false);
+                            ClientCommon.SetControlPropertyThreadSafe(lblSwipeEncrypt, "Visible", false);
+                            if (tsk.Result != "")
+                            {
+                                string rawToken = JsonConvert.DeserializeObject<NetworkMessage>(tsk.Result).Token;
+                                nm.Password = NFCRing.Service.Common.Crypto.Encrypt(nm.Password, rawToken);
+                                if (ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(nm)) > 0)
+                                    Invoke(new Action(Close));
+                            }
+                            else
+                            {
+                                // failed to scan a ring. 
+                                // do we want to allow unencrypted passwords?
+                            }
+                        }
+                        else
+                        {
+                            // still waiting for it to be scanned
+                            value += 7;
+                            ClientCommon.SetControlPropertyThreadSafe(pgbAwaitingToken, "Value", value);
+                        }
+                    }, task, 1000, 1000);
+                    pgbAwaitingToken.Visible = true;
+                }
+            }
         }
     }
 }

@@ -157,7 +157,7 @@ namespace NFCRing.Service.Core
                                     {
                                         if (plugin.Value.GetPluginName() == e.PluginName)
                                         {
-                                            plugin.Value.NCFRingDown(hashedToken, e.Parameters, SystemStatus);
+                                            plugin.Value.NCFRingDown(id, e.Parameters, SystemStatus);
 
                                             Log("Plugin " + plugin.Value.GetPluginName() + " passed TagDown event");
                                         }
@@ -192,7 +192,7 @@ namespace NFCRing.Service.Core
                                     {
                                         if (plugin.Value.GetPluginName() == e.PluginName)
                                         {
-                                            plugin.Value.NCFRingUp(hashedToken, e.Parameters, SystemStatus);
+                                            plugin.Value.NCFRingUp(id, e.Parameters, SystemStatus);
                                             Log("Plugin " + plugin.Value.GetPluginName() + " passed TagUp event");
                                         }
                                     }

@@ -38,6 +38,8 @@
             this.dgcValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.pgbAwaitingToken = new System.Windows.Forms.ProgressBar();
+            this.lblSwipeEncrypt = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvParameters)).BeginInit();
             this.SuspendLayout();
             // 
@@ -128,11 +130,35 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // pgbAwaitingToken
+            // 
+            this.pgbAwaitingToken.Location = new System.Drawing.Point(12, 328);
+            this.pgbAwaitingToken.Name = "pgbAwaitingToken";
+            this.pgbAwaitingToken.Size = new System.Drawing.Size(316, 23);
+            this.pgbAwaitingToken.TabIndex = 7;
+            this.pgbAwaitingToken.Visible = false;
+            // 
+            // lblSwipeEncrypt
+            // 
+            this.lblSwipeEncrypt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblSwipeEncrypt.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSwipeEncrypt.Location = new System.Drawing.Point(12, 76);
+            this.lblSwipeEncrypt.Name = "lblSwipeEncrypt";
+            this.lblSwipeEncrypt.Size = new System.Drawing.Size(515, 246);
+            this.lblSwipeEncrypt.TabIndex = 8;
+            this.lblSwipeEncrypt.Text = "Swipe your token again to encrypt password";
+            this.lblSwipeEncrypt.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblSwipeEncrypt.Visible = false;
+            // 
             // frmEventRegistration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(539, 357);
+            this.Controls.Add(this.lblSwipeEncrypt);
+            this.Controls.Add(this.pgbAwaitingToken);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.dgvParameters);
@@ -160,5 +186,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dgcName;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgcIsOptional;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgcValue;
+        private System.Windows.Forms.ProgressBar pgbAwaitingToken;
+        private System.Windows.Forms.Label lblSwipeEncrypt;
     }
 }

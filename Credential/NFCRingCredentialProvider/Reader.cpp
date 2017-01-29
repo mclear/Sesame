@@ -62,6 +62,7 @@ void Reader::Start()
 	int result;
 	result = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (result != 0) {
+		MAZ_LOG(LogMessageType::Information, "Reader::Start WSAStartup failed");
 		printf("WSAStartup failed with error: %d\n", result);
 		//return 1;
 		return; //failed
@@ -69,6 +70,8 @@ void Reader::Start()
 	_soc = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (_soc == INVALID_SOCKET)
 	{
+		MAZ_LOG(LogMessageType::Information, "Reader::Start Invalid socket");
+
 		//std::cout << "socket is bullshit and didnt start" << std::endl;
 		WSACleanup();
 		//return 1;
@@ -76,6 +79,7 @@ void Reader::Start()
 	}
 
 	_serviceFound = true;
+	MAZ_LOG(LogMessageType::Information, "Reader::Start Service found");
 
 	// this is where we'd start the thread to check for a valid ring
 	_readerThread = std::thread(&Reader::CheckNFC, this);
@@ -112,18 +116,22 @@ void Reader::CheckNFC()
 	destination.sin_addr.s_addr = inet_addr("127.0.0.1");
 	while (_checkLoop)
 	{
-		int result = connect(_soc, (struct sockaddr *)&destination, sizeof(destination));
+		MAZ_LOG(LogMessageType::Information, std::to_string((int)_soc));
 
+		int result = connect(_soc, (struct sockaddr *)&destination, sizeof(destination));
+		MAZ_LOG(LogMessageType::Information, std::string("Reader::CheckNFC result ").append(std::to_string(result)));
 		for (int i = 0; i < 5; i++)
 		{
 			if (result != 0 && _checkLoop)
+			{
 				result = connect(_soc, (struct sockaddr *)&destination, sizeof(destination));
+				MAZ_LOG(LogMessageType::Information, std::string("Reader::CheckNFC result ").append(std::to_string(result)));
+			}
 			else
 				break;
-			std::this_thread::sleep_for(std::chrono::seconds(2));
+			std::this_thread::sleep_for(std::chrono::seconds(1));
 			MAZ_LOG(LogMessageType::Information, "Reader::CheckNFC connect failed");
 		}
-
 		char buffer[1000];
 		int newData = 0;
 		if (_soc != INVALID_SOCKET)
@@ -176,6 +184,15 @@ bool Reader::HasLogin()
 	MAZ_LOG(LogMessageType::Information, "Reader::HasLogin");
 
 	return _kerbrosCredentialRetrieved;
+}
+
+void Reader::ClearLogin()
+{
+	MAZ_LOG(LogMessageType::Information, "Reader::ClearLogin");
+
+	_username = "";
+	_password = "";
+	_kerbrosCredentialRetrieved = false;
 }
 
 std::wstring StringToWString(const std::string& s)
