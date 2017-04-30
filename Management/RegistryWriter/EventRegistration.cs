@@ -102,7 +102,7 @@ namespace CredentialRegistration
                     }
                 }
             }
-            if (nm.Password != "")
+            if (!string.IsNullOrEmpty(nm.Password))
             {
                 lblSwipeEncrypt.Visible = true;
                 pgbAwaitingToken.Visible = true;
@@ -142,6 +142,12 @@ namespace CredentialRegistration
                     }, task, 1000, 1000);
                     pgbAwaitingToken.Visible = true;
                 }
+            }
+            else
+            {
+                // This event doesnt have a password field
+                if (ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(nm)) > 0)
+                    Invoke(new Action(Close));
             }
         }
     }

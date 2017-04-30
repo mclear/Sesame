@@ -558,13 +558,13 @@ namespace NFCRing.Service.Core
             return true;
         }
 
-        private void RemoveToken(string user, string rawToken)
+        private void RemoveToken(string user, string token)
         {
-            string hashedToken = Crypto.Hash(rawToken);
+            //string hashedToken = Crypto.Hash(rawToken);
 
             foreach (User u in ApplicationConfiguration.Users)
             {
-                string token = Crypto.Hash(hashedToken + u.Salt);
+                //string token = Crypto.Hash(hashedToken + u.Salt);
                 if (u.Username.ToLower() == user.ToLower())
                 {
                     if (u.Tokens.ContainsKey(token))
