@@ -72,7 +72,6 @@ HRESULT NFCCredentialProvider::SetUsageScenario(
 	switch (cpus)
 	{
 	case CPUS_LOGON:
-	case CPUS_CREDUI:
 	case CPUS_UNLOCK_WORKSTATION:    
 		if (!_pCredential && !_reader)
 		{
@@ -121,7 +120,7 @@ HRESULT NFCCredentialProvider::SetUsageScenario(
 			hr = S_OK;
 		}
 		break;
-
+	case CPUS_CREDUI:
 	case CPUS_CHANGE_PASSWORD:
 		hr = E_NOTIMPL;
 		break;
