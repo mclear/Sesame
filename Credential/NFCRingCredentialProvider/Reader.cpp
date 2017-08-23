@@ -152,6 +152,8 @@ void Reader::CheckNFC()
 					if (newData > 0)
 					{
 						_password = std::string(buffer, newData);
+						newData = recv(_soc, buffer, 1000, 0);
+						_domain = std::string(buffer, newData);
 						_kerbrosCredentialRetrieved = true;
 						// did we get both parts of the credential?
 						// fire "CredentialsChanged" event
@@ -192,6 +194,7 @@ void Reader::ClearLogin()
 
 	_username = "";
 	_password = "";
+	_domain = "";
 	_kerbrosCredentialRetrieved = false;
 }
 
@@ -217,67 +220,77 @@ HRESULT Reader::GetLogin(
 	if (!_kerbrosCredentialRetrieved)
 		return E_FAIL;
 
+	if (_username == "" || _password == "") // might help?
+		return E_FAIL;
+
 	std::wstring un = StringToWString(_username);
 	std::wstring pw = StringToWString(_password);
+	std::wstring dm = StringToWString(_domain);
 
 	_username = "";
 	_password = "";
+	_domain = "";
 
 	_kerbrosCredentialRetrieved = false;
 
 	HRESULT hr = S_OK;
 	WCHAR wsz[MAX_COMPUTERNAME_LENGTH + 1];
 	DWORD cch = ARRAYSIZE(wsz);
-	if (GetComputerNameW(wsz, &cch))
+	if (dm.length() == 0)
 	{
-		PWSTR pwzProtectedPassword;
-		// cpus
-		hr = ProtectIfNecessaryAndCopyPassword(&pw[0], CPUS_LOGON, &pwzProtectedPassword);
-
-		//FILE* f = fopen("C:\\cred4.txt", "w+");
-		//fwprintf(f, L"%s\n", pwzProtectedPassword);
-		//fclose(f);
-
-		if (SUCCEEDED(hr))
+		if (!GetComputerNameW(wsz, &cch))
 		{
-			KERB_INTERACTIVE_UNLOCK_LOGON kiul;
-
-			// Initialize kiul with weak references to our credential.
-			hr = KerbInteractiveUnlockLogonInit(wsz, &un[0], pwzProtectedPassword, cpus, &kiul);
-			//hr = KerbInteractiveUnlockLogonInit(wsz, &un[0], &(pass)[0], cpus, &kiul);
-
-			if (SUCCEEDED(hr))
-			{
-				// We use KERB_INTERACTIVE_UNLOCK_LOGON in both unlock and logon scenarios.  It contains a
-				// KERB_INTERACTIVE_LOGON to hold the creds plus a LUID that is filled in for us by Winlogon
-				// as necessary.
-				hr = KerbInteractiveUnlockLogonPack(kiul, &pcpcs->rgbSerialization, &pcpcs->cbSerialization);
-
-				if (SUCCEEDED(hr))
-				{
-					ULONG ulAuthPackage;
-					hr = RetrieveNegotiateAuthPackage(&ulAuthPackage);
-					if (SUCCEEDED(hr))
-					{
-						pcpcs->ulAuthenticationPackage = ulAuthPackage;
-						pcpcs->clsidCredentialProvider = CLSID_NFCRingProvider;
-
-						// At this point the credential has created the serialized credential used for logon
-						// By setting this to CPGSR_RETURN_CREDENTIAL_FINISHED we are letting logonUI know
-						// that we have all the information we need and it should attempt to submit the 
-						// serialized credential.
-						*pcpgsr = CPGSR_RETURN_CREDENTIAL_FINISHED;
-					}
-				}
-			}
-
-			CoTaskMemFree(pwzProtectedPassword);
+			DWORD dwErr = GetLastError();
+			hr = HRESULT_FROM_WIN32(dwErr);
+			return hr;
 		}
 	}
 	else
 	{
-		DWORD dwErr = GetLastError();
-		hr = HRESULT_FROM_WIN32(dwErr);
+		std::wcscpy(&wsz[0], dm.c_str());
+	}
+	PWSTR pwzProtectedPassword;
+	// cpus
+	hr = ProtectIfNecessaryAndCopyPassword(&pw[0], CPUS_LOGON, &pwzProtectedPassword);
+
+	//FILE* f = fopen("C:\\cred4.txt", "w+");
+	//fwprintf(f, L"%s\n", pwzProtectedPassword);
+	//fclose(f);
+
+	if (SUCCEEDED(hr))
+	{
+		KERB_INTERACTIVE_UNLOCK_LOGON kiul;
+
+		// Initialize kiul with weak references to our credential.
+		hr = KerbInteractiveUnlockLogonInit(wsz, &un[0], pwzProtectedPassword, cpus, &kiul);
+		//hr = KerbInteractiveUnlockLogonInit(wsz, &un[0], &(pass)[0], cpus, &kiul);
+
+		if (SUCCEEDED(hr))
+		{
+			// We use KERB_INTERACTIVE_UNLOCK_LOGON in both unlock and logon scenarios.  It contains a
+			// KERB_INTERACTIVE_LOGON to hold the creds plus a LUID that is filled in for us by Winlogon
+			// as necessary.
+			hr = KerbInteractiveUnlockLogonPack(kiul, &pcpcs->rgbSerialization, &pcpcs->cbSerialization);
+
+			if (SUCCEEDED(hr))
+			{
+				ULONG ulAuthPackage;
+				hr = RetrieveNegotiateAuthPackage(&ulAuthPackage);
+				if (SUCCEEDED(hr))
+				{
+					pcpcs->ulAuthenticationPackage = ulAuthPackage;
+					pcpcs->clsidCredentialProvider = CLSID_NFCRingProvider;
+
+					// At this point the credential has created the serialized credential used for logon
+					// By setting this to CPGSR_RETURN_CREDENTIAL_FINISHED we are letting logonUI know
+					// that we have all the information we need and it should attempt to submit the 
+					// serialized credential.
+					*pcpgsr = CPGSR_RETURN_CREDENTIAL_FINISHED;
+				}
+			}
+		}
+
+		CoTaskMemFree(pwzProtectedPassword);
 	}
 	return hr;
 }

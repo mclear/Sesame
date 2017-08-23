@@ -646,9 +646,18 @@ namespace NFCRing.Service.Core
 
         private void RegisterCredential(string user, string password, string tokenId, string pluginName)
         {
+            string loggedInUser = GetCurrentUsername();
+            string domain = "";
                 // do some work
-            if(GetCurrentUsername().Substring(GetCurrentUsername().LastIndexOf('\\')+1).ToLower() == user.ToLower())
+            //if(loggedInUser.ToLower() == user.ToLower())
+            //{
+                // username and domain
+            domain = loggedInUser.Substring(0,loggedInUser.LastIndexOf('\\'));
+            //}
+            if (loggedInUser.Substring(loggedInUser.LastIndexOf('\\')+1).ToLower() == user.ToLower())
             {
+                // check to see if there is a domain?
+
                 // password is already encoded
                 foreach(User u in ApplicationConfiguration.Users)
                 {
@@ -658,7 +667,7 @@ namespace NFCRing.Service.Core
                         {
                             PluginName = pluginName,
                             Token = tokenId,
-                            Parameters = new Dictionary<string, object>() {{ "Username", user }, { "Password", password }}
+                            Parameters = new Dictionary<string, object>() { { "Username", user }, { "Password", password }, { "Domain", domain } }
                         });
                         break;
                     }

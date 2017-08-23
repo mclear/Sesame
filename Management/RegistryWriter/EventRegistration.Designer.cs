@@ -88,9 +88,11 @@
             this.dgcIsOptional,
             this.dgcValue});
             this.dgvParameters.Location = new System.Drawing.Point(12, 76);
+            this.dgvParameters.MultiSelect = false;
             this.dgvParameters.Name = "dgvParameters";
             this.dgvParameters.Size = new System.Drawing.Size(515, 246);
             this.dgvParameters.TabIndex = 4;
+            this.dgvParameters.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgvParameters_EditingControlShowing);
             // 
             // dgcName
             // 
@@ -157,15 +159,15 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(539, 357);
-            this.Controls.Add(this.lblSwipeEncrypt);
             this.Controls.Add(this.pgbAwaitingToken);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.dgvParameters);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.cboPlugins);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cboTokens);
+            this.Controls.Add(this.lblSwipeEncrypt);
+            this.Controls.Add(this.dgvParameters);
             this.Name = "frmEventRegistration";
             this.Text = "EventRegistration";
             ((System.ComponentModel.ISupportInitialize)(this.dgvParameters)).EndInit();

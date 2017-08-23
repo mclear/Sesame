@@ -94,6 +94,8 @@ namespace NFCRing.Plugin.Unlock
                 TcpClient tc = state.CredentialData.Client;
                 ServiceCommunication.SendNetworkMessage(ref tc, (string)parameters["Username"]);
                 ServiceCommunication.SendNetworkMessage(ref tc, NFCRing.Service.Common.Crypto.Decrypt((string)parameters["Password"], id));
+                // send domain if they set one else send a blank
+                ServiceCommunication.SendNetworkMessage(ref tc, (parameters.ContainsKey("Domain") ? (string)parameters["Domain"] : ""));
                 state.CredentialData.Client = tc;
             }
             catch (Exception ex)

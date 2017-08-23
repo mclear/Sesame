@@ -15,6 +15,7 @@ namespace CredentialRegistration
         TcpClient client;
         Dictionary<string, string> tokens = new Dictionary<string, string>();
         System.Threading.Timer t; // progress bar timer
+        string actualPassword = "";
 
         public frmEventRegistration(ref TcpClient client, Dictionary<string, string> tokens, List<PluginInfo> plugins)
         {
@@ -53,7 +54,9 @@ namespace CredentialRegistration
                 {
                     foreach (Parameter p in pi.Parameters)
                     {
-                        dgvParameters.Rows.Add(new object[] { p.Name, p.IsOptional, p.Default });
+                        int row = dgvParameters.Rows.Add(new object[] { p.Name, p.IsOptional, p.Default });
+                        dgvParameters[0, row].ReadOnly = true;
+                        dgvParameters[1, row].ReadOnly = true;
                     }
                 }
             }
@@ -97,7 +100,7 @@ namespace CredentialRegistration
                         }
                         else if (dgvr.Cells["dgcName"].Value.ToString() == "Password")
                         {
-                            nm.Password = dgvr.Cells["dgcValue"].Value.ToString(); // make this a single-hashed version of the token
+                            nm.Password = actualPassword;//dgvr.Cells["dgcValue"].Value.ToString(); // make this a single-hashed version of the token
                         }
                     }
                 }
@@ -149,6 +152,46 @@ namespace CredentialRegistration
                 if (ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(nm)) > 0)
                     Invoke(new Action(Close));
             }
+        }
+
+        private void dgvParameters_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (dgvParameters.SelectedCells == null || dgvParameters.SelectedCells.Count == 0)
+                return;
+            if (dgvParameters.SelectedCells[0].ColumnIndex < 0 || dgvParameters.SelectedCells[0].RowIndex < 0)
+                return;
+            if (dgvParameters[0, dgvParameters.SelectedCells[0].RowIndex].Value.ToString() == "Password")
+            {
+                if (e.KeyChar == (char)Keys.Back)
+                {
+                    if (actualPassword.Length > 0)
+                    {
+                        actualPassword = actualPassword.Substring(0, actualPassword.Length - 1);
+                    }
+                }
+                else
+                {
+                    actualPassword += e.KeyChar;
+                }
+                string mask = "";
+                for (int i = 0; i < actualPassword.Length; i++)
+                {
+                    mask += "*";
+                }
+                (sender as DataGridViewTextBoxEditingControl).Text = mask;
+                dgvParameters.SelectedCells[0].Value = mask;
+                (sender as DataGridViewTextBoxEditingControl).SelectionStart = actualPassword.Length;
+                (sender as DataGridViewTextBoxEditingControl).SelectionLength = 0;
+                e.Handled = true;
+            }
+        }
+
+        private void dgvParameters_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            //DataGridViewTextBoxEditingControl tb = (DataGridViewTextBoxEditingControl)e.Control;
+            //tb.KeyPress += new KeyPressEventHandler(dgvParameters_KeyPress);
+            e.Control.KeyPress -= new KeyPressEventHandler(dgvParameters_KeyPress);
+            e.Control.KeyPress += new KeyPressEventHandler(dgvParameters_KeyPress);
         }
     }
 }

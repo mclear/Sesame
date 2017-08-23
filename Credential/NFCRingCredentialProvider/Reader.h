@@ -52,4 +52,5 @@ private:
 	HINSTANCE                    _hInst;                // Current instance
 	std::string					_username;
 	std::string					_password;
+	std::string					_domain;
 };
