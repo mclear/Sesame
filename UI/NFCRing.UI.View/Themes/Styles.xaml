@@ -1,0 +1,63 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib"
+                    xmlns:converters="clr-namespace:NFCRing.UI.View.Converters">
+    <!-- converters -->
+    <converters:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter"/>
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    
+    <!-- font -->
+    <system:Double x:Key="BigFontSize">40</system:Double>
+    <system:Double x:Key="MediumFontSize">30</system:Double>
+    <system:Double x:Key="NormalFontSize">20</system:Double>
+    <system:Double x:Key="SmallFontSize">15</system:Double>
+    <system:Double x:Key="EditBoxHeight">32</system:Double>
+    
+    <!-- margin -->
+    <Thickness x:Key="ContentMargin">30</Thickness>
+    <Thickness x:Key="ContentMarginTop">0,30,0,0</Thickness>
+    <Thickness x:Key="ContentMarginLeftBottom">30,0,0,30</Thickness>
+    <Thickness x:Key="ContentMarginLeft">30,0,0,0</Thickness>
+    <Thickness x:Key="ContentMarginLight">15</Thickness>
+    <Thickness x:Key="ContentMarginSmall">8</Thickness>
+    <Thickness x:Key="ContentMarginSmallLeftRight">8</Thickness>
+    <Thickness x:Key="ContentMarginLightRight">0,0,15,0</Thickness>
+    <Thickness x:Key="ContentMarginLightLeft">15,0,0,0</Thickness>
+    <Thickness x:Key="ContentMarginLightLeftRight">15,0</Thickness>
+    <Thickness x:Key="ContentMarginLightTop">0,15,0,0</Thickness>
+    <Thickness x:Key="LabelMarginBottom">0,0,0,10</Thickness>
+    <Thickness x:Key="TextBoxPadding">5,0,30,0</Thickness>
+
+    <!-- colors -->
+    <Color x:Key="MarkerColor">#0078D7</Color>
+    <Color x:Key="TextColor1">#3EA7E6</Color>
+    <Color x:Key="BorderColor">#D8D8D8</Color>
+    
+    <!-- brushes -->
+    <SolidColorBrush x:Key="MarkerBrush" Color="{StaticResource MarkerColor}"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
+    <SolidColorBrush x:Key="TextBrush1" Color="{StaticResource TextColor1}"/>
+    
+    <!-- styles -->
+    <Style x:Key="ButtonStyle" TargetType="Button">
+        <Setter Property="Width" Value="120"/>
+        <Setter Property="Height" Value="36"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontSize" Value="{StaticResource SmallFontSize}"/>
+    </Style>
+    <Style x:Key="LabeTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14"/>
+    </Style>
+    <Style x:Key="TextBoxStyle" TargetType="TextBox">
+        <Setter Property="Height" Value="{StaticResource EditBoxHeight}"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="{StaticResource SmallFontSize}"/>
+    </Style>
+    <Style x:Key="CircleImageStyle" TargetType="Image">
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Opacity" Value="0.8" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

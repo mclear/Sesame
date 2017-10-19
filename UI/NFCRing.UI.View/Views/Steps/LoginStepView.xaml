@@ -1,0 +1,90 @@
+﻿<UserControl x:Class="NFCRing.UI.View.Views.LoginStepView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModel="clr-namespace:NFCRing.UI.ViewModel;assembly=NFCRing.UI.ViewModel"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="600"
+             d:DataContext="{d:DesignInstance viewModel:LoginStepViewModel}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- step text -->
+        <TextBlock Grid.Row="0"
+                   Text="Enter your Windows Login credentials"
+                   HorizontalAlignment="Center"
+                   FontSize="{StaticResource MediumFontSize}"
+                   Margin="{StaticResource ContentMargin}"/>
+        
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- user name -->
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="User Name"
+                           FontSize="{StaticResource NormalFontSize}"
+                           Margin="{StaticResource LabelMarginBottom}"/>
+                <TextBox Style="{StaticResource TextBoxStyle}"
+                         Text="{Binding UserName}"
+                         Padding="{StaticResource TextBoxPadding}"
+                         MaxLength="104"/>
+            </StackPanel>
+            
+            <!-- password -->
+            <StackPanel Grid.Row="1" Grid.Column="1" Margin="{StaticResource ContentMarginTop}">
+                <TextBlock Text="Password" FontSize="{StaticResource NormalFontSize}" Margin="{StaticResource LabelMarginBottom}"/>
+                
+                <Grid>
+                    <!-- password text -->
+                    <TextBox x:Name="PasswordTextBox" Height="{StaticResource EditBoxHeight}"
+                             Padding="{StaticResource TextBoxPadding}"
+                             VerticalContentAlignment="Center"
+                             MaxLength="127"
+                             FontSize="{StaticResource SmallFontSize}"/>
+                    
+                    <!-- password starts -->
+                    <PasswordBox x:Name="PasswordBox"
+                                 Height="{StaticResource EditBoxHeight}"
+                                 Padding="{StaticResource TextBoxPadding}"
+                                 VerticalContentAlignment="Center"
+                                 MaxLength="127"
+                                 PasswordChanged="PasswordBox_OnPasswordChanged"
+                                 FontSize="{StaticResource SmallFontSize}"/>
+                    
+                    <!-- show password button -->
+                    <Button x:Name="ShowPasswordButton"
+                            Margin="5"
+                            Height="25"
+                            Width="25"
+                            HorizontalAlignment="Right"
+                            PreviewMouseLeftButtonUp="ShowPasswordButton_OnPreviewMouseLeftButtonUp"
+                            PreviewMouseLeftButtonDown="ShowPasswordButton_OnPreviewMouseLeftButtonDown"
+                            KeyboardNavigation.IsTabStop="False"
+                            BorderThickness="0"
+                            Background="Transparent">
+                        <Button.Content>
+                            <Image Source="/NFCRing.UI.View;component/Assets/Eye_16.png"
+                                   Height="16"
+                                   Style="{StaticResource CircleImageStyle}"/>
+                        </Button.Content>
+                    </Button>
+                </Grid>
+                
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
