@@ -54,6 +54,7 @@
                              Padding="{StaticResource TextBoxPadding}"
                              VerticalContentAlignment="Center"
                              MaxLength="127"
+                             Focusable="False"
                              FontSize="{StaticResource SmallFontSize}"/>
                     
                     <!-- password starts -->
