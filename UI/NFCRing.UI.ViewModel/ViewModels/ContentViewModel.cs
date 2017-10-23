@@ -8,8 +8,8 @@ namespace NFCRing.UI.ViewModel
 
         public string Title
         {
-            get => _title;
-            set => Set(ref _title, value);
+            get { return _title; }
+            set { Set(ref _title, value); }
         }
     }
 }

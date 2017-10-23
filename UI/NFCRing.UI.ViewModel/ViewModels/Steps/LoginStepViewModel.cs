@@ -19,14 +19,14 @@ namespace NFCRing.UI.ViewModel
 
         public bool IsError
         {
-            get => _isError;
-            set => Set(ref _isError, value);
+            get { return _isError; }
+            set { Set(ref _isError, value); }
         }
 
         public string UserName
         {
-            get => _userName;
-            set => Set(ref _userName, value);
+            get { return _userName; }
+            set { Set(ref _userName, value); }
         }
 
         public SecureString Password { get; set; }

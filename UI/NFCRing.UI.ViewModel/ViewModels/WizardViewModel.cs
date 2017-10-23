@@ -16,14 +16,14 @@ namespace NFCRing.UI.ViewModel
 
         public IStepViewModel StepViewModel
         {
-            get => _stepViewModel;
-            set => Set(ref _stepViewModel, value);
+            get { return _stepViewModel; }
+            set { Set(ref _stepViewModel, value); }
         }
 
         public bool IsBusy
         {
-            get => _isBusy;
-            set => Set(ref _isBusy, value);
+            get { return _isBusy; }
+            set { Set(ref _isBusy, value); }
         }
 
         public string NextText => StepViewModel?.NextText;

@@ -19,14 +19,16 @@ namespace NFCRing.UI.View.Views
 
         private void PasswordBox_OnPasswordChanged(object sender, RoutedEventArgs e)
         {
-            if (!(sender is PasswordBox passwordBox))
+            var passwordBox = sender as PasswordBox;
+            if (passwordBox == null)
                 return;
 
             PasswordTextBox.Text = passwordBox.Password;
-            if (!(DataContext is LoginStepViewModel viewModel))
+            var viewModel = DataContext as LoginStepViewModel;
+            if (viewModel == null)
                 return;
 
-            viewModel.Password = passwordBox?.SecurePassword;
+            viewModel.Password = passwordBox.SecurePassword;
         }
 
         private void ShowPasswordButton_OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)

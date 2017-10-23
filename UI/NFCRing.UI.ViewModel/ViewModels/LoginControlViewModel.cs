@@ -18,20 +18,20 @@ namespace NFCRing.UI.ViewModel
 
         public ObservableCollection<RingItemViewModel> Items
         {
-            get => _items ?? (_items = new ObservableCollection<RingItemViewModel>());
-            set => Set(ref _items, value);
+            get { return _items ?? (_items = new ObservableCollection<RingItemViewModel>()); }
+            set { Set(ref _items, value); }
         }
 
         public RingItemViewModel SelectedItem
         {
-            get => _selectedItem;
-            set => Set(ref _selectedItem, value);
+            get { return _selectedItem; }
+            set { Set(ref _selectedItem, value); }
         }
 
         public bool IsBusy
         {
-            get => _isBusy;
-            set => Set(ref _isBusy, value);
+            get { return _isBusy; }
+            set { Set(ref _isBusy, value); }
         }
 
         /// <summary>
