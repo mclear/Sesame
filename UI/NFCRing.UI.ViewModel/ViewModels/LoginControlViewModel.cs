@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Command;
@@ -12,6 +11,8 @@ namespace NFCRing.UI.ViewModel
     {
         private readonly IRepositoryService _repositoryService;
         private readonly IDialogService _dialogService;
+        private readonly ITokenService _tokenService;
+        private readonly ISynchronizationService _synchronizationService;
         private ObservableCollection<RingItemViewModel> _items;
         private RingItemViewModel _selectedItem;
         private bool _isBusy;
@@ -47,10 +48,12 @@ namespace NFCRing.UI.ViewModel
         /// <summary>
         /// Ctor.
         /// </summary>
-        public LoginControlViewModel(IRepositoryService repositoryService, IDialogService dialogService)
+        public LoginControlViewModel(IRepositoryService repositoryService, IDialogService dialogService, ITokenService tokenService, ISynchronizationService synchronizationService)
         {
             _repositoryService = repositoryService;
             _dialogService = dialogService;
+            _tokenService = tokenService;
+            _synchronizationService = synchronizationService;
 
             Title = "NFC Ring Login Control";
 
@@ -61,14 +64,21 @@ namespace NFCRing.UI.ViewModel
 
         public async Task InitializeAsync()
         {
-            var items = await _repositoryService.GetRingsAsync();
+            //var items = await _repositoryService.GetRingsAsync();
+
+            var tokens = await _tokenService.GetTokensAsync();
+
+            foreach (var token in tokens)
+            {
+                _synchronizationService.RunInMainThread(() => Items.Add(new RingItemViewModel {Name = token.Value, Token = token.Key}));
+            }
 
 #if DEBUG
-            for (int i = 1; i < 5; i++)
-            {
-                Items.Add(new RingItemViewModel {Name = $"Ring {i}", Token = Guid.NewGuid().ToString()});
+            //for (int i = 1; i < 5; i++)
+            //{
+            //Items.Add(new RingItemViewModel {Name = $"Ring {i}", Token = Guid.NewGuid().ToString()});
 
-            }
+            //}
 #endif
         }
 
