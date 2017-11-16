@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace NFCRing.UI.ViewModel
         private readonly IDialogService _dialogService;
         private readonly ITokenService _tokenService;
         private readonly ISynchronizationService _synchronizationService;
+        private readonly ILogger _logger;
         private ObservableCollection<RingItemViewModel> _items;
         private RingItemViewModel _selectedItem;
         private bool _isBusy;
@@ -51,11 +53,12 @@ namespace NFCRing.UI.ViewModel
         /// <summary>
         /// Ctor.
         /// </summary>
-        public LoginControlViewModel(IDialogService dialogService, ITokenService tokenService, ISynchronizationService synchronizationService)
+        public LoginControlViewModel(IDialogService dialogService, ITokenService tokenService, ISynchronizationService synchronizationService, ILogger logger)
         {
             _dialogService = dialogService;
             _tokenService = tokenService;
             _synchronizationService = synchronizationService;
+            _logger = logger;
 
             Title = "NFC Ring Login Control";
 

@@ -10,6 +10,13 @@ namespace NFCRing.UI.ViewModel.Services
 {
     public class TokenService : ITokenService
     {
+        private readonly ILogger _logger;
+
+        public TokenService(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public async Task<Dictionary<string, string>> GetTokensAsync(string userName)
         {
             TcpClient client = null;
@@ -26,6 +33,8 @@ namespace NFCRing.UI.ViewModel.Services
             
             UserServerState userServerState = JsonConvert.DeserializeObject<UserServerState>(response);
 
+            _logger.Debug($"GetTokensAsync: {userServerState.UserConfiguration.Tokens}");
+
             return userServerState.UserConfiguration.Tokens;
         }
 
@@ -35,6 +44,8 @@ namespace NFCRing.UI.ViewModel.Services
 
             ServiceCommunication.SendNetworkMessage(ref client,
                 JsonConvert.SerializeObject(new NetworkMessage(MessageType.Delete) {Token = token, Username = CurrentUser.Get()}));
+
+            _logger.Debug($"RemoveTokenAsync: {token}");
 
             await Task.Yield();
         }
@@ -56,14 +67,20 @@ namespace NFCRing.UI.ViewModel.Services
                         Token = token
                     }));
             });
+
+            _logger.Debug($"AddTokenAsync: username: {userName} token: {token}");
         }
 
         public async Task<string> GetNewTokenAsync(CancellationToken cancellationToken)
         {
-            return await Task.Factory.StartNew(() =>
+            var newToken = await Task.Factory.StartNew(() =>
             {
                 return GetNewToken(cancellationToken);
             }, cancellationToken);
+
+            _logger.Debug($"GetNewTokenAsync: {newToken}");
+
+            return newToken;
         }
 
         private string GetNewToken(CancellationToken cancellationToken)
@@ -80,6 +97,7 @@ namespace NFCRing.UI.ViewModel.Services
                 var message = ServiceCommunication.ReadNetworkMessage(ref client);
                 if (!string.IsNullOrEmpty(message))
                 {
+                    _logger.Debug($"GetNewToken: {message}");
                     var networkMessage = JsonConvert.DeserializeObject<NetworkMessage>(message);
                     return networkMessage?.Token;
                 }

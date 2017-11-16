@@ -24,6 +24,7 @@ namespace NFCRing.UI.View
             if (e.Exception?.InnerException != null)
                 message = $"{message}{Environment.NewLine}{e.Exception.InnerException.Message}";
 
+            ServiceLocator.Current.GetInstance<ILogger>().Error(message);
             ServiceLocator.Current.GetInstance<IDialogService>().ShowErrorDialog(message);
 
             e.Handled = true;

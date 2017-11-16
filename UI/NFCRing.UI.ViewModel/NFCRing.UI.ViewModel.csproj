@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\IInitializeAsync.cs" />
+    <Compile Include="Services\ILogger.cs" />
     <Compile Include="Services\ITokenService.cs" />
     <Compile Include="Services\TokenService.cs" />
     <Compile Include="ViewModels\ContentViewModel.cs" />

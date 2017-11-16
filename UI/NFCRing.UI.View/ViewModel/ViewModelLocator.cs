@@ -6,6 +6,7 @@ using Microsoft.Practices.ServiceLocation;
 using NFCRing.UI.View.Services;
 using NFCRing.UI.ViewModel;
 using NFCRing.UI.ViewModel.Services;
+using NLog;
 
 namespace NFCRing.UI.View.ViewModel
 {
@@ -41,6 +42,7 @@ namespace NFCRing.UI.View.ViewModel
 
         private void RegisterServices(ContainerBuilder builder)
         {
+            builder.RegisterInstance(new NLogger()).As<UI.ViewModel.Services.ILogger>();
             builder.RegisterType<DialogService>().As<IDialogService>().SingleInstance();
             builder.RegisterType<TokenService>().As<ITokenService>().SingleInstance();
             builder.RegisterType<SynchronizationService>().As<ISynchronizationService>().SingleInstance();
