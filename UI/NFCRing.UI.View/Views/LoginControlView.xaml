@@ -30,7 +30,7 @@
                 </Grid.RowDefinitions>
                 
                 <!-- add new -->
-                <Border Margin="{StaticResource ContentMarginLight}">
+                <Border Margin="{StaticResource ContentMarginLight}" IsEnabled="{Binding AllowAdd}">
                     <TextBlock VerticalAlignment="Center">
                         <Hyperlink Command="{Binding AddCommand}" TextDecorations="{x:Null}" Foreground="Black">
                             <StackPanel Orientation="Horizontal">
@@ -50,6 +50,9 @@
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Opacity" Value="0.5" />
                                     <Setter Property="Cursor" Value="Hand" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.5" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>

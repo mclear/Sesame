@@ -40,12 +40,35 @@ namespace NFCRing.UI.ViewModel
 
             _steps = steps;
 
+            InitializeSteps(_steps);
+
             StepViewModel = _steps.FirstOrDefault();
 
             CancelCommand = new RelayCommand(Cancel);
             NextCommand = new RelayCommand(Next);
 
             PropertyChanged += OnPropertyChanged;
+        }
+
+        private void InitializeSteps(List<IStepViewModel> steps)
+        {
+            if (steps == null)
+                return;
+
+            var newRingViewModel = new NewRingViewModel();
+
+            foreach (var stepViewModel in steps)
+            {
+                SetNewRing(stepViewModel, newRingViewModel);
+
+                if (stepViewModel.ToNext != null)
+                    stepViewModel.ToNext += ToNext;
+            }
+        }
+
+        private static void SetNewRing(IStepViewModel stepViewModel, NewRingViewModel newRingViewModel)
+        {
+            stepViewModel.NewRingViewModel = newRingViewModel;
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -77,6 +100,11 @@ namespace NFCRing.UI.ViewModel
                 }
             }
 
+            ToNext();
+        }
+
+        private void ToNext()
+        {
             var currentStepIndex = _steps.IndexOf(StepViewModel);
             if (currentStepIndex < 0)
                 return;
@@ -89,6 +117,7 @@ namespace NFCRing.UI.ViewModel
 
         private void Cancel()
         {
+            StepViewModel.CancelAction?.Invoke();
             CancelAction?.Invoke();
         }
     }

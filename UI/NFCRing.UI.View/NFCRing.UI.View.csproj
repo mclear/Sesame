@@ -99,6 +99,7 @@
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\SynchronizationService.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="Common\CustomControl.cs" />
     <Compile Include="Views\Steps\FinishedStepView.xaml.cs">
       <DependentUpon>FinishedStepView.xaml</DependentUpon>
     </Compile>

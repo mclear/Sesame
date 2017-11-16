@@ -5,15 +5,22 @@
         /// <summary>
         /// Show question dialog.
         /// </summary>
-        /// <param name="questionMessage"></param>
+        /// <param name="message"></param>
         /// <returns></returns>
-        bool ShowQuestionDialog(string questionMessage);
+        bool ShowQuestionDialog(string message);
 
         /// <summary>
         /// Show error dialog.
         /// </summary>
-        /// <param name="errorMessage"></param>
+        /// <param name="message"></param>
         /// <returns></returns>
-        bool ShowErrorDialog(string errorMessage);
+        bool ShowErrorDialog(string message);
+
+        /// <summary>
+        /// Show warning dialog.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        bool ShowWarningDialog(string message);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Practices.ServiceLocation;
@@ -9,7 +11,6 @@ namespace NFCRing.UI.ViewModel
 {
     public class LoginControlViewModel : ContentViewModel
     {
-        private readonly IRepositoryService _repositoryService;
         private readonly IDialogService _dialogService;
         private readonly ITokenService _tokenService;
         private readonly ISynchronizationService _synchronizationService;
@@ -35,6 +36,8 @@ namespace NFCRing.UI.ViewModel
             set { Set(ref _isBusy, value); }
         }
 
+        public bool AllowAdd => Items.Count < CurrentUser.MaxTokensCount;
+
         /// <summary>
         /// Add new ring item command.
         /// </summary>
@@ -48,38 +51,32 @@ namespace NFCRing.UI.ViewModel
         /// <summary>
         /// Ctor.
         /// </summary>
-        public LoginControlViewModel(IRepositoryService repositoryService, IDialogService dialogService, ITokenService tokenService, ISynchronizationService synchronizationService)
+        public LoginControlViewModel(IDialogService dialogService, ITokenService tokenService, ISynchronizationService synchronizationService)
         {
-            _repositoryService = repositoryService;
             _dialogService = dialogService;
             _tokenService = tokenService;
             _synchronizationService = synchronizationService;
 
             Title = "NFC Ring Login Control";
 
-            AddCommand = new RelayCommand(Add);
+            AddCommand = new RelayCommand(Add, () => AllowAdd);
             RemoveCommand = new RelayCommand<RingItemViewModel>(Remove);
+
             PropertyChanged += OnPropertyChanged;
+            Items.CollectionChanged += ItemsOnCollectionChanged;
         }
 
         public async Task InitializeAsync()
         {
-            //var items = await _repositoryService.GetRingsAsync();
+            var tokens = await _tokenService.GetTokensAsync(CurrentUser.Get());
 
-            var tokens = await _tokenService.GetTokensAsync();
+            if (Items.Any())
+                _synchronizationService.RunInMainThread(() => Items.Clear());
 
             foreach (var token in tokens)
             {
                 _synchronizationService.RunInMainThread(() => Items.Add(new RingItemViewModel {Name = token.Value, Token = token.Key}));
             }
-
-#if DEBUG
-            //for (int i = 1; i < 5; i++)
-            //{
-            //Items.Add(new RingItemViewModel {Name = $"Ring {i}", Token = Guid.NewGuid().ToString()});
-
-            //}
-#endif
         }
 
         private void Add()
@@ -87,7 +84,7 @@ namespace NFCRing.UI.ViewModel
             ServiceLocator.Current.GetInstance<MainViewModel>().SetContent(ServiceLocator.Current.GetInstance<WizardViewModel>());
         }
 
-        private void Remove(RingItemViewModel item)
+        private async void Remove(RingItemViewModel item)
         {
             if (item == null)
                 return;
@@ -95,13 +92,28 @@ namespace NFCRing.UI.ViewModel
             if (!_dialogService.ShowQuestionDialog($"Remove {item.Name}"))
                 return;
 
-            Items.Remove(item);
+            await RemoveAsync(item.Token);
+        }
+
+        private async Task RemoveAsync(string token)
+        {
+            await _tokenService.RemoveTokenAsync(token);
+
+            // TODO: workaround
+            await Task.Delay(50);
+
+            await InitializeAsync();
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(IsBusy))
                 ServiceLocator.Current.GetInstance<MainViewModel>().IsBusy = IsBusy;
+        }
+
+        private void ItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            _synchronizationService.RunInMainThread(() => AddCommand.RaiseCanExecuteChanged());
         }
     }
 }

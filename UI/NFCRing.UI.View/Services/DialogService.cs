@@ -5,19 +5,24 @@ namespace NFCRing.UI.View.Services
 {
     public class DialogService : IDialogService
     {
-        public bool ShowQuestionDialog(string questionMessage)
+        public bool ShowQuestionDialog(string message)
         {
-            return ShowMessageDialog(questionMessage, "Question", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            return ShowMessageDialog(message, "Question", MessageBoxButton.YesNo, MessageBoxImage.Question);
         }
 
-        public bool ShowErrorDialog(string errorMessage)
+        public bool ShowErrorDialog(string message)
         {
-            return ShowMessageDialog(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return ShowMessageDialog(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        private bool ShowMessageDialog(string questionMessage, string caption, MessageBoxButton buttons, MessageBoxImage image)
+        public bool ShowWarningDialog(string message)
         {
-            var dialogResult = MessageBox.Show(Application.Current.MainWindow, questionMessage, caption, buttons, image);
+            return ShowMessageDialog(message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+
+        private bool ShowMessageDialog(string message, string caption, MessageBoxButton buttons, MessageBoxImage image)
+        {
+            var dialogResult = MessageBox.Show(Application.Current.MainWindow, message, caption, buttons, image);
 
             return dialogResult == MessageBoxResult.OK || dialogResult == MessageBoxResult.Yes;
         }

@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Windows;
 using Autofac;
 using Autofac.Extras.CommonServiceLocator;
 using Microsoft.Practices.ServiceLocation;
@@ -42,8 +41,7 @@ namespace NFCRing.UI.View.ViewModel
 
         private void RegisterServices(ContainerBuilder builder)
         {
-            builder.RegisterType<Services.DialogService>().As<IDialogService>().SingleInstance();
-            builder.RegisterType<RepositoryService>().As<IRepositoryService>().SingleInstance();
+            builder.RegisterType<DialogService>().As<IDialogService>().SingleInstance();
             builder.RegisterType<TokenService>().As<ITokenService>().SingleInstance();
             builder.RegisterType<SynchronizationService>().As<ISynchronizationService>().SingleInstance();
         }
