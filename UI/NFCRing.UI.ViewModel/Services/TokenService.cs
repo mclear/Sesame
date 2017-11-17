@@ -17,6 +17,22 @@ namespace NFCRing.UI.ViewModel.Services
             _logger = logger;
         }
 
+        public bool Ping()
+        {
+            TcpClient client = null;
+
+            var result = ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.State)));
+
+            if (result == 0)
+            {
+                _logger.Error($"Service not available");
+
+                return false;
+            }
+
+            return true;
+        }
+
         public async Task<Dictionary<string, string>> GetTokensAsync(string userName)
         {
             TcpClient client = null;
@@ -29,13 +45,13 @@ namespace NFCRing.UI.ViewModel.Services
             });
 
             if (string.IsNullOrEmpty(response))
-                return null;
+                return new Dictionary<string, string>();
             
             UserServerState userServerState = JsonConvert.DeserializeObject<UserServerState>(response);
 
             _logger.Debug($"GetTokensAsync: {JsonConvert.SerializeObject(userServerState.UserConfiguration.Tokens)}");
 
-            return userServerState.UserConfiguration.Tokens;
+            return userServerState.UserConfiguration.Tokens ?? new Dictionary<string, string>();
         }
 
         public async Task RemoveTokenAsync(string token)
@@ -106,7 +122,7 @@ namespace NFCRing.UI.ViewModel.Services
                 i++;
 
                 if (i > 10)
-                    return "234423456";
+                    return "23442453456";
 
                 Thread.Sleep(200);
 #endif

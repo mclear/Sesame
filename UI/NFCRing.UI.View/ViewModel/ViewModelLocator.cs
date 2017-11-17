@@ -6,7 +6,6 @@ using Microsoft.Practices.ServiceLocation;
 using NFCRing.UI.View.Services;
 using NFCRing.UI.ViewModel;
 using NFCRing.UI.ViewModel.Services;
-using NLog;
 
 namespace NFCRing.UI.View.ViewModel
 {
@@ -42,7 +41,7 @@ namespace NFCRing.UI.View.ViewModel
 
         private void RegisterServices(ContainerBuilder builder)
         {
-            builder.RegisterInstance(new NLogger()).As<UI.ViewModel.Services.ILogger>();
+            builder.RegisterInstance(new NLogger()).As<ILogger>();
             builder.RegisterType<DialogService>().As<IDialogService>().SingleInstance();
             builder.RegisterType<TokenService>().As<ITokenService>().SingleInstance();
             builder.RegisterType<SynchronizationService>().As<ISynchronizationService>().SingleInstance();
@@ -77,7 +76,7 @@ namespace NFCRing.UI.View.ViewModel
             builder.RegisterType<SuccessfullyStepViewModel>();
             builder.RegisterType<LoginStepViewModel>();
             builder.RegisterType<FinishedStepViewModel>();
-            builder.RegisterType<LoginControlViewModel>().OnActivated(async x => await x.Instance.InitializeAsync());
+            builder.RegisterType<LoginControlViewModel>();
 
             builder.RegisterBuildCallback(x => x.Resolve<MainViewModel>().SetContent(x.Resolve<LoginControlViewModel>()));
         }

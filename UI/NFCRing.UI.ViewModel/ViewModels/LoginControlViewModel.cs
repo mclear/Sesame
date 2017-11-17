@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,7 +8,7 @@ using NFCRing.UI.ViewModel.Services;
 
 namespace NFCRing.UI.ViewModel
 {
-    public class LoginControlViewModel : ContentViewModel
+    public class LoginControlViewModel : ContentViewModel, IInitializeAsync
     {
         private readonly IDialogService _dialogService;
         private readonly ITokenService _tokenService;
@@ -19,6 +17,7 @@ namespace NFCRing.UI.ViewModel
         private ObservableCollection<RingItemViewModel> _items;
         private RingItemViewModel _selectedItem;
         private bool _isBusy;
+        private bool _serviceStarted;
 
         public ObservableCollection<RingItemViewModel> Items
         {
@@ -38,7 +37,7 @@ namespace NFCRing.UI.ViewModel
             set { Set(ref _isBusy, value); }
         }
 
-        public bool AllowAdd => Items.Count < CurrentUser.MaxTokensCount;
+        public bool AllowAdd => _serviceStarted && Items.Count < CurrentUser.MaxTokensCount;
 
         /// <summary>
         /// Add new ring item command.
@@ -66,11 +65,21 @@ namespace NFCRing.UI.ViewModel
             RemoveCommand = new RelayCommand<RingItemViewModel>(Remove);
 
             PropertyChanged += OnPropertyChanged;
-            Items.CollectionChanged += ItemsOnCollectionChanged;
         }
 
         public async Task InitializeAsync()
         {
+            _serviceStarted = _tokenService.Ping();
+
+            if (!_serviceStarted)
+            {
+                _synchronizationService.RunInMainThread(() => RaisePropertyChanged(nameof(AllowAdd)));
+
+                _dialogService.ShowErrorDialog("Service not available");
+
+                return;
+            }
+
             var tokens = await _tokenService.GetTokensAsync(CurrentUser.Get());
 
             if (Items.Any())
@@ -78,8 +87,14 @@ namespace NFCRing.UI.ViewModel
 
             foreach (var token in tokens)
             {
-                _synchronizationService.RunInMainThread(() => Items.Add(new RingItemViewModel {Name = token.Value, Token = token.Key}));
+                _synchronizationService.RunInMainThread(() => Items.Add(new RingItemViewModel { Name = token.Value, Token = token.Key }));
             }
+
+            _synchronizationService.RunInMainThread(() =>
+            {
+                RaisePropertyChanged(nameof(AllowAdd));
+                AddCommand.RaiseCanExecuteChanged();
+            });
         }
 
         private void Add()
@@ -112,11 +127,6 @@ namespace NFCRing.UI.ViewModel
         {
             if (e.PropertyName == nameof(IsBusy))
                 ServiceLocator.Current.GetInstance<MainViewModel>().IsBusy = IsBusy;
-        }
-
-        private void ItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            _synchronizationService.RunInMainThread(() => AddCommand.RaiseCanExecuteChanged());
         }
     }
 }
