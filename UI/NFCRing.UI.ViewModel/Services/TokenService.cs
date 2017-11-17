@@ -33,7 +33,7 @@ namespace NFCRing.UI.ViewModel.Services
             
             UserServerState userServerState = JsonConvert.DeserializeObject<UserServerState>(response);
 
-            _logger.Debug($"GetTokensAsync: {userServerState.UserConfiguration.Tokens}");
+            _logger.Debug($"GetTokensAsync: {JsonConvert.SerializeObject(userServerState.UserConfiguration.Tokens)}");
 
             return userServerState.UserConfiguration.Tokens;
         }

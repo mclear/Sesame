@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Practices.ServiceLocation;
 using NFCRing.UI.ViewModel;
@@ -28,6 +29,20 @@ namespace NFCRing.UI.View
             ServiceLocator.Current.GetInstance<IDialogService>().ShowErrorDialog(message);
 
             e.Handled = true;
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            ServiceLocator.Current.GetInstance<ILogger>().Info("NFC Ring startup");
+
+            base.OnStartup(e);
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            ServiceLocator.Current.GetInstance<ILogger>().Info("NFC Ring exit");
+
+            base.OnExit(e);
         }
     }
 }
