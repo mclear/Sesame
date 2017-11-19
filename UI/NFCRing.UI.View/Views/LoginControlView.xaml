@@ -1,9 +1,10 @@
-﻿<UserControl x:Class="NFCRing.UI.View.Views.LoginControlView"
+﻿<view:CustomControl x:Class="NFCRing.UI.View.Views.LoginControlView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:viewModel="clr-namespace:NFCRing.UI.ViewModel;assembly=NFCRing.UI.ViewModel"
+             xmlns:view="clr-namespace:NFCRing.UI.View"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance viewModel:LoginControlViewModel}">
@@ -12,7 +13,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
+
         <!-- content -->
         <Grid>
             <Grid.ColumnDefinitions>
@@ -20,7 +21,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            
+
             <!-- items -->
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
@@ -28,9 +29,9 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                
+
                 <!-- add new -->
-                <Border Margin="{StaticResource ContentMarginLight}">
+                <Border Margin="{StaticResource ContentMarginLight}" IsEnabled="{Binding AllowAdd}">
                     <TextBlock VerticalAlignment="Center">
                         <Hyperlink Command="{Binding AddCommand}" TextDecorations="{x:Null}" Foreground="Black">
                             <StackPanel Orientation="Horizontal">
@@ -51,11 +52,14 @@
                                     <Setter Property="Opacity" Value="0.5" />
                                     <Setter Property="Cursor" Value="Hand" />
                                 </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.5" />
+                                </Trigger>
                             </Style.Triggers>
                         </Style>
                     </Border.Style>
                 </Border>
-                
+
                 <!-- manage -->
                 <Grid Grid.Row="1" Margin="{StaticResource ContentMarginLightRight}">
                     <Grid.ColumnDefinitions>
@@ -83,10 +87,10 @@
                                FontSize="{StaticResource SmallFontSize}"/>
                 </Grid>
             </Grid>
-            
+
             <!-- splitter -->
             <Border Grid.Column="1" VerticalAlignment="Stretch" Width="2" Background="{StaticResource BorderBrush}"/>
-            
+
             <!-- selected item data -->
             <ListBox Grid.Column="2"
                      ItemsSource="{Binding Items}"
@@ -99,34 +103,34 @@
                                 <Setter.Value>
                                     <ControlTemplate>
                                         <!--<DataTemplate DataType="viewModel:RingItemViewModel">-->
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="*"/>
-                                                </Grid.RowDefinitions>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
 
-                                                <!-- name -->
-                                                <TextBlock Text="{Binding Name}"
+                                            <!-- name -->
+                                            <TextBlock Text="{Binding Name}"
                                                            FontSize="{StaticResource MediumFontSize}"
                                                            Foreground="{StaticResource TextBrush1}"/>
 
-                                                <!-- token -->
-                                                <StackPanel Grid.Row="1" Margin="{StaticResource ContentMarginLightTop}" Orientation="Horizontal">
-                                                    <TextBlock Text="Token: " FontSize="{StaticResource SmallFontSize}"/>
-                                                    <TextBlock Text="{Binding Token}" FontSize="{StaticResource SmallFontSize}"/>
-                                                </StackPanel>
+                                            <!-- token -->
+                                            <StackPanel Grid.Row="1" Margin="{StaticResource ContentMarginLightTop}" Orientation="Horizontal">
+                                                <TextBlock Text="Token: " FontSize="{StaticResource SmallFontSize}"/>
+                                                <TextBlock Text="{Binding Token}" FontSize="{StaticResource SmallFontSize}"/>
+                                            </StackPanel>
 
-                                                <!-- remove button -->
-                                                <Button Grid.Row="2"
+                                            <!-- remove button -->
+                                            <Button Grid.Row="2"
                                                         Content="Remove"
                                                         Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ListBox}, Path=DataContext.RemoveCommand}"
                                                         CommandParameter="{Binding}"
                                                         HorizontalAlignment="Left"
                                                         Margin="{StaticResource ContentMarginLightTop}"
                                                         Style="{StaticResource ButtonStyle}"/>
-                                            </Grid>
+                                        </Grid>
                                         <!--</DataTemplate>-->
                                     </ControlTemplate>
                                 </Setter.Value>
@@ -139,7 +143,7 @@
                 </ListBox.ItemTemplate>-->
             </ListBox>
         </Grid>
-        
+
         <!-- image -->
         <Image Grid.Row="1"
                Source="/NFCRing.UI.View;component/Assets/nfcring_logo_1x.png"
@@ -147,4 +151,4 @@
                HorizontalAlignment="Left"
                Margin="{StaticResource ContentMarginLight}"/>
     </Grid>
-</UserControl>
+</view:CustomControl>

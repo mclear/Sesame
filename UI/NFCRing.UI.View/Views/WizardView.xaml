@@ -33,8 +33,14 @@
             <Button Content="Cancel"
                     Command="{Binding CancelCommand}"
                     Style="{StaticResource ButtonStyle}"
+                    IsCancel="True"
                     Visibility="{Binding StepViewModel.CancelIsVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            <Button Grid.Column="2" Content="{Binding NextText}" Command="{Binding NextCommand}" Style="{StaticResource ButtonStyle}"/>
+            <Button Grid.Column="2"
+                    Content="{Binding NextText}"
+                    Command="{Binding NextCommand}"
+                    Visibility="{Binding StepViewModel.NextIsVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    IsDefault="True"
+                    Style="{StaticResource ButtonStyle}"/>
         </Grid>
     </Grid>
 </UserControl>

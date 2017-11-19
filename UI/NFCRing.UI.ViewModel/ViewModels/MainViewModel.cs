@@ -9,8 +9,8 @@ namespace NFCRing.UI.ViewModel
 
         public bool IsBusy
         {
-            get => _isBusy;
-            set => Set(ref _isBusy, value);
+            get { return _isBusy; }
+            set { Set(ref _isBusy, value); }
         }
 
         /// <summary>
@@ -18,8 +18,8 @@ namespace NFCRing.UI.ViewModel
         /// </summary>
         public ContentViewModel Content
         {
-            get => _content;
-            set => Set(ref _content, value);
+            get { return _content; }
+            set { Set(ref _content, value); }
         }
 
         public void SetContent(ContentViewModel content)

@@ -12,8 +12,8 @@ namespace NFCRing.UI.ViewModel
         /// </summary>
         public string Name
         {
-            get => _name;
-            set => Set(ref _name, value);
+            get { return _name; }
+            set { Set(ref _name, value); }
         }
 
         /// <summary>
@@ -21,8 +21,8 @@ namespace NFCRing.UI.ViewModel
         /// </summary>
         public string Token
         {
-            get => _token;
-            set => Set(ref _token, value);
+            get { return _token; }
+            set { Set(ref _token, value); }
         }
     }
 }

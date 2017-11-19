@@ -7,7 +7,8 @@ namespace NFCRing.UI.ViewModel
 {
     public class LoginStepViewModel : BaseStepViewModel
     {
-        private readonly IRepositoryService _repositoryService;
+        private readonly ITokenService _tokenService;
+        private readonly IDialogService _dialogService;
         private string _userName;
         private bool _isError;
 
@@ -19,28 +20,63 @@ namespace NFCRing.UI.ViewModel
 
         public bool IsError
         {
-            get => _isError;
-            set => Set(ref _isError, value);
+            get { return _isError; }
+            set { Set(ref _isError, value); }
         }
 
         public string UserName
         {
-            get => _userName;
-            set => Set(ref _userName, value);
+            get { return _userName; }
+            set { Set(ref _userName, value); }
         }
 
         public SecureString Password { get; set; }
 
-        public LoginStepViewModel(IRepositoryService repositoryService)
+        public LoginStepViewModel(ITokenService tokenService, IDialogService dialogService)
         {
-            _repositoryService = repositoryService;
+            _tokenService = tokenService;
+            _dialogService = dialogService;
+
+            UserName = CurrentUser.Get();
         }
 
         private async Task<bool> Save()
         {
             var password = ConvertToUnsecureString(Password);
 
-            await _repositoryService.SaveAsync();
+            NewRingViewModel.Login = UserName;
+            NewRingViewModel.Password = password;
+
+            if (!Validate())
+                return false;
+
+            await _tokenService.AddTokenAsync(NewRingViewModel.Login, NewRingViewModel.Password, NewRingViewModel.Token);
+
+            return true;
+        }
+
+        private bool Validate()
+        {
+            if (string.IsNullOrEmpty(NewRingViewModel.Login))
+            {
+                _dialogService.ShowErrorDialog("Please input User name");
+
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(NewRingViewModel.Password))
+            {
+                _dialogService.ShowErrorDialog("Please input password");
+
+                return false;
+            }
+
+            if (!CurrentUser.IsValidCredentials(NewRingViewModel.Login, NewRingViewModel.Password))
+            {
+                _dialogService.ShowErrorDialog("Please input valid User credentials");
+
+                return false;
+            }
 
             return true;
         }

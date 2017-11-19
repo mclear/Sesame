@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
-using System.Windows;
 using Autofac;
 using Autofac.Extras.CommonServiceLocator;
 using Microsoft.Practices.ServiceLocation;
+using NFCRing.UI.View.Services;
 using NFCRing.UI.ViewModel;
 using NFCRing.UI.ViewModel.Services;
 
@@ -41,8 +41,10 @@ namespace NFCRing.UI.View.ViewModel
 
         private void RegisterServices(ContainerBuilder builder)
         {
-            builder.RegisterType<Services.DialogService>().As<IDialogService>().SingleInstance();
-            builder.RegisterType<RepositoryService>().As<IRepositoryService>().SingleInstance();
+            builder.RegisterInstance(new NLogger()).As<ILogger>();
+            builder.RegisterType<DialogService>().As<IDialogService>().SingleInstance();
+            builder.RegisterType<TokenService>().As<ITokenService>().SingleInstance();
+            builder.RegisterType<SynchronizationService>().As<ISynchronizationService>().SingleInstance();
         }
 
         private static void RegisterViewModels(ContainerBuilder builder)
@@ -74,7 +76,7 @@ namespace NFCRing.UI.View.ViewModel
             builder.RegisterType<SuccessfullyStepViewModel>();
             builder.RegisterType<LoginStepViewModel>();
             builder.RegisterType<FinishedStepViewModel>();
-            builder.RegisterType<LoginControlViewModel>().OnActivated(async x => await x.Instance.InitializeAsync());
+            builder.RegisterType<LoginControlViewModel>();
 
             builder.RegisterBuildCallback(x => x.Resolve<MainViewModel>().SetContent(x.Resolve<LoginControlViewModel>()));
         }
