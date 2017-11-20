@@ -7,6 +7,7 @@
 #define MyAppPublisher "Sesame Company, Inc."
 #define MyAppURL "http://www.example.com/"
 #define MyAppExeName "NFCRing.UI.View.exe"
+#define AppGuid "{F7D4EF32-2D80-441A-A499-3E6000BFCEBA}"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -14,7 +15,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 PrivilegesRequired=admin
 
-AppId={{F7D4EF32-2D80-441A-A499-3E6000BFCEBA}
+AppId={{#AppGuid}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -69,6 +70,7 @@ Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Code]
+#include "checkinstalled.pas"
 #include "dotnet45.pas"        
 
 [Run]
