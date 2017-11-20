@@ -2,7 +2,7 @@
 
 #include <idp.iss>
 
-#define MyAppName "NFCRing_test"
+#define MyAppName "NFCRing"
 #define MyAppVersion "1.0.0.1"
 #define MyAppPublisher "Sesame Company, Inc."
 #define MyAppURL "http://www.example.com/"
@@ -12,8 +12,9 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
+PrivilegesRequired=admin
 
-AppId={{BCB6CF6D-434A-4F06-81FB-495090F9DFBE}
+AppId={{F7D4EF32-2D80-441A-A499-3E6000BFCEBA}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -39,11 +40,12 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 ; exe file
-Source: "C:\Dev\github\Sesame\UI\NFCRing.UI.View\bin\Release\NFCRing.UI.View.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\UI\NFCRing.UI.View\bin\Release\NFCRing.UI.View.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; Application files
-Source: "c:\Dev\github\Sesame\UI\NFCRing.UI.View\bin\Release\*"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\UI\NFCRing.UI.View\bin\Release\*"; DestDir: "{app}"; Flags: ignoreversion
 ; Service files
-Source: "C:\Dev\github\Sesame\Service\NFCRingServiceHost\bin\Release\*"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\Service\NFCRingServiceHost\bin\Release\*"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\Release\WinAPIWrapper.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 ; Source: "E:\install\dotNetFx45_Full_setup.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: not IsRequiredDotNetDetected
@@ -58,7 +60,7 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 ; Filename: {tmp}\dotNetFx45_Full_setup.exe; Parameters: "/q:a /c:""install /l /q"""; Check: not IsRequiredDotNetDetected; StatusMsg: Microsoft Framework 4.5 is installed. Please wait...
-Filename: "{app}\NFCRingServiceHost.exe"; Parameters: "--install"
+Filename: "{app}\NFCRingServiceHost.exe"; Flags: runascurrentuser; Parameters: "--install"
 
 [UninstallRun]
 Filename: "{app}\NFCRingServiceHost.exe"; Parameters: "--uninstall"
