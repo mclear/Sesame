@@ -1,7 +1,5 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
-#include <idp.iss>
-
 #define MyAppName "NFCRing"
 #define MyAppVersion "1.0.0.1"
 #define MyAppPublisher "Sesame Company, Inc."
@@ -70,8 +68,19 @@ Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Code]
+#include "dotnet.pas"
 #include "checkinstalled.pas"
-#include "dotnet45.pas"        
+
+function InitializeSetup(): Boolean;
+begin
+    if not CheckNetFramework() then
+    begin
+        result := false;
+    end else
+    begin
+        result := CheckInstalledVersion();
+    end;
+end; 
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
