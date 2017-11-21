@@ -61,6 +61,11 @@ Source: "..\..\Service\NFCRingServiceHost\bin\Release\NFCRingServiceCommon.dll";
 Source: "..\..\Service\NFCRingServiceHost\bin\Release\NFCRingServiceCore.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\Service\NFCRingServiceHost\bin\Release\NFCRingServiceHost.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\Release\WinAPIWrapper.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\Service\Plugins\NFCRing.Plugin.Lock\bin\Release\NFCRing.Plugin.Lock.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
+Source: "..\..\Service\Plugins\NFCRing.Plugin.Unlock\bin\Release\NFCRing.Plugin.Unlock.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
+Source: "..\..\Service\Plugins\NFCRing.Plugin.Unlock\bin\Release\NFCRingServiceCommon.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
+Source: "..\..\Service\Plugins\NFCRing.Plugin.Unlock\bin\Release\NFCRingServiceCore.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
+Source: "..\..\Service\Plugins\NFCRing.Plugin.Unlock\bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
