@@ -11,12 +11,15 @@
 #define ServiceManagementPath = "{app}\Service\Management"
 #define ServiceAppPath = "{app}\Service\Service"
 #define ServiceAppPluginsPath = "{app}\Service\Service\Plugins"
+#define RegistryKey = "{{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}"
+#define ProviderNameKey = "NFCRingCredentialProvider"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 PrivilegesRequired=admin
+ArchitecturesInstallIn64BitMode=x64
 
 AppId={{#AppGuid}
 AppName={#MyAppName}
@@ -84,8 +87,7 @@ Source: "..\..\Release\WinAPIWrapper.dll"; DestDir: {#ServiceManagementPath}; Fl
 Source: "..\..\bin\Release\Credential\CredUILauncher.exe"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Credential\NFCRingCredentialProvider.dll"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Credential\tileimage.bmp"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Credential\Register.reg"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Credential\Unregister.reg"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Credential\NFCRingCredentialProvider.dll"; DestDir: {sys};
 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
@@ -114,3 +116,19 @@ Filename: "{#ServiceAppPath}\NFCRingServiceHost.exe"; Flags: runascurrentuser; P
 
 [UninstallRun]
 Filename: "{#ServiceAppPath}\NFCRingServiceHost.exe"; Parameters: "--uninstall"
+Filename: "{sys}\NFCRingCredentialProvider.dll"
+
+[Registry]
+; [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\Credential Providers\{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}]
+; @="NFCRingCredentialProvider"
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\Credential Providers\{#RegistryKey}"; ValueType: string; ValueName: ""; ValueData: "{#ProviderNameKey}"; Flags: uninsdeletekey
+
+; [HKEY_CLASSES_ROOT\CLSID\{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}]
+; @="NFCRingCredentialProvider"
+Root: HKCR; Subkey: "CLSID\{#RegistryKey}"; ValueType: string; ValueName: ""; ValueData: "{#ProviderNameKey}"; Flags: uninsdeletekey
+
+; [HKEY_CLASSES_ROOT\CLSID\{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}\InprocServer32]
+; @="NFCRingCredentialProvider.dll"
+; "ThreadingModel"="Apartment"
+Root: HKCR; Subkey: "CLSID\{#RegistryKey}\InprocServer32"; ValueType: string; ValueName: ""; ValueData: "{#ProviderNameKey}.dll"
+Root: HKCR; Subkey: "CLSID\{#RegistryKey}\InprocServer32"; ValueType: string; ValueName: "ThreadingModel"; ValueData: "Apartment"
