@@ -13,6 +13,7 @@
 #define ServiceAppPluginsPath = "{app}\Service\Service\Plugins"
 #define RegistryKey = "{{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}"
 #define ProviderNameKey = "NFCRingCredentialProvider"
+#define VCmsg "Installing Microsoft Visual C++ Redistributable...."
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -89,6 +90,10 @@ Source: "..\..\bin\Release\Credential\NFCRingCredentialProvider.dll"; DestDir: {
 Source: "..\..\bin\Release\Credential\tileimage.bmp"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Credential\NFCRingCredentialProvider.dll"; DestDir: {sys};
 
+; Visual C++ 2015
+; Source: "vc_redist.x86.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+Source: "vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -98,6 +103,7 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 [Code]
 #include "dotnet.pas"
 #include "checkinstalled.pas"
+#include "vc.pas"
 
 function InitializeSetup(): Boolean;
 begin
@@ -111,6 +117,8 @@ begin
 end; 
 
 [Run]
+; Filename: "vc_redist.x86.exe"; StatusMsg: "{#VCmsg}"; Check: not IsWin64 and VCRedistNeedsInstall
+Filename: "{tmp}\vc_redist.x64.exe"; StatusMsg: "{#VCmsg}"; Check: IsWin64 and VCRedistNeedsInstall
 Filename: "{#AppPath}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 Filename: "{#ServiceAppPath}\NFCRingServiceHost.exe"; Flags: runascurrentuser; Parameters: "--install"
 
