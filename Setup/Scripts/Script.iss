@@ -91,7 +91,6 @@ Source: "..\..\bin\Release\Credential\tileimage.bmp"; DestDir: {#ServiceCredenti
 Source: "..\..\bin\Release\Credential\NFCRingCredentialProvider.dll"; DestDir: {sys};
 
 ; Visual C++ 2015
-; Source: "vc_redist.x86.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 Source: "vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
@@ -117,7 +116,6 @@ begin
 end; 
 
 [Run]
-; Filename: "vc_redist.x86.exe"; StatusMsg: "{#VCmsg}"; Check: not IsWin64 and VCRedistNeedsInstall
 Filename: "{tmp}\vc_redist.x64.exe"; StatusMsg: "{#VCmsg}"; Check: IsWin64 and VCRedistNeedsInstall
 Filename: "{#AppPath}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 Filename: "{#ServiceAppPath}\NFCRingServiceHost.exe"; Flags: runascurrentuser; Parameters: "--install"
