@@ -17,20 +17,6 @@ namespace NFCRing.UI.View
             DispatcherUnhandledException += OnDispatcherUnhandledException;
         }
 
-        private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-        {
-            ServiceLocator.Current.GetInstance<MainViewModel>().IsBusy = false;
-
-            var message = e.Exception?.Message;
-            if (e.Exception?.InnerException != null)
-                message = $"{message}{Environment.NewLine}{e.Exception.InnerException.Message}";
-
-            ServiceLocator.Current.GetInstance<ILogger>().Error(message);
-            ServiceLocator.Current.GetInstance<IDialogService>().ShowErrorDialog(message);
-
-            e.Handled = true;
-        }
-
         protected override void OnStartup(StartupEventArgs e)
         {
             ServiceLocator.Current.GetInstance<ILogger>().Info("NFC Ring startup");
@@ -43,6 +29,20 @@ namespace NFCRing.UI.View
             ServiceLocator.Current.GetInstance<ILogger>().Info("NFC Ring exit");
 
             base.OnExit(e);
+        }
+
+        private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            ServiceLocator.Current.GetInstance<MainViewModel>().IsBusy = false;
+
+            var message = e.Exception?.Message;
+            if (e.Exception?.InnerException != null)
+                message = $"{message}{Environment.NewLine}{e.Exception.InnerException.Message}";
+
+            ServiceLocator.Current.GetInstance<ILogger>().Error(message);
+            ServiceLocator.Current.GetInstance<IDialogService>().ShowErrorDialog(message);
+
+            e.Handled = true;
         }
     }
 }

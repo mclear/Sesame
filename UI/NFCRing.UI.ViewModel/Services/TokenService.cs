@@ -49,7 +49,7 @@ namespace NFCRing.UI.ViewModel.Services
             
             UserServerState userServerState = JsonConvert.DeserializeObject<UserServerState>(response);
 
-            _logger.Debug($"GetTokensAsync: {JsonConvert.SerializeObject(userServerState.UserConfiguration.Tokens)}");
+            _logger.Trace($"GetTokensAsync: {JsonConvert.SerializeObject(userServerState.UserConfiguration.Tokens)}");
 
             return userServerState.UserConfiguration.Tokens ?? new Dictionary<string, string>();
         }
@@ -61,7 +61,7 @@ namespace NFCRing.UI.ViewModel.Services
             ServiceCommunication.SendNetworkMessage(ref client,
                 JsonConvert.SerializeObject(new NetworkMessage(MessageType.Delete) {Token = token, Username = CurrentUser.Get()}));
 
-            _logger.Debug($"RemoveTokenAsync: {token}");
+            _logger.Trace($"RemoveTokenAsync: {token}");
 
             await Task.Yield();
         }
@@ -84,7 +84,7 @@ namespace NFCRing.UI.ViewModel.Services
                     }));
             });
 
-            _logger.Debug($"AddTokenAsync: username: {userName} token: {token}");
+            _logger.Trace($"AddTokenAsync: username: {userName} token: {token}");
         }
 
         public async Task<string> GetNewTokenAsync(CancellationToken cancellationToken)
@@ -94,7 +94,7 @@ namespace NFCRing.UI.ViewModel.Services
                 return GetNewToken(cancellationToken);
             }, cancellationToken);
 
-            _logger.Debug($"GetNewTokenAsync: {newToken}");
+            _logger.Trace($"GetNewTokenAsync: {newToken}");
 
             return newToken;
         }
@@ -113,7 +113,7 @@ namespace NFCRing.UI.ViewModel.Services
                 var message = ServiceCommunication.ReadNetworkMessage(ref client);
                 if (!string.IsNullOrEmpty(message))
                 {
-                    _logger.Debug($"GetNewToken: {message}");
+                    _logger.Trace($"GetNewToken: {message}");
                     var networkMessage = JsonConvert.DeserializeObject<NetworkMessage>(message);
                     return networkMessage?.Token;
                 }
