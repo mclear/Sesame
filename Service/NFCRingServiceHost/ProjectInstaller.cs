@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections;
+using System.ComponentModel;
 using System.Configuration.Install;
 using System.Diagnostics;
 using System.ServiceProcess;
@@ -34,6 +36,38 @@ namespace NFCRing.Service.Host
 
             var process = new Process { StartInfo = processStartInfo };
             process.Start();
+        }
+
+        protected override void OnBeforeUninstall(IDictionary savedState)
+        {
+            var controller = new ServiceController(_serviceInstaller.ServiceName);
+            try
+            {
+                if (controller.Status == ServiceControllerStatus.Running | controller.Status == ServiceControllerStatus.Paused)
+                {
+                    controller.Stop();
+                    controller.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(30));
+                    controller.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                var source = $"{_serviceInstaller.ServiceName} Installer";
+                const string log = "Application";
+
+                if (!EventLog.SourceExists(source))
+                {
+                    EventLog.CreateEventSource(source, log);
+                }
+
+                var eventLog = new EventLog {Source = source};
+
+                eventLog.WriteEntry(string.Concat(@"The service could not be stopped. Please stop the service manually. Error: ", ex.Message), EventLogEntryType.Error);
+            }
+            finally
+            {
+                base.OnBeforeUninstall(savedState);
+            }
         }
     }
 }
