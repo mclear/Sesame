@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="NFCRing.UI.View.Views.HelloStepView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModel="clr-namespace:NFCRing.UI.ViewModel;assembly=NFCRing.UI.ViewModel"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="600"
+             d:DataContext="{d:DesignInstance viewModel:HelloStepViewModel}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- step text -->
+        <TextBlock Grid.Row="1"
+                   Text="Windows Login Setup"
+                   HorizontalAlignment="Center"
+                   FontSize="{StaticResource BigFontSize}"
+                   Margin="{StaticResource ContentMargin}"/>
+        
+        <!-- text 1 -->
+        <TextBlock Grid.Row="2"
+                   Text="Let's set up your ring to lock and unlock your computer with an NFC Ring. You will need a compatible NFC Reader installed and your ring."
+                   HorizontalAlignment="Center"
+                   TextAlignment="Center"
+                   FontSize="{StaticResource NormalFontSize}"
+                   TextWrapping="Wrap"/>
+        
+        <!-- text 2 -->
+        <TextBlock Grid.Row="3"
+                   Text="During the process you will be asked to enter your login credentials. These credentials are stored in your computer in a secure form and never transmitted over internet. To learn more about our privacy policy, please follow the link below."
+                   HorizontalAlignment="Center"
+                   TextAlignment="Center"
+                   FontSize="{StaticResource NormalFontSize}"
+                   TextWrapping="Wrap"
+                   Margin="{StaticResource ContentMargin}"/>
+        
+        <!-- link -->
+        <TextBlock Grid.Row="4"
+                   HorizontalAlignment="Center"
+                   FontSize="{StaticResource NormalFontSize}">
+            <Hyperlink Command="{Binding NavigateCommand}">http://nfcring.com/privacy</Hyperlink>
+        </TextBlock>
+    </Grid>
+</UserControl>

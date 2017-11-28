@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="NFCRing.UI.View.Views.FinishedStepView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="600">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- step text -->
+        <TextBlock Grid.Row="1"
+                   Text="Finished!"
+                   HorizontalAlignment="Center"
+                   FontSize="{StaticResource MediumFontSize}"
+                   Margin="{StaticResource ContentMargin}"/>
+        
+        <!-- text 1 -->
+        <TextBlock Grid.Row="2"
+                   Text="You can now use your ring to lock and unlock your computer. Just tap your ring on the reader!"
+                   HorizontalAlignment="Center"
+                   TextAlignment="Center"
+                   FontSize="{StaticResource MediumFontSize}"
+                   TextWrapping="Wrap"/>
+        
+        <!-- text 2 -->
+        <TextBlock Grid.Row="3"
+                   Text="You can also add more rings for other users or revoke access on the next screen."
+                   HorizontalAlignment="Center"
+                   TextAlignment="Center"
+                   FontSize="{StaticResource MediumFontSize}"
+                   TextWrapping="Wrap"
+                   Margin="{StaticResource ContentMargin}"/>
+    </Grid>
+</UserControl>
