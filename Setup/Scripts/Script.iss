@@ -67,23 +67,23 @@ Source: "..\..\UI\NFCRing.UI.View\bin\Release\System.Windows.Interactivity.dll";
 Source: "..\..\UI\NFCRing.UI.View\bin\Release\Icon.ico"; DestDir: {#AppPath}; Flags: ignoreversion
 
 ; Service files
-Source: "..\..\Service\NFCRingServiceHost\bin\Release\NFCRingServiceHost.exe.config"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
-Source: "..\..\Service\NFCRingServiceHost\bin\Release\Newtonsoft.Json.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
-Source: "..\..\Service\NFCRingServiceHost\bin\Release\NFCRingServiceCommon.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
-Source: "..\..\Service\NFCRingServiceHost\bin\Release\NFCRingServiceCore.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
-Source: "..\..\Service\NFCRingServiceHost\bin\Release\NFCRingServiceHost.exe"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
-Source: "..\..\Release\WinAPIWrapper.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
-Source: "..\..\Service\Plugins\NFCRing.Plugin.Lock\bin\Release\NFCRing.Plugin.Lock.dll"; DestDir: {#ServiceAppPluginsPath}; Flags: ignoreversion
-Source: "..\..\Service\Plugins\NFCRing.Plugin.Unlock\bin\Release\NFCRing.Plugin.Unlock.dll"; DestDir: {#ServiceAppPluginsPath}; Flags: ignoreversion
-Source: "..\..\Service\Plugins\NFCRing.Plugin.Unlock\bin\Release\NFCRingServiceCommon.dll"; DestDir: {#ServiceAppPluginsPath}; Flags: ignoreversion
-Source: "..\..\Service\Plugins\NFCRing.Plugin.Unlock\bin\Release\NFCRingServiceCore.dll"; DestDir: {#ServiceAppPluginsPath}; Flags: ignoreversion
-Source: "..\..\Service\Plugins\NFCRing.Plugin.Unlock\bin\Release\Newtonsoft.Json.dll"; DestDir: {#ServiceAppPluginsPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\NFCRingServiceHost.exe.config"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\Newtonsoft.Json.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\NFCRingServiceCommon.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\NFCRingServiceCore.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\NFCRingServiceHost.exe"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\WinAPIWrapper.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\Plugins\NFCRing.Plugin.Lock.dll"; DestDir: {#ServiceAppPluginsPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\Plugins\NFCRing.Plugin.Unlock.dll"; DestDir: {#ServiceAppPluginsPath}; Flags: ignoreversion
+;Source: "..\..\bin\Release\Service\Plugins\NFCRingServiceCommon.dll"; DestDir: {#ServiceAppPluginsPath}; Flags: ignoreversion
+;Source: "..\..\bin\Release\Service\Plugins\NFCRingServiceCore.dll"; DestDir: {#ServiceAppPluginsPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\Plugins\Newtonsoft.Json.dll"; DestDir: {#ServiceAppPluginsPath}; Flags: ignoreversion
 
-Source: "..\..\Management\RegistryWriter\bin\Release\CredentialRegistration.exe.config"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
-Source: "..\..\Management\RegistryWriter\bin\Release\Newtonsoft.Json.dll"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
-Source: "..\..\Management\RegistryWriter\bin\Release\NFCRingServiceCommon.dll"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
-Source: "..\..\Management\RegistryWriter\bin\Release\CredentialRegistration.exe"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
-Source: "..\..\Release\WinAPIWrapper.dll"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Management\CredentialRegistration.exe.config"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Management\Newtonsoft.Json.dll"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Management\NFCRingServiceCommon.dll"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Management\CredentialRegistration.exe"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Management\WinAPIWrapper.dll"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
 
 Source: "..\..\bin\Release\Credential\CredUILauncher.exe"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Credential\NFCRingCredentialProvider.dll"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
