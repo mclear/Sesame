@@ -1,4 +1,5 @@
-﻿using System.DirectoryServices.AccountManagement;
+﻿using NFCRing.Service.Common;
+using System.DirectoryServices.AccountManagement;
 
 namespace NFCRing.UI.ViewModel.Services
 {
@@ -13,9 +14,19 @@ namespace NFCRing.UI.ViewModel.Services
 
         public static bool IsValidCredentials(string username, string password)
         {
-            using (PrincipalContext context = new PrincipalContext(ContextType.Domain))
+            if(Crypto.IsDomainJoined()) // check if we're on a domain
             {
-                return context.ValidateCredentials(username, password);
+                using (PrincipalContext context = new PrincipalContext(ContextType.Domain))
+                {
+                    return context.ValidateCredentials(username, password);
+                }
+            }
+            else
+            {
+                using (PrincipalContext context = new PrincipalContext(ContextType.Machine))
+                {
+                    return context.ValidateCredentials(username, password);
+                }
             }
         }
     }

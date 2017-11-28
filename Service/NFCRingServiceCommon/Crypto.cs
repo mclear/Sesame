@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Security.Cryptography;
+using System.Runtime.InteropServices;
 
 namespace NFCRing.Service.Common
 {
@@ -107,5 +108,44 @@ namespace NFCRing.Service.Common
             byte[] hash = (new SHA1Managed()).ComputeHash(Encoding.UTF8.GetBytes(s));
             return string.Join("", hash.Select(b => b.ToString("x2")).ToArray());
         }
+
+        public static bool IsDomainJoined()
+        {
+            Win32.NetJoinStatus status = Win32.NetJoinStatus.NetSetupUnknownStatus;
+            IntPtr pDomain = IntPtr.Zero;
+            int result = Win32.NetGetJoinInformation(null, out pDomain, out status);
+            if (pDomain != IntPtr.Zero)
+            {
+                Win32.NetApiBufferFree(pDomain);
+            }
+            if (result == Win32.ErrorSuccess)
+            {
+                return status == Win32.NetJoinStatus.NetSetupDomainName;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
+    internal class Win32
+    {
+        public const int ErrorSuccess = 0;
+
+        [DllImport("Netapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern int NetGetJoinInformation(string server, out IntPtr domain, out NetJoinStatus status);
+
+        [DllImport("Netapi32.dll")]
+        public static extern int NetApiBufferFree(IntPtr Buffer);
+
+        public enum NetJoinStatus
+        {
+            NetSetupUnknownStatus = 0,
+            NetSetupUnjoined,
+            NetSetupWorkgroupName,
+            NetSetupDomainName
+        }
+
     }
 }

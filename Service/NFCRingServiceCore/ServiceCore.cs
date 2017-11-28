@@ -401,7 +401,6 @@ namespace NFCRing.Service.Core
                             case MessageType.CancelRegistration:
                                 {
                                     SystemStatus.AwaitingToken = false;
-                                    SystemStatus.AwaitingToken = false;
                                     break;
                                 }
                             case MessageType.GetToken:
