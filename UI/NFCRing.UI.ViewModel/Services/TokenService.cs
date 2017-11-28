@@ -99,9 +99,30 @@ namespace NFCRing.UI.ViewModel.Services
             return newToken;
         }
 
+        public async Task SendCancelAsync()
+        {
+            await Task.Factory.StartNew(() =>
+            {
+                TcpClient client = null;
+
+                SendCancel(ref client);
+            });
+        }
+
         private string GetNewToken(CancellationToken cancellationToken)
         {
             TcpClient client = null;
+
+            _logger.Trace($"Send GetToken");
+
+            var getTokenMessage = ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.GetToken)));
+
+            _logger.Trace($"GetToken: {getTokenMessage}");
+
+            if (getTokenMessage <= 0)
+                return null;
+
+            _logger.Trace($"Send ReadNetworkMessage");
 
             var i = 0;
 
@@ -122,7 +143,11 @@ namespace NFCRing.UI.ViewModel.Services
                 i++;
 
                 if (i > 10)
+                {
+                    ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.CancelRegistration)));
+
                     return "23442453456";
+                }
 
                 Thread.Sleep(200);
 #endif
@@ -130,7 +155,18 @@ namespace NFCRing.UI.ViewModel.Services
                 Thread.Sleep(50);
             }
 
+            SendCancel(ref client);
+
             return null;
+        }
+
+        private void SendCancel(ref TcpClient client)
+        {
+            _logger.Trace("Send CancelRegistration");
+
+            var cancelMessage = ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.CancelRegistration)));
+
+            _logger.Trace($"CancelRegistration: {cancelMessage}");
         }
 
         private async Task<string> GetRingNameAsync(string login)

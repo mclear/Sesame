@@ -18,5 +18,7 @@ namespace NFCRing.UI.ViewModel.Services
         Task AddTokenAsync(string userName, string password, string token);
 
         Task<string> GetNewTokenAsync(CancellationToken cancellationToken);
+
+        Task SendCancelAsync();
     }
 }

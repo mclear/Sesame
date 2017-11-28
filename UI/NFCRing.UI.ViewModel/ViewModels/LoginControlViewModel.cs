@@ -69,7 +69,7 @@ namespace NFCRing.UI.ViewModel
 
         public async Task InitializeAsync()
         {
-            _serviceStarted = _tokenService.Ping();
+            _serviceStarted = await Task.Factory.StartNew(() => _tokenService.Ping());
 
             if (!_serviceStarted)
             {

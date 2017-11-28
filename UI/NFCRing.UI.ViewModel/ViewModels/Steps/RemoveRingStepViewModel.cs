@@ -46,9 +46,11 @@ namespace NFCRing.UI.ViewModel
             ToNext();
         }
 
-        private void Cancel()
+        private async void Cancel()
         {
             _cancellationTokenSource.Cancel();
+
+            await _tokenService.SendCancelAsync();
         }
     }
 }
