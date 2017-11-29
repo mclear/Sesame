@@ -9,6 +9,7 @@ namespace NFCRing.UI.ViewModel
     {
         private readonly ITokenService _tokenService;
         private readonly IDialogService _dialogService;
+        private readonly IUserCredentials _userCredentials;
         private string _userName;
         private bool _isError;
 
@@ -32,12 +33,13 @@ namespace NFCRing.UI.ViewModel
 
         public SecureString Password { get; set; }
 
-        public LoginStepViewModel(ITokenService tokenService, IDialogService dialogService)
+        public LoginStepViewModel(ITokenService tokenService, IDialogService dialogService, IUserCredentials userCredentials)
         {
             _tokenService = tokenService;
             _dialogService = dialogService;
+            _userCredentials = userCredentials;
 
-            UserName = CurrentUser.Get();
+            UserName = _userCredentials.GetName();
         }
 
         private async Task<bool> Save()
@@ -64,14 +66,16 @@ namespace NFCRing.UI.ViewModel
                 return false;
             }
 
-            if (string.IsNullOrEmpty(NewRingViewModel.Password))
+            var isValidCredentials = _userCredentials.IsValidCredentials(NewRingViewModel.Login, NewRingViewModel.Password);
+
+            if (string.IsNullOrEmpty(NewRingViewModel.Password) && !isValidCredentials)
             {
                 _dialogService.ShowErrorDialog("Please input password");
 
                 return false;
             }
 
-            if (!CurrentUser.IsValidCredentials(NewRingViewModel.Login, NewRingViewModel.Password))
+            if (!isValidCredentials)
             {
                 _dialogService.ShowErrorDialog("Please input valid User credentials");
 

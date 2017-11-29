@@ -10,10 +10,12 @@ namespace NFCRing.UI.ViewModel.Services
 {
     public class TokenService : ITokenService
     {
+        private readonly IUserCredentials _userCredentials;
         private readonly ILogger _logger;
 
-        public TokenService(ILogger logger)
+        public TokenService(IUserCredentials userCredentials, ILogger logger)
         {
+            _userCredentials = userCredentials;
             _logger = logger;
         }
 
@@ -59,7 +61,7 @@ namespace NFCRing.UI.ViewModel.Services
             TcpClient client = null;
 
             ServiceCommunication.SendNetworkMessage(ref client,
-                JsonConvert.SerializeObject(new NetworkMessage(MessageType.Delete) {Token = token, Username = CurrentUser.Get()}));
+                JsonConvert.SerializeObject(new NetworkMessage(MessageType.Delete) {Token = token, Username = _userCredentials.GetName()}));
 
             _logger.Trace($"RemoveTokenAsync: {token}");
 
@@ -175,7 +177,7 @@ namespace NFCRing.UI.ViewModel.Services
 
             var id = "00";
 
-            for (var i = 1; i < CurrentUser.MaxTokensCount; i++)
+            for (var i = 1; i < _userCredentials.MaxTokensCount; i++)
             {
                 var name = i.ToString("00");
 

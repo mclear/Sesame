@@ -45,6 +45,7 @@ namespace NFCRing.UI.View.ViewModel
             builder.RegisterType<DialogService>().As<IDialogService>().SingleInstance();
             builder.RegisterType<TokenService>().As<ITokenService>().SingleInstance();
             builder.RegisterType<SynchronizationService>().As<ISynchronizationService>().SingleInstance();
+            builder.RegisterType<UserCredentials>().As<IUserCredentials>().SingleInstance();
         }
 
         private static void RegisterViewModels(ContainerBuilder builder)

@@ -13,6 +13,7 @@ namespace NFCRing.UI.ViewModel
         private readonly IDialogService _dialogService;
         private readonly ITokenService _tokenService;
         private readonly ISynchronizationService _synchronizationService;
+        private readonly IUserCredentials _userCredentials;
         private readonly ILogger _logger;
         private ObservableCollection<RingItemViewModel> _items;
         private RingItemViewModel _selectedItem;
@@ -37,7 +38,7 @@ namespace NFCRing.UI.ViewModel
             set { Set(ref _isBusy, value); }
         }
 
-        public bool AllowAdd => _serviceStarted && Items.Count < CurrentUser.MaxTokensCount;
+        public bool AllowAdd => _serviceStarted && Items.Count < _userCredentials.MaxTokensCount;
 
         /// <summary>
         /// Add new ring item command.
@@ -52,11 +53,12 @@ namespace NFCRing.UI.ViewModel
         /// <summary>
         /// Ctor.
         /// </summary>
-        public LoginControlViewModel(IDialogService dialogService, ITokenService tokenService, ISynchronizationService synchronizationService, ILogger logger)
+        public LoginControlViewModel(IDialogService dialogService, ITokenService tokenService, ISynchronizationService synchronizationService, IUserCredentials userCredentials, ILogger logger)
         {
             _dialogService = dialogService;
             _tokenService = tokenService;
             _synchronizationService = synchronizationService;
+            _userCredentials = userCredentials;
             _logger = logger;
 
             Title = "NFC Ring Login Control";
@@ -80,7 +82,7 @@ namespace NFCRing.UI.ViewModel
                 return;
             }
 
-            var tokens = await _tokenService.GetTokensAsync(CurrentUser.Get());
+            var tokens = await _tokenService.GetTokensAsync(_userCredentials.GetName());
 
             if (Items.Any())
                 _synchronizationService.RunInMainThread(() => Items.Clear());

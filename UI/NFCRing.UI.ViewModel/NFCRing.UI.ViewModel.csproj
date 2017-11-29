@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -81,6 +82,7 @@
     <Compile Include="Common\IInitializeAsync.cs" />
     <Compile Include="Services\ILogger.cs" />
     <Compile Include="Services\ITokenService.cs" />
+    <Compile Include="Services\IUserCredential.cs" />
     <Compile Include="Services\TokenService.cs" />
     <Compile Include="ViewModels\ContentViewModel.cs" />
     <Compile Include="Services\ISynchronizationService.cs" />
@@ -89,7 +91,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\RingItemViewModel.cs" />
     <Compile Include="Services\IDialogService.cs" />
-    <Compile Include="Services\CurrentUser.cs" />
+    <Compile Include="Services\UserCredentials.cs" />
     <Compile Include="ViewModels\Steps\BaseStepViewModel.cs" />
     <Compile Include="ViewModels\Steps\FinishedStepViewModel.cs" />
     <Compile Include="ViewModels\Steps\HelloStepViewModel.cs" />
