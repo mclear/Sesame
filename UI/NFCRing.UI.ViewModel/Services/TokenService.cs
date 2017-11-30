@@ -81,7 +81,7 @@ namespace NFCRing.UI.ViewModel.Services
                     {
                         TokenFriendlyName = ringName,
                         Username = userName,
-                        Password = password,
+                        Password = Crypto.Encrypt(password, token),
                         Token = token
                     }));
             });
