@@ -77,7 +77,7 @@ namespace NFCRing.UI.ViewModel.Services
             await Task.Factory.StartNew(() =>
             {
                 ServiceCommunication.SendNetworkMessage(ref client,
-                    JsonConvert.SerializeObject(new NetworkMessage(MessageType.RegisterToken)
+                    JsonConvert.SerializeObject(new NetworkMessage(MessageType.RegisterAll)
                     {
                         TokenFriendlyName = ringName,
                         Username = userName,
@@ -131,13 +131,13 @@ namespace NFCRing.UI.ViewModel.Services
 
             try
             {
-#if DEBUG
-                Thread.Sleep(2000);
+//#if DEBUG
+//                Thread.Sleep(2000);
 
-                _logger.Trace($"DEBUG network message");
+//                _logger.Trace($"DEBUG network message");
 
-                return "23442453452346";
-#else
+//                return "23442453452346";
+//#else
                 var message = ServiceCommunication.ReadNetworkMessage(ref client);
                 if (!string.IsNullOrEmpty(message))
                 {
@@ -147,7 +147,7 @@ namespace NFCRing.UI.ViewModel.Services
                 }
 
                 return null;
-#endif
+//#endif
             }
             finally
             {

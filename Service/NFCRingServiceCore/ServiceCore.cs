@@ -488,6 +488,16 @@ namespace NFCRing.Service.Core
                                     }
                                     break;
                                 }
+                            case MessageType.RegisterAll:
+                                {
+                                    Log("Registering new token against all plugins");
+                                    string dht = RegisterToken(nm.Username, nm.Token, nm.TokenFriendlyName);
+                                    foreach(Lazy<INFCRingServicePlugin> p in plugins)
+                                    {
+                                        RegisterCredential(nm.Username, nm.Password, dht, p.Value.GetPluginName());
+                                    }
+                                    break;
+                                }
                             default:
                                 // failed
                                 Log("Unknown network message received: " + message);
@@ -607,7 +617,7 @@ namespace NFCRing.Service.Core
 
         }
 
-        private void RegisterToken(string user, string rawToken, string name)
+        private string RegisterToken(string user, string rawToken, string name)
         {
             // hash the token
             // remove the token registered anywhere else
@@ -638,9 +648,11 @@ namespace NFCRing.Service.Core
                 ApplicationConfiguration.Users.Add(u);
                 target = u;
             }
+            string dht = Crypto.Hash(hashedToken + target.Salt);
             Log("Token registered");
-            target.Tokens.Add(Crypto.Hash(hashedToken + target.Salt), name);
+            target.Tokens.Add(dht, name);
             SaveConfig();
+            return dht;
         }
 
         private void RegisterCredential(string user, string password, string tokenId, string pluginName)
@@ -652,6 +664,7 @@ namespace NFCRing.Service.Core
             //{
                 // username and domain
             domain = loggedInUser.Substring(0,loggedInUser.LastIndexOf('\\'));
+            user = user.Replace(domain + @"\", "");
             //}
             if (loggedInUser.Substring(loggedInUser.LastIndexOf('\\')+1).ToLower() == user.ToLower())
             {
@@ -662,11 +675,22 @@ namespace NFCRing.Service.Core
                 {
                     if(u.Username.ToLower() == GetCurrentUsername().ToLower())
                     {
+                        Lazy<INFCRingServicePlugin> lp = plugins.Where(x => x.Value.GetPluginName() == pluginName).FirstOrDefault();
+                        if (lp == null)
+                            break;
+                        Dictionary<string, object> p = new Dictionary<string, object>();
+                        if (lp.Value.GetParameters().Where(y => y.Name == "Username").FirstOrDefault() != null)
+                            p.Add("Username", user);
+                        if (lp.Value.GetParameters().Where(y => y.Name == "Password").FirstOrDefault() != null)
+                            p.Add("Password", password);
+                        if (lp.Value.GetParameters().Where(y => y.Name == "Domain").FirstOrDefault() != null)
+                            p.Add("Domain", domain);
+
                         u.Events.Add(new Event()
                         {
                             PluginName = pluginName,
                             Token = tokenId,
-                            Parameters = new Dictionary<string, object>() { { "Username", user }, { "Password", password }, { "Domain", domain } }
+                            Parameters = p
                         });
                         break;
                     }

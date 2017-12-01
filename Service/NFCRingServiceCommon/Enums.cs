@@ -24,6 +24,7 @@ namespace NFCRing.Service.Common
         GetState,
         State,
         Message,
-        Delete
+        Delete,
+        RegisterAll
     }
 }

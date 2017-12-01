@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using NFCRing.UI.ViewModel.Services;
+using NFCRing.Service.Common;
 
 namespace NFCRing.UI.ViewModel.ViewModels
 {

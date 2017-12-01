@@ -123,6 +123,7 @@ namespace NFCRing.Plugin.Unlock
             List<Parameter> lp = new List<Parameter>();
             lp.Add(new Parameter { Name = "Username", DataType = typeof(string), Default = "", IsOptional = false });
             lp.Add(new Parameter { Name = "Password", DataType = typeof(string), Default = "", IsOptional = false });
+            lp.Add(new Parameter { Name = "Domain", DataType = typeof(string), Default = "", IsOptional = true });
             return lp;
         }
     }
