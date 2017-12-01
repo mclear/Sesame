@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 
-namespace NFCRing.UI.ViewModel
+namespace NFCRing.UI.ViewModel.ViewModels
 {
     public abstract class BaseStepViewModel : ViewModelBase, IStepViewModel, IInitializeAsync
     {

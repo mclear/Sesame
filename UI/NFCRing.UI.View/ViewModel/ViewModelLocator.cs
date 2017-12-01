@@ -4,7 +4,7 @@ using Autofac;
 using Autofac.Extras.CommonServiceLocator;
 using Microsoft.Practices.ServiceLocation;
 using NFCRing.UI.View.Services;
-using NFCRing.UI.ViewModel;
+using NFCRing.UI.ViewModel.ViewModels;
 using NFCRing.UI.ViewModel.Services;
 
 namespace NFCRing.UI.View.ViewModel

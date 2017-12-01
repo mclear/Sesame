@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Practices.ServiceLocation;
 
-namespace NFCRing.UI.ViewModel
+namespace NFCRing.UI.ViewModel.ViewModels
 {
     public class FinishedStepViewModel : BaseStepViewModel
     {

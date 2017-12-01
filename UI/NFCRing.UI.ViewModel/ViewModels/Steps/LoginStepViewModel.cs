@@ -3,19 +3,16 @@ using System.Security;
 using System.Threading.Tasks;
 using NFCRing.UI.ViewModel.Services;
 
-namespace NFCRing.UI.ViewModel
+namespace NFCRing.UI.ViewModel.ViewModels
 {
     public class LoginStepViewModel : BaseStepViewModel
     {
-        private readonly ITokenService _tokenService;
         private readonly IDialogService _dialogService;
         private readonly IUserCredentials _userCredentials;
         private string _userName;
         private bool _isError;
 
-        public override int Index => 5;
-
-        public override string NextText => "Save";
+        public override int Index => 3;
 
         public override Func<Task<bool>> NextAction => Save;
 
@@ -33,9 +30,8 @@ namespace NFCRing.UI.ViewModel
 
         public SecureString Password { get; set; }
 
-        public LoginStepViewModel(ITokenService tokenService, IDialogService dialogService, IUserCredentials userCredentials)
+        public LoginStepViewModel(IDialogService dialogService, IUserCredentials userCredentials)
         {
-            _tokenService = tokenService;
             _dialogService = dialogService;
             _userCredentials = userCredentials;
 
@@ -51,8 +47,6 @@ namespace NFCRing.UI.ViewModel
 
             if (!Validate())
                 return false;
-
-            await _tokenService.AddTokenAsync(NewRingViewModel.Login, NewRingViewModel.Password, NewRingViewModel.Token);
 
             return true;
         }

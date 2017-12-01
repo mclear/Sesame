@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NFCRing.UI.ViewModel.Services;
 
-namespace NFCRing.UI.ViewModel
+namespace NFCRing.UI.ViewModel.ViewModels
 {
     public sealed class PlaceRingStepViewModel : BaseStepViewModel
     {

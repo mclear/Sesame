@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NFCRing.UI.ViewModel.Services;
 
-namespace NFCRing.UI.ViewModel
+namespace NFCRing.UI.ViewModel.ViewModels
 {
     public sealed class RemoveRingStepViewModel : BaseStepViewModel
     {
@@ -11,7 +11,7 @@ namespace NFCRing.UI.ViewModel
         private readonly IDialogService _dialogService;
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-        public override int Index => 3;
+        public override int Index => 4;
 
         public override bool NextIsVisible => false;
 
@@ -42,6 +42,8 @@ namespace NFCRing.UI.ViewModel
 
                 return;
             }
+
+            await _tokenService.AddTokenAsync(NewRingViewModel.Login, NewRingViewModel.Password, NewRingViewModel.Token);
 
             ToNext();
         }

@@ -1,7 +1,7 @@
-﻿namespace NFCRing.UI.ViewModel
+﻿namespace NFCRing.UI.ViewModel.ViewModels
 {
     public class SuccessfullyStepViewModel : BaseStepViewModel
     {
-        public override int Index => 4;
+        public override int Index => 5;
     }
 }

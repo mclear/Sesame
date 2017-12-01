@@ -126,13 +126,18 @@ namespace NFCRing.UI.ViewModel.Services
 
             _logger.Trace($"Send ReadNetworkMessage");
 
-            var i = 0;
+            if (cancellationToken.IsCancellationRequested)
+                return null;
 
-            while (true)
+            try
             {
-                if (cancellationToken.IsCancellationRequested)
-                    break;
+#if DEBUG
+                Thread.Sleep(2000);
 
+                _logger.Trace($"DEBUG network message");
+
+                return "23442453452346";
+#else
                 var message = ServiceCommunication.ReadNetworkMessage(ref client);
                 if (!string.IsNullOrEmpty(message))
                 {
@@ -141,25 +146,13 @@ namespace NFCRing.UI.ViewModel.Services
                     return networkMessage?.Token;
                 }
 
-#if DEBUG
-                i++;
-
-                if (i > 10)
-                {
-                    ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.CancelRegistration)));
-
-                    return "23442453456";
-                }
-
-                Thread.Sleep(200);
+                return null;
 #endif
-
-                Thread.Sleep(50);
             }
-
-            SendCancel(ref client);
-
-            return null;
+            finally
+            {
+                SendCancel(ref client);
+            }
         }
 
         private void SendCancel(ref TcpClient client)

@@ -3,10 +3,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                    xmlns:viewModel="clr-namespace:NFCRing.UI.ViewModel;assembly=NFCRing.UI.ViewModel"
+                    xmlns:viewModels="clr-namespace:NFCRing.UI.ViewModel.ViewModels;assembly=NFCRing.UI.ViewModel"
                     xmlns:view="clr-namespace:NFCRing.UI.View"
                     mc:Ignorable="d"
-                    d:DataContext="{d:DesignInstance viewModel:PlaceRingStepViewModel}">
+                    d:DataContext="{d:DesignInstance viewModels:PlaceRingStepViewModel}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

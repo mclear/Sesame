@@ -6,7 +6,7 @@ using GalaSoft.MvvmLight.Command;
 using Microsoft.Practices.ServiceLocation;
 using NFCRing.UI.ViewModel.Services;
 
-namespace NFCRing.UI.ViewModel
+namespace NFCRing.UI.ViewModel.ViewModels
 {
     public class LoginControlViewModel : ContentViewModel, IInitializeAsync
     {

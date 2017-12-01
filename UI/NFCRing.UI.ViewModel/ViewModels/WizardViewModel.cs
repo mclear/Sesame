@@ -5,7 +5,7 @@ using System.Linq;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Practices.ServiceLocation;
 
-namespace NFCRing.UI.ViewModel
+namespace NFCRing.UI.ViewModel.ViewModels
 {
     public class WizardViewModel : ContentViewModel
     {

@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using NFCRing.UI.ViewModel;
+using NFCRing.UI.ViewModel.ViewModels;
 
 namespace NFCRing.UI.View.Views
 {

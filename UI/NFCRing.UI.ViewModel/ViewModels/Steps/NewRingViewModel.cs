@@ -1,4 +1,4 @@
-﻿namespace NFCRing.UI.ViewModel
+﻿namespace NFCRing.UI.ViewModel.ViewModels
 {
     public class NewRingViewModel
     {

@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Practices.ServiceLocation;
-using NFCRing.UI.ViewModel;
+using NFCRing.UI.ViewModel.ViewModels;
 using NFCRing.UI.ViewModel.Services;
 
 namespace NFCRing.UI.View
