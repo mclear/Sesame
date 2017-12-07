@@ -109,7 +109,7 @@ namespace NFCRing.UI.ViewModel.ViewModels
             if (item == null)
                 return;
 
-            if (!_dialogService.ShowQuestionDialog($"Remove {item.Name}"))
+            if (!_dialogService.ShowQuestionDialog($"Remove {item.Name}?"))
                 return;
 
             await RemoveAsync(item.Token);

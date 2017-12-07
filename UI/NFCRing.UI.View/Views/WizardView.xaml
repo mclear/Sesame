@@ -15,8 +15,8 @@
         </Grid.RowDefinitions>
 
         <!-- image -->
-        <Image Source="/NFCRing.UI.View;component/Assets/nfcring_logo_1x.png"
-               Height="24"
+        <Image Source="/NFCRing.UI.View;component/Assets/nfcring_logo_2x.png"
+               Height="36"
                HorizontalAlignment="Center"/>
         
         <!-- step content -->

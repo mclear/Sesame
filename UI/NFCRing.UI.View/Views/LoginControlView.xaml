@@ -146,7 +146,7 @@
 
         <!-- image -->
         <Image Grid.Row="1"
-               Source="/NFCRing.UI.View;component/Assets/nfcring_logo_1x.png"
+               Source="/NFCRing.UI.View;component/Assets/nfcring_logo_12.png"
                Height="12"
                HorizontalAlignment="Left"
                Margin="{StaticResource ContentMarginLight}"/>

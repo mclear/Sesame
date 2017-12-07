@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="{Binding Content.Title}"
+        MinHeight="550"
+        MinWidth="700"
         Height="550"
         Width="825"
         WindowStartupLocation="CenterScreen"

@@ -247,8 +247,6 @@
   <ItemGroup>
     <Resource Include="Assets\nfcring_logo_1x.png" />
     <Resource Include="Assets\nfcring_logo_2x.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Assets\nfc_reader_1x.png" />
     <Resource Include="Assets\nfc_reader_2x.png" />
   </ItemGroup>
@@ -283,6 +281,9 @@
     <EmbeddedResource Include="Icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\nfcring_logo_12.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
