@@ -20,5 +20,9 @@ namespace NFCRing.UI.ViewModel.Services
         Task<string> GetNewTokenAsync(CancellationToken cancellationToken);
 
         Task SendCancelAsync();
+
+        void UpdateTokenImage(string token, ImageData imageData);
+
+        ImageData GetTokenImage(string token);
     }
 }

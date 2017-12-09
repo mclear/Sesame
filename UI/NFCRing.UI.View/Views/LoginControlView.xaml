@@ -93,6 +93,7 @@
 
             <!-- selected item data -->
             <ListBox Grid.Column="2"
+                     x:Name="ItemsListBox"
                      ItemsSource="{Binding Items}"
                      Margin="{StaticResource ContentMarginLeft}"
                      BorderThickness="0">
@@ -102,8 +103,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate>
-                                        <!--<DataTemplate DataType="viewModel:RingItemViewModel">-->
-                                        <Grid>
+                                        <Grid d:DataContext="{d:DesignInstance viewModels:RingItemViewModel}" Margin="0,10,0,0">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
@@ -111,10 +111,42 @@
                                                 <RowDefinition Height="*"/>
                                             </Grid.RowDefinitions>
 
-                                            <!-- name -->
-                                            <TextBlock Text="{Binding Name}"
-                                                           FontSize="{StaticResource MediumFontSize}"
-                                                           Foreground="{StaticResource TextBrush1}"/>
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+
+                                                <!-- image -->
+                                                <Border Margin="0,5,10,0">
+                                                    <Image Height="32" Width="32">
+                                                        <Image.Style>
+                                                            <Style TargetType="{x:Type Image}">
+                                                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                                <Setter Property="Source" Value="{Binding Image}" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding Image}" Value="{x:Null}">
+                                                                        <Setter Property="Source" Value="/NFCRing.UI.View;component/Assets/DoubleCircle_36.png" />
+                                                                    </DataTrigger>
+                                                                    <Trigger Property="Image.IsMouseOver" Value="True">
+                                                                        <Setter Property="Cursor" Value="Hand" />
+                                                                    </Trigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Image.Style>
+                                                        <Image.InputBindings>
+                                                            <MouseBinding MouseAction="LeftClick"
+                                                                          Command="{Binding ElementName=ItemsListBox, Path=DataContext.SelectImageCommand}"
+                                                                          CommandParameter="{Binding Token}"/>
+                                                        </Image.InputBindings>
+                                                    </Image>
+                                                </Border>
+                                                
+                                                <!-- name -->
+                                                <TextBox Text="{Binding Name, UpdateSourceTrigger=LostFocus}"
+                                                         FontSize="{StaticResource MediumFontSize}"
+                                                         Foreground="{StaticResource TextBrush1}"
+                                                         VerticalAlignment="Center"
+                                                         MaxLength="32"
+                                                         BorderThickness="0"/>
+                                            </StackPanel>
 
                                             <!-- token -->
                                             <StackPanel Grid.Row="1" Margin="{StaticResource ContentMarginLightTop}" Orientation="Horizontal">
@@ -124,23 +156,19 @@
 
                                             <!-- remove button -->
                                             <Button Grid.Row="2"
-                                                        Content="Remove"
-                                                        Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ListBox}, Path=DataContext.RemoveCommand}"
-                                                        CommandParameter="{Binding}"
-                                                        HorizontalAlignment="Left"
-                                                        Margin="{StaticResource ContentMarginLightTop}"
-                                                        Style="{StaticResource ButtonStyle}"/>
+                                                    Content="Remove"
+                                                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ListBox}, Path=DataContext.RemoveCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    HorizontalAlignment="Left"
+                                                    Margin="{StaticResource ContentMarginLightTop}"
+                                                    Style="{StaticResource ButtonStyle}"/>
                                         </Grid>
-                                        <!--</DataTemplate>-->
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
                         </Style.Setters>
                     </Style>
                 </ListBox.ItemContainerStyle>
-                <!--<ListBox.ItemTemplate>
-                    
-                </ListBox.ItemTemplate>-->
             </ListBox>
         </Grid>
 

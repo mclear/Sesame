@@ -6,6 +6,7 @@ namespace NFCRing.UI.ViewModel.ViewModels
     {
         private string _name;
         private string _token;
+        private byte[] _image;
 
         /// <summary>
         /// Gets or sets the Name.
@@ -23,6 +24,15 @@ namespace NFCRing.UI.ViewModel.ViewModels
         {
             get { return _token; }
             set { Set(ref _token, value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the Image.
+        /// </summary>
+        public byte[] Image
+        {
+            get { return _image; }
+            set { Set(ref _image, value); }
         }
     }
 }

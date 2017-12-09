@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -51,6 +52,11 @@ namespace NFCRing.UI.ViewModel.ViewModels
         public RelayCommand<RingItemViewModel> RemoveCommand { get; }
 
         /// <summary>
+        /// Select image command.
+        /// </summary>
+        public RelayCommand<string> SelectImageCommand { get; }
+
+        /// <summary>
         /// Ctor.
         /// </summary>
         public LoginControlViewModel(IDialogService dialogService, ITokenService tokenService, ISynchronizationService synchronizationService, IUserCredentials userCredentials, ILogger logger)
@@ -65,6 +71,7 @@ namespace NFCRing.UI.ViewModel.ViewModels
 
             AddCommand = new RelayCommand(Add, () => AllowAdd);
             RemoveCommand = new RelayCommand<RingItemViewModel>(Remove);
+            SelectImageCommand = new RelayCommand<string>(SelectImage);
 
             PropertyChanged += OnPropertyChanged;
         }
@@ -89,7 +96,9 @@ namespace NFCRing.UI.ViewModel.ViewModels
 
             foreach (var token in tokens)
             {
-                _synchronizationService.RunInMainThread(() => Items.Add(new RingItemViewModel { Name = token.Value, Token = token.Key }));
+                var tokenKey = token.Key;
+                var imageData = _tokenService.GetTokenImage(tokenKey);
+                _synchronizationService.RunInMainThread(() => Items.Add(new RingItemViewModel { Name = token.Value, Token = tokenKey, Image = imageData.ImageBytes }));
             }
 
             _synchronizationService.RunInMainThread(() =>
@@ -123,6 +132,31 @@ namespace NFCRing.UI.ViewModel.ViewModels
             await Task.Delay(50);
 
             await InitializeAsync();
+        }
+
+        private void SelectImage(string token)
+        {
+            var item = Items.FirstOrDefault(x => x.Token == token);
+            if (item == null)
+                return;
+
+            ImageData imageData;
+            if (!_dialogService.ShowImageDialog(out imageData))
+                return;
+
+            try
+            {
+                _tokenService.UpdateTokenImage(token, imageData);
+            }
+            catch (Exception ex)
+            {
+                var message = $"Error image saving: {ex.Message}";
+                _logger.Error($"{message}{Environment.NewLine}{ex}");
+                _dialogService.ShowErrorDialog(message);
+                return;
+            }
+
+            item.Image = imageData.ImageBytes;
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)

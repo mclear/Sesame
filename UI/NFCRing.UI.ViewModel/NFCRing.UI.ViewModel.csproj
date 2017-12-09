@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\IInitializeAsync.cs" />
+    <Compile Include="Common\ImageData.cs" />
     <Compile Include="Services\ILogger.cs" />
     <Compile Include="Services\ITokenService.cs" />
     <Compile Include="Services\IUserCredential.cs" />

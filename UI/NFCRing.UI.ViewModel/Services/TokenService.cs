@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
@@ -10,6 +12,8 @@ namespace NFCRing.UI.ViewModel.Services
 {
     public class TokenService : ITokenService
     {
+        private const string ImageDirectory = "Data";
+
         private readonly IUserCredentials _userCredentials;
         private readonly ILogger _logger;
 
@@ -65,6 +69,8 @@ namespace NFCRing.UI.ViewModel.Services
 
             _logger.Trace($"RemoveTokenAsync: {token}");
 
+            RemoveTokenImage(token);
+
             await Task.Yield();
         }
 
@@ -111,6 +117,54 @@ namespace NFCRing.UI.ViewModel.Services
             });
         }
 
+        public void UpdateTokenImage(string token, ImageData imageData)
+        {
+            var imagePath = RemoveTokenImage(token);
+
+            File.WriteAllBytes(imagePath, imageData.ImageBytes);
+        }
+
+        public ImageData GetTokenImage(string token)
+        {
+            var imageData = new ImageData();
+
+            try
+            {
+                var imagePath = GetImagePath(token);
+                if (File.Exists(imagePath))
+                {
+                    var imageBytes = File.ReadAllBytes(imagePath);
+                    imageData.ImageBytes = imageBytes;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error image loading: {ex.Message}{Environment.NewLine}{ex}");
+            }
+
+            return imageData;
+        }
+
+        private static string GetImagePath(string token)
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), ImageDirectory);
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            var imagePath = Path.Combine(path, token);
+            return imagePath;
+        }
+
+        private string RemoveTokenImage(string token)
+        {
+            var imagePath = GetImagePath(token);
+
+            if (File.Exists(imagePath))
+                File.Delete(imagePath);
+
+            return imagePath;
+        }
+
         private string GetNewToken(CancellationToken cancellationToken)
         {
             TcpClient client = null;
@@ -131,13 +185,13 @@ namespace NFCRing.UI.ViewModel.Services
 
             try
             {
-//#if DEBUG
-//                Thread.Sleep(2000);
+#if DEBUG
+                Thread.Sleep(2000);
 
-//                _logger.Trace($"DEBUG network message");
+                _logger.Trace($"DEBUG network message");
 
-//                return "23442453452346";
-//#else
+                return "23452346";
+#else
                 var message = ServiceCommunication.ReadNetworkMessage(ref client);
                 if (!string.IsNullOrEmpty(message))
                 {
@@ -147,7 +201,7 @@ namespace NFCRing.UI.ViewModel.Services
                 }
 
                 return null;
-//#endif
+#endif
             }
             finally
             {
