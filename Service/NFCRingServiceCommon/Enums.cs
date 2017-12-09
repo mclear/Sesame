@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NFCRing.Service.Common
+﻿namespace NFCRing.Service.Common
 {
     public enum ServiceState
     {
@@ -25,6 +19,7 @@ namespace NFCRing.Service.Common
         State,
         Message,
         Delete,
-        RegisterAll
+        RegisterAll,
+        UpdateFriendlyName
     }
 }

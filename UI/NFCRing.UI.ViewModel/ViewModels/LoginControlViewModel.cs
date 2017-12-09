@@ -98,7 +98,10 @@ namespace NFCRing.UI.ViewModel.ViewModels
             {
                 var tokenKey = token.Key;
                 var imageData = _tokenService.GetTokenImage(tokenKey);
-                _synchronizationService.RunInMainThread(() => Items.Add(new RingItemViewModel { Name = token.Value, Token = tokenKey, Image = imageData.ImageBytes }));
+                var ringItemViewModel = new RingItemViewModel { Name = token.Value, Token = tokenKey, Image = imageData.ImageBytes };
+                ringItemViewModel.PropertyChanged += RingItemViewModelOnPropertyChanged;
+
+                _synchronizationService.RunInMainThread(() => Items.Add(ringItemViewModel));
             }
 
             _synchronizationService.RunInMainThread(() =>
@@ -106,6 +109,18 @@ namespace NFCRing.UI.ViewModel.ViewModels
                 RaisePropertyChanged(nameof(AllowAdd));
                 AddCommand.RaiseCanExecuteChanged();
             });
+        }
+
+        private async void RingItemViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var item = sender as RingItemViewModel;
+            if (item == null)
+                return;
+
+            if (e.PropertyName == nameof(RingItemViewModel.Name))
+            {
+                await _tokenService.UpdateNameAsync(item.Token, item.Name);
+            }
         }
 
         private void Add()

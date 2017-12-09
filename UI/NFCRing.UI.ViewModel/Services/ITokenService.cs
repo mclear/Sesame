@@ -24,5 +24,7 @@ namespace NFCRing.UI.ViewModel.Services
         void UpdateTokenImage(string token, ImageData imageData);
 
         ImageData GetTokenImage(string token);
+
+        Task UpdateNameAsync(string token, string name);
     }
 }

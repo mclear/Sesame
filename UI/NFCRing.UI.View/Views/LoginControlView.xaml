@@ -140,7 +140,7 @@
                                                 </Border>
                                                 
                                                 <!-- name -->
-                                                <TextBox Text="{Binding Name, UpdateSourceTrigger=LostFocus}"
+                                                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
                                                          FontSize="{StaticResource MediumFontSize}"
                                                          Foreground="{StaticResource TextBrush1}"
                                                          VerticalAlignment="Center"

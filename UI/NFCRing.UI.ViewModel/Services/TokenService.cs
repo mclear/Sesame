@@ -12,6 +12,7 @@ namespace NFCRing.UI.ViewModel.Services
 {
     public class TokenService : ITokenService
     {
+        private const string ApplicationAppDataDirectory = "NFCRing";
         private const string ImageDirectory = "Data";
 
         private readonly IUserCredentials _userCredentials;
@@ -95,6 +96,23 @@ namespace NFCRing.UI.ViewModel.Services
             _logger.Trace($"AddTokenAsync: username: {userName} token: {token}");
         }
 
+        public async Task UpdateNameAsync(string token, string name)
+        {
+            TcpClient client = null;
+
+            await Task.Factory.StartNew(() =>
+            {
+                ServiceCommunication.SendNetworkMessage(ref client,
+                    JsonConvert.SerializeObject(new NetworkMessage(MessageType.UpdateFriendlyName)
+                    {
+                        TokenFriendlyName = name,
+                        Token = token
+                    }));
+            });
+
+            _logger.Trace($"UpdateNameAsync: name: {name} token: {token}");
+        }
+
         public async Task<string> GetNewTokenAsync(CancellationToken cancellationToken)
         {
             var newToken = await Task.Factory.StartNew(() =>
@@ -147,7 +165,7 @@ namespace NFCRing.UI.ViewModel.Services
 
         private static string GetImagePath(string token)
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), ImageDirectory);
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ApplicationAppDataDirectory, ImageDirectory);
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 

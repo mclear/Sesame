@@ -167,7 +167,7 @@ namespace NFCRing.Service.Core
                         }
                     }
                 }
-                else if (currentId != "" && id == "")
+                else if (currentId != "" && id == "") 
                 {
                     Log("NFCTagUpEvent");
                     string origId = currentId;
@@ -498,6 +498,14 @@ namespace NFCRing.Service.Core
                                     }
                                     break;
                                 }
+                            case MessageType.UpdateFriendlyName:
+                                {
+                                    Log("Update token friendly name");
+
+                                    UpdateFriendlyName(nm);
+
+                                    break;
+                                }
                             default:
                                 // failed
                                 Log("Unknown network message received: " + message);
@@ -522,7 +530,31 @@ namespace NFCRing.Service.Core
                 SystemStatus.AwaitingToken = false;
             if (SystemStatus.CredentialData.Client == null || !SystemStatus.CredentialData.Client.Connected)
                 SystemStatus.CredentialData.ProviderActive = false;
-        }   
+        }
+
+        private void UpdateFriendlyName(NetworkMessage networkMessage)
+        {
+            var token = networkMessage.Token;
+
+            var isUpdated = false;
+
+            if (ApplicationConfiguration.Users != null)
+            {
+                foreach (var user in ApplicationConfiguration.Users)
+                {
+                    var existToken = user.Tokens.FirstOrDefault(x => x.Key == token);
+                    if (Equals(existToken, default(KeyValuePair<string, string>)))
+                        continue;
+
+                    user.Tokens[token] = networkMessage.TokenFriendlyName;
+                    isUpdated = true;
+                    break;
+                }
+            }
+
+            if (isUpdated)
+                SaveConfig();
+        }
 
         private bool LoadConfig()
         {
