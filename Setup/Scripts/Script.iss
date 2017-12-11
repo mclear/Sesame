@@ -1,7 +1,8 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "NFCRing"
-#define MyAppVersion "1.0.0.1"
+#define GitCommitHash "004ccc3"
+#define MyAppVersion "1.0.0.2"
 #define MyAppPublisher "Sesame Company, Inc."
 #define MyAppURL "http://www.example.com/"
 #define MyAppExeName "NFCRing.UI.View.exe"
@@ -35,7 +36,7 @@ DefaultDirName={pf}\{#MyAppName}
 DisableProgramGroupPage=yes
 
 OutputDir=..\Result
-OutputBaseFilename=NFCRing_1.0
+OutputBaseFilename={#MyAppName}_{#GitCommitHash}_{#MyAppVersion}
 
 Compression=lzma
 SolidCompression=yes
