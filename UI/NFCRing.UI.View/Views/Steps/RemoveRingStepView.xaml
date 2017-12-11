@@ -17,7 +17,7 @@
         
         <!-- step text -->
         <Grid Grid.Row="1" Height="140">
-            <TextBlock Text="Remove the ring and place it on the reader again for confirmation"
+            <TextBlock Text="Place the ring on the reader again for confirmation"
                        TextWrapping="Wrap"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
