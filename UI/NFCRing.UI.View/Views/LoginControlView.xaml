@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:viewModels="clr-namespace:NFCRing.UI.ViewModel.ViewModels;assembly=NFCRing.UI.ViewModel"
              xmlns:view="clr-namespace:NFCRing.UI.View"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance viewModels:LoginControlViewModel}">
@@ -139,13 +140,49 @@
                                                     </Image>
                                                 </Border>
                                                 
-                                                <!-- name -->
-                                                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
-                                                         FontSize="{StaticResource MediumFontSize}"
-                                                         Foreground="{StaticResource TextBrush1}"
-                                                         VerticalAlignment="Center"
-                                                         MaxLength="32"
-                                                         BorderThickness="0"/>
+                                                <ContentControl>
+                                                    <ContentControl.Template>
+                                                        <ControlTemplate>
+                                                            <StackPanel x:Name="ContainerStackPanel" Orientation="Horizontal">
+                                                                <!-- name -->
+                                                                <TextBox x:Name="NameTextBox"
+                                                                         Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
+                                                                         FontSize="{StaticResource MediumFontSize}"
+                                                                         Foreground="{StaticResource TextBrush1}"
+                                                                         VerticalAlignment="Center"
+                                                                         MaxLength="32"
+                                                                         BorderThickness="0"/>
+
+                                                                <!-- edit image -->
+                                                                <Image x:Name="EditImage"
+                                                                       Visibility="Hidden"
+                                                                       HorizontalAlignment="Right"
+                                                                       VerticalAlignment="Center"
+                                                                       Source="/NFCRing.UI.View;component/Assets/Edit_36.png"
+                                                                       Height="24"
+                                                                       Width="24"
+                                                                       Margin="5,0">
+                                                                    <i:Interaction.Behaviors>
+                                                                        <view:EditSelectionBehavior TextBox="{Binding ElementName=NameTextBox}"/>
+                                                                    </i:Interaction.Behaviors>
+                                                                </Image>
+                                                            </StackPanel>
+
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger SourceName="NameTextBox" Property="IsFocused" Value="True">
+                                                                    <Setter TargetName="EditImage" Property="Visibility" Value="Visible"/>
+                                                                </Trigger>
+                                                                <Trigger SourceName="ContainerStackPanel" Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="EditImage" Property="Visibility" Value="Visible"/>
+                                                                </Trigger>
+                                                                <Trigger SourceName="EditImage" Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="EditImage" Property="Visibility" Value="Visible"/>
+                                                                    <Setter TargetName="EditImage" Property="Cursor" Value="Hand"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </ContentControl.Template>
+                                                </ContentControl>
                                             </StackPanel>
 
                                             <!-- token -->

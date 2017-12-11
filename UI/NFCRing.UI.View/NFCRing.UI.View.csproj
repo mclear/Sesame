@@ -127,6 +127,7 @@
     <Compile Include="Services\SynchronizationService.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="Common\CustomControl.cs" />
+    <Compile Include="Common\EditSelectionBehavior.cs" />
     <Compile Include="Views\Steps\FinishedStepView.xaml.cs">
       <DependentUpon>FinishedStepView.xaml</DependentUpon>
     </Compile>
@@ -284,6 +285,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\nfcring_logo_12.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Edit_128.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Edit_36.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
