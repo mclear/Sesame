@@ -57,9 +57,20 @@ namespace NFCRing.UI.ViewModel.ViewModels
         public RelayCommand<string> SelectImageCommand { get; }
 
         /// <summary>
+        /// Save name command.
+        /// </summary>
+        public RelayCommand<object> SaveNameCommand { get; }
+
+        /// <summary>
+        /// Cancel edit name command.
+        /// </summary>
+        public RelayCallbackCommand<object> CancelEditNameCommand { get; }
+
+        /// <summary>
         /// Ctor.
         /// </summary>
-        public LoginControlViewModel(IDialogService dialogService, ITokenService tokenService, ISynchronizationService synchronizationService, IUserCredentials userCredentials, ILogger logger)
+        public LoginControlViewModel(IDialogService dialogService, ITokenService tokenService,
+            ISynchronizationService synchronizationService, IUserCredentials userCredentials, ILogger logger)
         {
             _dialogService = dialogService;
             _tokenService = tokenService;
@@ -72,6 +83,8 @@ namespace NFCRing.UI.ViewModel.ViewModels
             AddCommand = new RelayCommand(Add, () => AllowAdd);
             RemoveCommand = new RelayCommand<RingItemViewModel>(Remove);
             SelectImageCommand = new RelayCommand<string>(SelectImage);
+            SaveNameCommand = new RelayCommand<object>(SaveName, x => !string.IsNullOrEmpty(Items.FirstOrDefault(y => Equals(x, y.Token))?.Name));
+            CancelEditNameCommand = new RelayCallbackCommand<object>(CancelEditName);
 
             PropertyChanged += OnPropertyChanged;
         }
@@ -98,8 +111,9 @@ namespace NFCRing.UI.ViewModel.ViewModels
             {
                 var tokenKey = token.Key;
                 var imageData = _tokenService.GetTokenImage(tokenKey);
-                var ringItemViewModel = new RingItemViewModel { Name = token.Value, Token = tokenKey, Image = imageData.ImageBytes };
-                ringItemViewModel.PropertyChanged += RingItemViewModelOnPropertyChanged;
+                var ringItemViewModel =
+                    new RingItemViewModel {Name = token.Value, Token = tokenKey, Image = imageData.ImageBytes};
+                ringItemViewModel.SetDefaultName(ringItemViewModel.Name);
 
                 _synchronizationService.RunInMainThread(() => Items.Add(ringItemViewModel));
             }
@@ -111,21 +125,10 @@ namespace NFCRing.UI.ViewModel.ViewModels
             });
         }
 
-        private async void RingItemViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            var item = sender as RingItemViewModel;
-            if (item == null)
-                return;
-
-            if (e.PropertyName == nameof(RingItemViewModel.Name))
-            {
-                await _tokenService.UpdateNameAsync(item.Token, item.Name);
-            }
-        }
-
         private void Add()
         {
-            ServiceLocator.Current.GetInstance<MainViewModel>().SetContent(ServiceLocator.Current.GetInstance<WizardViewModel>());
+            ServiceLocator.Current.GetInstance<MainViewModel>()
+                .SetContent(ServiceLocator.Current.GetInstance<WizardViewModel>());
         }
 
         private async void Remove(RingItemViewModel item)
@@ -137,6 +140,26 @@ namespace NFCRing.UI.ViewModel.ViewModels
                 return;
 
             await RemoveAsync(item.Token);
+        }
+
+        private async void SaveName(object token)
+        {
+            var item = Items.FirstOrDefault(x => Equals(x.Token, token));
+            if (item == null || item.Name == item.GetDefaultName())
+                return;
+
+            item.SetDefaultName(item.Name);
+            await _tokenService.UpdateNameAsync(item.Token, item.Name);
+        }
+
+        private void CancelEditName(object token)
+        {
+            var item = Items.FirstOrDefault(x => Equals(x.Token, token));
+            if (item == null)
+                return;
+
+            item.Name = item.GetDefaultName();
+            CancelEditNameCommand.Callback?.Invoke();
         }
 
         private async Task RemoveAsync(string token)
@@ -178,6 +201,19 @@ namespace NFCRing.UI.ViewModel.ViewModels
         {
             if (e.PropertyName == nameof(IsBusy))
                 ServiceLocator.Current.GetInstance<MainViewModel>().IsBusy = IsBusy;
+        }
+    }
+
+    public class RelayCallbackCommand<T> : RelayCommand<T>
+    {
+        public Action Callback { get; set; }
+
+        public RelayCallbackCommand(Action<T> execute) : base(execute)
+        {
+        }
+
+        public RelayCallbackCommand(Action<T> execute, Func<T, bool> canExecute) : base(execute, canExecute)
+        {
         }
     }
 }

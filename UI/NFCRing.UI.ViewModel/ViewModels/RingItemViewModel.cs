@@ -7,6 +7,7 @@ namespace NFCRing.UI.ViewModel.ViewModels
         private string _name;
         private string _token;
         private byte[] _image;
+        private string _defaultName;
 
         /// <summary>
         /// Gets or sets the Name.
@@ -34,5 +35,12 @@ namespace NFCRing.UI.ViewModel.ViewModels
             get { return _image; }
             set { Set(ref _image, value); }
         }
+
+        public void SetDefaultName(string name)
+        {
+            _defaultName = name;
+        }
+
+        public string GetDefaultName() => _defaultName;
     }
 }

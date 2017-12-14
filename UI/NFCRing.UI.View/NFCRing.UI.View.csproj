@@ -121,13 +121,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\SkypeButtonControl.xaml.cs">
+      <DependentUpon>SkypeButtonControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\Converters.cs" />
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\NLogger.cs" />
     <Compile Include="Services\SynchronizationService.cs" />
+    <Compile Include="Controls\SkypeTextEditControl.xaml.cs">
+      <DependentUpon>SkypeTextEditControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="Common\CustomControl.cs" />
-    <Compile Include="Common\EditSelectionBehavior.cs" />
     <Compile Include="Views\Steps\FinishedStepView.xaml.cs">
       <DependentUpon>FinishedStepView.xaml</DependentUpon>
     </Compile>
@@ -152,6 +157,10 @@
     <Compile Include="Views\WizardView.xaml.cs">
       <DependentUpon>WizardView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\SkypeButtonControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -164,6 +173,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Controls\SkypeTextEditControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -292,5 +305,14 @@
   <ItemGroup>
     <Resource Include="Assets\Edit_36.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Cancel_128.png" />
+    <Resource Include="Assets\Ok_128.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Cancel_blue_128.png" />
+    <Resource Include="Assets\Ok_blue_128.png" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,0 +1,119 @@
+﻿<UserControl x:Class="NFCRing.UI.View.Controls.SkypeTextEditControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:NFCRing.UI.View.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <ContentControl Focusable="False">
+            <ContentControl.Template>
+                <ControlTemplate>
+                    <StackPanel x:Name="ContainerStackPanel" Orientation="Horizontal">
+                        
+                        <Grid>
+                            <!-- border -->
+                            <Border x:Name="TextBoxBorder"
+                                    Margin="0"
+                                    Padding="0"
+                                    Height="40"
+                                    Visibility="Hidden"
+                                    BorderThickness="1"
+                                    BorderBrush="{StaticResource BorderBrush}"/>
+
+                            <!-- background -->
+                            <Border x:Name="BackgroundBorder"
+                                    Background="Transparent"
+                                    Opacity="0.8"
+                                    CornerRadius="3"
+                                    Margin="1,3"
+                                    Visibility="Visible"/>
+                            
+                            <TextBox Width="0" Height="0" Loaded="FrameworkElement_OnLoaded" Visibility="Visible"/>
+                            
+                            <!-- name -->
+                            <TextBox x:Name="NameTextBox"
+                                     Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=controls:SkypeTextEditControl}, Path=Text, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                     KeyDown="NameTextBox_OnKeyDown"
+                                     LostFocus="NameTextBox_OnLostFocus"
+                                     FontSize="24"
+                                     Foreground="{StaticResource TextBrush1}"
+                                     VerticalAlignment="Center"
+                                     VerticalContentAlignment="Center"
+                                     Background="Transparent"
+                                     MaxLength="32"
+                                     Height="36"
+                                     MinWidth="10"
+                                     BorderThickness="0"/>
+                        </Grid>
+
+                        <!-- ok button -->
+                        <controls:SkypeButtonControl x:Name="OkImage"
+                                                     Visibility="Hidden"
+                                                     Margin="6,0,0,0"
+                                                     ImageSource="/NFCRing.UI.View;component/Assets/Ok_blue_128.png"
+                                                     MouseLeftButtonUp="CommandButton_OnMouseLeftButtonUp">
+                            <controls:SkypeButtonControl.InputBindings>
+                                <MouseBinding MouseAction="LeftClick"
+                                              Command="{Binding RelativeSource={RelativeSource AncestorType=controls:SkypeTextEditControl}, Path=OkCommand}"
+                                              CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=controls:SkypeTextEditControl}, Path=CommandParameter}"/>
+                            </controls:SkypeButtonControl.InputBindings>
+                        </controls:SkypeButtonControl>
+                        
+                        <!-- cancel button -->
+                        <controls:SkypeButtonControl x:Name="CancelImage"
+                                                     Visibility="Hidden"
+                                                     Margin="6,0,0,0"
+                                                     ImageSource="/NFCRing.UI.View;component/Assets/Cancel_blue_128.png"
+                                                     MouseLeftButtonUp="CommandButton_OnMouseLeftButtonUp">
+                            <controls:SkypeButtonControl.InputBindings>
+                                <MouseBinding MouseAction="LeftClick"
+                                              Command="{Binding RelativeSource={RelativeSource AncestorType=controls:SkypeTextEditControl}, Path=CancelCommand}"
+                                              CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=controls:SkypeTextEditControl}, Path=CommandParameter}"/>
+                            </controls:SkypeButtonControl.InputBindings>
+                        </controls:SkypeButtonControl>
+                    </StackPanel>
+
+                    <!-- triggers -->
+                    <ControlTemplate.Triggers>
+                        <Trigger SourceName="NameTextBox" Property="IsFocused" Value="True">
+                            <Setter TargetName="OkImage" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="CancelImage" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="BackgroundBorder" Property="Visibility" Value="Hidden"/>
+                            <Setter TargetName="TextBoxBorder" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger SourceName="NameTextBox" Property="IsFocused" Value="False">
+                            <Setter TargetName="BackgroundBorder" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <DataTrigger Binding="{Binding ElementName=NameTextBox, Path=Text}" Value="">
+                            <Setter TargetName="OkImage" Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+
+                        <EventTrigger SourceName="NameTextBox" RoutedEvent="TextBox.LostFocus">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Duration="0:0:0.8" Storyboard.TargetName="BackgroundBorder" Storyboard.TargetProperty="Background.Color" From="LightGray" To="Transparent" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger SourceName="NameTextBox" RoutedEvent="TextBox.MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Duration="0:0:0.5" Storyboard.TargetName="BackgroundBorder" Storyboard.TargetProperty="Background.Color" To="LightGray" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger SourceName="NameTextBox" RoutedEvent="TextBox.MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Duration="0:0:0.8" Storyboard.TargetName="BackgroundBorder" Storyboard.TargetProperty="Background.Color" To="Transparent" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </ContentControl.Template>
+        </ContentControl>
+    </Grid>
+</UserControl>

@@ -37,6 +37,8 @@
     <SolidColorBrush x:Key="MarkerBrush" Color="{StaticResource MarkerColor}"/>
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
     <SolidColorBrush x:Key="TextBrush1" Color="{StaticResource TextColor1}"/>
+    <SolidColorBrush x:Key="Brush1" Color="{StaticResource TextColor1}"/>
+    <SolidColorBrush x:Key="Brush2" Color="{StaticResource BorderColor}"/>
     
     <!-- styles -->
     <Style x:Key="ButtonStyle" TargetType="Button">

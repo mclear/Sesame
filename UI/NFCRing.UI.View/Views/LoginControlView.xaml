@@ -1,14 +1,14 @@
 ﻿<view:CustomControl x:Class="NFCRing.UI.View.Views.LoginControlView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:viewModels="clr-namespace:NFCRing.UI.ViewModel.ViewModels;assembly=NFCRing.UI.ViewModel"
-             xmlns:view="clr-namespace:NFCRing.UI.View"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance viewModels:LoginControlViewModel}">
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:viewModels="clr-namespace:NFCRing.UI.ViewModel.ViewModels;assembly=NFCRing.UI.ViewModel"
+                    xmlns:view="clr-namespace:NFCRing.UI.View"
+                    xmlns:controls="clr-namespace:NFCRing.UI.View.Controls"
+                    mc:Ignorable="d" 
+                    d:DesignHeight="300" d:DesignWidth="300"
+                    d:DataContext="{d:DesignInstance viewModels:LoginControlViewModel}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -104,7 +104,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate>
-                                        <Grid d:DataContext="{d:DesignInstance viewModels:RingItemViewModel}" Margin="0,10,0,0">
+                                        <Grid d:DataContext="{d:DesignInstance viewModels:RingItemViewModel}" Margin="0,10,0,0" Focusable="False">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
@@ -140,49 +140,11 @@
                                                     </Image>
                                                 </Border>
                                                 
-                                                <ContentControl>
-                                                    <ContentControl.Template>
-                                                        <ControlTemplate>
-                                                            <StackPanel x:Name="ContainerStackPanel" Orientation="Horizontal">
-                                                                <!-- name -->
-                                                                <TextBox x:Name="NameTextBox"
-                                                                         Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
-                                                                         FontSize="{StaticResource MediumFontSize}"
-                                                                         Foreground="{StaticResource TextBrush1}"
-                                                                         VerticalAlignment="Center"
-                                                                         MaxLength="32"
-                                                                         BorderThickness="0"/>
-
-                                                                <!-- edit image -->
-                                                                <Image x:Name="EditImage"
-                                                                       Visibility="Hidden"
-                                                                       HorizontalAlignment="Right"
-                                                                       VerticalAlignment="Center"
-                                                                       Source="/NFCRing.UI.View;component/Assets/Edit_36.png"
-                                                                       Height="24"
-                                                                       Width="24"
-                                                                       Margin="5,0">
-                                                                    <i:Interaction.Behaviors>
-                                                                        <view:EditSelectionBehavior TextBox="{Binding ElementName=NameTextBox}"/>
-                                                                    </i:Interaction.Behaviors>
-                                                                </Image>
-                                                            </StackPanel>
-
-                                                            <ControlTemplate.Triggers>
-                                                                <Trigger SourceName="NameTextBox" Property="IsFocused" Value="True">
-                                                                    <Setter TargetName="EditImage" Property="Visibility" Value="Visible"/>
-                                                                </Trigger>
-                                                                <Trigger SourceName="ContainerStackPanel" Property="IsMouseOver" Value="True">
-                                                                    <Setter TargetName="EditImage" Property="Visibility" Value="Visible"/>
-                                                                </Trigger>
-                                                                <Trigger SourceName="EditImage" Property="IsMouseOver" Value="True">
-                                                                    <Setter TargetName="EditImage" Property="Visibility" Value="Visible"/>
-                                                                    <Setter TargetName="EditImage" Property="Cursor" Value="Hand"/>
-                                                                </Trigger>
-                                                            </ControlTemplate.Triggers>
-                                                        </ControlTemplate>
-                                                    </ContentControl.Template>
-                                                </ContentControl>
+                                                <!-- name -->
+                                                <controls:SkypeTextEditControl Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                                               OkCommand="{Binding ElementName=ItemsListBox, Path=DataContext.SaveNameCommand}"
+                                                                               CancelCommand="{Binding ElementName=ItemsListBox, Path=DataContext.CancelEditNameCommand}"
+                                                                               CommandParameter="{Binding Token}"/>
                                             </StackPanel>
 
                                             <!-- token -->
