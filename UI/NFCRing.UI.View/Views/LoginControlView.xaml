@@ -115,31 +115,54 @@
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
 
                                                 <!-- image -->
-                                                <Border Margin="0,5,10,0">
-                                                    <Image Height="32" Width="32">
-                                                        <Image.Style>
-                                                            <Style TargetType="{x:Type Image}">
-                                                                <Setter Property="HorizontalAlignment" Value="Center"/>
-                                                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                                                <Setter Property="Source" Value="{Binding Image}" />
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding Image}" Value="{x:Null}">
-                                                                        <Setter Property="Source" Value="/NFCRing.UI.View;component/Assets/DoubleCircle_36.png" />
-                                                                    </DataTrigger>
-                                                                    <Trigger Property="Image.IsMouseOver" Value="True">
-                                                                        <Setter Property="Cursor" Value="Hand" />
-                                                                    </Trigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </Image.Style>
-                                                        <Image.InputBindings>
-                                                            <MouseBinding MouseAction="LeftClick"
-                                                                          Command="{Binding ElementName=ItemsListBox, Path=DataContext.SelectImageCommand}"
-                                                                          CommandParameter="{Binding Token}"/>
-                                                        </Image.InputBindings>
-                                                    </Image>
-                                                </Border>
-                                                
+                                                <ContentControl>
+                                                    <ContentControl.Template>
+                                                        <ControlTemplate>
+                                                            <Border x:Name="ImageBorder" Margin="0,5,10,0" BorderBrush="Blue">
+                                                                <Image Height="32" Width="32">
+                                                                    <Image.Style>
+                                                                        <Style TargetType="{x:Type Image}">
+                                                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                                                            <Setter Property="Source" Value="{Binding Image}" />
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding Image}" Value="{x:Null}">
+                                                                                    <Setter Property="Source" Value="/NFCRing.UI.View;component/Assets/DoubleCircle_36.png" />
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </Image.Style>
+                                                                    <Image.InputBindings>
+                                                                        <MouseBinding MouseAction="LeftClick"
+                                                                                      Command="{Binding ElementName=ItemsListBox, Path=DataContext.SelectImageCommand}"
+                                                                                      CommandParameter="{Binding Token}"/>
+                                                                    </Image.InputBindings>
+                                                                </Image>
+                                                            </Border>
+                                                            
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="ImageBorder" Property="Cursor" Value="Hand" />
+                                                                </Trigger>
+                                                                <EventTrigger SourceName="ImageBorder" RoutedEvent="Border.MouseEnter">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <DoubleAnimation Duration="0:0:0.4" Storyboard.TargetName="ImageBorder" Storyboard.TargetProperty="Opacity" To="0.5" />
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                                <EventTrigger SourceName="ImageBorder" RoutedEvent="Border.MouseLeave">
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <DoubleAnimation Duration="0:0:0.4" Storyboard.TargetName="ImageBorder" Storyboard.TargetProperty="Opacity" To="1" />
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </EventTrigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </ContentControl.Template>
+                                                </ContentControl>
+
                                                 <!-- name -->
                                                 <controls:SkypeTextEditControl Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                                                OkCommand="{Binding ElementName=ItemsListBox, Path=DataContext.SaveNameCommand}"
@@ -148,7 +171,10 @@
                                             </StackPanel>
 
                                             <!-- token -->
-                                            <StackPanel Grid.Row="1" Margin="{StaticResource ContentMarginLightTop}" Orientation="Horizontal">
+                                            <StackPanel Grid.Row="1"
+                                                        Margin="{StaticResource ContentMarginLightTop}"
+                                                        Orientation="Horizontal"
+                                                        Visibility="Collapsed">
                                                 <TextBlock Text="Token: " FontSize="{StaticResource SmallFontSize}"/>
                                                 <TextBlock Text="{Binding Token}" FontSize="{StaticResource SmallFontSize}"/>
                                             </StackPanel>

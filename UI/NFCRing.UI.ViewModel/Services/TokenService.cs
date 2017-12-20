@@ -203,13 +203,6 @@ namespace NFCRing.UI.ViewModel.Services
 
             try
             {
-#if DEBUG
-                Thread.Sleep(2000);
-
-                _logger.Trace($"DEBUG network message");
-
-                return "23452346";
-#else
                 var message = ServiceCommunication.ReadNetworkMessage(ref client);
                 if (!string.IsNullOrEmpty(message))
                 {
@@ -219,7 +212,6 @@ namespace NFCRing.UI.ViewModel.Services
                 }
 
                 return null;
-#endif
             }
             finally
             {

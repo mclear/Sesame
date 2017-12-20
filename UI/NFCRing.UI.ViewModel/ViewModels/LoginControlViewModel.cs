@@ -78,7 +78,7 @@ namespace NFCRing.UI.ViewModel.ViewModels
             _userCredentials = userCredentials;
             _logger = logger;
 
-            Title = "NFC Ring Login Control";
+            Title = "NFCRing - Fence";
 
             AddCommand = new RelayCommand(Add, () => AllowAdd);
             RemoveCommand = new RelayCommand<RingItemViewModel>(Remove);
