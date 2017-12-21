@@ -18,7 +18,7 @@
         
         <!-- step text -->
         <Grid Grid.Row="1" Height="140">
-            <TextBlock Text="Place your NFC Ring on the reader"
+            <TextBlock Text="Place then remove your NFC Ring on the reader"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        FontSize="{StaticResource MediumFontSize}"

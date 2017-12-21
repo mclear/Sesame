@@ -67,6 +67,10 @@ const
   VC_2015_REDIST_X86 = '{8FD71E98-EE44-3844-9DAD-9CB0BBBC603C}';
   VC_2015_REDIST_X64 = '{C0B2C673-ECAA-372D-94E5-E89440D087AD}';
   
+  { Visual C++ 2015 Redistributable 14.0.24215 }
+  VC_2015_REDIST_X64_24215_MIN = '{EF1EC6A9-17DE-3DA9-B040-686A1E8A8B04}';
+  VC_2015_REDIST_X64_24215_ADD = '{50A2BC33-C9CD-3BF1-A8FF-53C10A0B183C}';
+  
   { Visual C++ 2017 Redistributable 14.11.25325 }
   VC_2017_REDIST_X86 = '{029DA848-1A80-34D3-BFC1-A6447BFC8E7F}';
   VC_2017_REDIST_X64 = '{B0037450-526D-3448-A370-CACBD87769A0}';
@@ -86,7 +90,9 @@ begin
   { this statement, the following won't install your VC redist only when }
   { the Visual C++ 2015 Redist (x64) or the Visual C++ 2017 Redist (x64) }
   { are installed for the current user }
-  Result := not (VCVersionInstalled(VC_2015_REDIST_X64_MIN) or
-				 VCVersionInstalled(VC_2015_REDIST_X64) or
+  Result := not (VCVersionInstalled(VC_2015_REDIST_X64_24215_MIN) or
+				 VCVersionInstalled(VC_2015_REDIST_X64_24215_ADD) or
+				 VCVersionInstalled(VC_2015_REDIST_X64_MIN) or
+				 VCVersionInstalled(VC_2015_REDIST_X64) or				 
 				 VCVersionInstalled(VC_2017_REDIST_X64));
 end;

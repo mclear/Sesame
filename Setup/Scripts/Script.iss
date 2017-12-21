@@ -1,9 +1,9 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "NFCRing Fence"
-#define GitCommitHash "6f5e112"
-#define MyAppVersion "1.0.0.3"
-#define MyAppPublisher "Sesame Company, Inc."
+#define GitCommitHash "5afa111"
+#define MyAppVersion "1.0.0.7"
+#define MyAppPublisher "McLear Ltd"
 #define MyAppURL "http://www.example.com/"
 #define MyAppExeName "NFCRing.UI.View.exe"
 #define AppGuid "{F7D4EF32-2D80-441A-A499-3E6000BFCEBA}"
