@@ -20,6 +20,9 @@ namespace NFCRing.UI.ViewModel.ViewModels
         private RingItemViewModel _selectedItem;
         private bool _isBusy;
         private bool _serviceStarted;
+        private ObservableCollection<NFCDevice> devicesList;
+        private bool _IsDeviceNotAvailable = false;
+        private bool _IsDeviceAvailable = false;
 
         public ObservableCollection<RingItemViewModel> Items
         {
@@ -37,6 +40,47 @@ namespace NFCRing.UI.ViewModel.ViewModels
         {
             get { return _isBusy; }
             set { Set(ref _isBusy, value); }
+        }
+        public ObservableCollection<NFCDevice> DevicesList
+        {
+            get { return devicesList ?? (devicesList = new ObservableCollection<NFCDevice>()); }
+            set
+            {
+                Set(ref devicesList, value);
+                if (devicesList != null)
+                {
+                    if (devicesList.Count > 0)
+                    {
+                        IsDeviceAvailable = true;
+                        IsDeviceNotAvailable = false;
+                    }
+                    else
+                    {
+                        IsDeviceAvailable = false;
+                        IsDeviceNotAvailable = true;
+                    }
+                }
+            }
+        }
+
+
+        public bool IsDeviceNotAvailable
+        {
+            get { return _IsDeviceNotAvailable; }
+            set
+            {
+                _IsDeviceNotAvailable = value;
+                RaisePropertyChanged();
+            }
+        }
+        public bool IsDeviceAvailable
+        {
+            get { return _IsDeviceAvailable; }
+            set
+            {
+                _IsDeviceAvailable = value;
+                RaisePropertyChanged();
+            }
         }
 
         public bool AllowAdd => _serviceStarted && Items.Count < _userCredentials.MaxTokensCount;
@@ -67,11 +111,20 @@ namespace NFCRing.UI.ViewModel.ViewModels
         public RelayCallbackCommand<object> CancelEditNameCommand { get; }
 
         /// <summary>
+        /// Refresh Connected NFC Devices command.
+        /// </summary>
+        public RelayCallbackCommand<object> RefreshConnectedDevicesCommand { get; }
+
+        /// <summary>
         /// Ctor.
         /// </summary>
         public LoginControlViewModel(IDialogService dialogService, ITokenService tokenService,
             ISynchronizationService synchronizationService, IUserCredentials userCredentials, ILogger logger)
         {
+            System.Threading.ThreadPool.QueueUserWorkItem((x) =>
+            {
+                DevicesList = NFCWMQService.GetConnectedDevices();
+            });
             _dialogService = dialogService;
             _tokenService = tokenService;
             _synchronizationService = synchronizationService;
@@ -85,12 +138,12 @@ namespace NFCRing.UI.ViewModel.ViewModels
             SelectImageCommand = new RelayCommand<string>(SelectImage);
             SaveNameCommand = new RelayCommand<object>(SaveName, x => !string.IsNullOrEmpty(Items.FirstOrDefault(y => Equals(x, y.Token))?.Name));
             CancelEditNameCommand = new RelayCallbackCommand<object>(CancelEditName);
-
+            RefreshConnectedDevicesCommand = new RelayCallbackCommand<object>(RefreshConnectedDevices);
             PropertyChanged += OnPropertyChanged;
         }
 
         public async Task InitializeAsync()
-        {
+        {            
             _serviceStarted = await Task.Factory.StartNew(() => _tokenService.Ping());
 
             if (!_serviceStarted)
@@ -117,7 +170,7 @@ namespace NFCRing.UI.ViewModel.ViewModels
 
                 _synchronizationService.RunInMainThread(() => Items.Add(ringItemViewModel));
             }
-
+           
             _synchronizationService.RunInMainThread(() =>
             {
                 RaisePropertyChanged(nameof(AllowAdd));
@@ -161,7 +214,10 @@ namespace NFCRing.UI.ViewModel.ViewModels
             item.Name = item.GetDefaultName();
             CancelEditNameCommand.Callback?.Invoke();
         }
-
+        private async void RefreshConnectedDevices(object state)
+        {
+            DevicesList = await Task.Factory.StartNew(() => NFCWMQService.GetConnectedDevices());
+        }
         private async Task RemoveAsync(string token)
         {
             await _tokenService.RemoveTokenAsync(token);

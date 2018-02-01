@@ -139,7 +139,7 @@
                                                                     </Image.InputBindings>
                                                                 </Image>
                                                             </Border>
-                                                            
+
                                                             <ControlTemplate.Triggers>
                                                                 <Trigger Property="IsMouseOver" Value="True">
                                                                     <Setter TargetName="ImageBorder" Property="Cursor" Value="Hand" />
@@ -198,10 +198,40 @@
         </Grid>
 
         <!-- image -->
-        <Image Grid.Row="1"
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+
+            </Grid.ColumnDefinitions>
+            <Image Grid.Row="1"
                Source="/NFCRing.UI.View;component/Assets/nfcring_logo_12.png"
                Height="12"
                HorizontalAlignment="Left"
                Margin="{StaticResource ContentMarginLight}"/>
+            <DockPanel Grid.Column="1" LastChildFill="False" VerticalAlignment="Center" Margin="0,0,10,0" Visibility="{Binding IsDeviceNotAvailable,Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Button x:Name="buttonConnect" Background="Transparent" BorderBrush="Transparent" DockPanel.Dock="Right" Command="{Binding RefreshConnectedDevicesCommand}" Style="{StaticResource ConnectToolbarButtonStyle}">
+                    <Viewbox>
+                        <ContentControl />
+                    </Viewbox>
+                </Button>
+                <TextBlock Text="No Compatible NFC Reader detected." DockPanel.Dock="Right"
+                               FontSize="{StaticResource SmallFontSize}" 
+                               VerticalAlignment="Center" 
+                               HorizontalAlignment="Right" 
+                               Foreground="Red"></TextBlock>
+            </DockPanel>
+
+            <DockPanel Grid.Column="1" LastChildFill="False" VerticalAlignment="Center" Margin="0,0,10,0" Visibility="{Binding IsDeviceAvailable,Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ComboBox DockPanel.Dock="Right" SelectedIndex="0" IsSynchronizedWithCurrentItem="True" Width="Auto" VerticalAlignment="Center" ItemsSource="{Binding DevicesList}" DisplayMemberPath="DeviceName">
+                    
+                </ComboBox>
+                <TextBlock Text="Available NFC Readers:" DockPanel.Dock="Right"
+                               FontSize="{StaticResource SmallFontSize}" 
+                               VerticalAlignment="Center" 
+                               HorizontalAlignment="Right"></TextBlock>
+            </DockPanel>
+
+        </Grid>
     </Grid>
 </view:CustomControl>

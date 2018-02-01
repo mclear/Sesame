@@ -62,4 +62,29 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    <ControlTemplate x:Key="ConnectButtonIconTemplate">
+        <Path Width="18" Height="18" Stretch="Uniform" UseLayoutRounding="False" Fill="#0078D7" Data="F1 M 20.8105,7.09424L 24.2607,33.1177L 15.9209,29.6714C 14.2021,33.7583 13.251,38.2466 13.251,42.9595C 13.251,61.9429 28.6406,77.3267 47.6201,77.3267C 53.2109,77.3267 58.4854,75.9829 63.1504,73.6147L 69.4775,79.9419C 63.0732,83.7349 55.6025,85.9204 47.6201,85.9204C 23.8936,85.9204 4.6582,66.688 4.6582,42.9595C 4.6582,37.0845 5.84277,31.4888 7.98047,26.3901L 0,23.0913L 20.8105,7.09424 Z M 47.6191,0.000488281C 71.3457,0.000488281 90.5791,19.2368 90.5791,42.9604C 90.5791,47.8813 89.748,52.6089 88.2227,57.0112L 96.0176,60.3472L 75.0029,76.0845L 71.8828,50.0181L 80.2969,53.6187C 81.3936,50.2642 81.9883,46.6821 81.9883,42.9604C 81.9883,23.9771 66.5986,8.59326 47.6191,8.59326C 43.3438,8.59326 39.2559,9.38037 35.4814,10.8052L 28.9404,4.26318C 34.5898,1.53076 40.9238,0.000488281 47.6191,0.000488281 Z ">
+        </Path>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="Transparent"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+    <Style x:Key="ToolbarButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="Width" Value="22"/>
+        <Setter Property="VerticalAlignment" Value="Center"></Setter>
+        <Style.Resources>
+            <Style TargetType="{x:Type Viewbox}">
+                <Setter Property="Width" Value="18"/>
+            </Style>
+        </Style.Resources>
+    </Style>
+    <Style x:Key="ConnectToolbarButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource ToolbarButtonStyle}">
+        <Style.Resources>
+            <Style TargetType="{x:Type ContentControl}">
+                <Setter Property="Template" Value="{StaticResource ConnectButtonIconTemplate}"/>
+            </Style>
+        </Style.Resources>
+    </Style>
 </ResourceDictionary>
