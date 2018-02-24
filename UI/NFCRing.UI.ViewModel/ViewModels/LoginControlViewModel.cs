@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Practices.ServiceLocation;
 using NFCRing.UI.ViewModel.Services;
 
@@ -91,6 +92,11 @@ namespace NFCRing.UI.ViewModel.ViewModels
         public RelayCommand AddCommand { get; }
 
         /// <summary>
+        /// About command.
+        /// </summary>
+        public RelayCommand AboutCommand { get; }
+
+        /// <summary>
         /// Remove ring item command.
         /// </summary>
         public RelayCommand<RingItemViewModel> RemoveCommand { get; }
@@ -123,7 +129,14 @@ namespace NFCRing.UI.ViewModel.ViewModels
         {
             System.Threading.ThreadPool.QueueUserWorkItem((x) =>
             {
-                DevicesList = NFCWMQService.GetConnectedDevices();
+                try
+                {
+                    DevicesList = NFCWMQService.GetConnectedDevices();
+                }
+                catch (Exception)
+                {
+
+                }
             });
             _dialogService = dialogService;
             _tokenService = tokenService;
@@ -139,6 +152,7 @@ namespace NFCRing.UI.ViewModel.ViewModels
             SaveNameCommand = new RelayCommand<object>(SaveName, x => !string.IsNullOrEmpty(Items.FirstOrDefault(y => Equals(x, y.Token))?.Name));
             CancelEditNameCommand = new RelayCallbackCommand<object>(CancelEditName);
             RefreshConnectedDevicesCommand = new RelayCallbackCommand<object>(RefreshConnectedDevices);
+            AboutCommand=new RelayCommand(AboutCommandMethod);
             PropertyChanged += OnPropertyChanged;
         }
 
@@ -183,6 +197,11 @@ namespace NFCRing.UI.ViewModel.ViewModels
             ServiceLocator.Current.GetInstance<MainViewModel>()
                 .SetContent(ServiceLocator.Current.GetInstance<WizardViewModel>());
         }
+        private void AboutCommandMethod()
+        {
+            string version = new Version(System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location).ProductVersion).ToString();
+            Messenger.Default.Send(new AboutViewModel() { VersionInfo= version });
+        }
 
         private async void Remove(RingItemViewModel item)
         {
@@ -216,7 +235,14 @@ namespace NFCRing.UI.ViewModel.ViewModels
         }
         private async void RefreshConnectedDevices(object state)
         {
-            DevicesList = await Task.Factory.StartNew(() => NFCWMQService.GetConnectedDevices());
+            try
+            {
+                DevicesList = await Task.Factory.StartNew(() => NFCWMQService.GetConnectedDevices());
+            }
+            catch (Exception ex)
+            {
+                
+            }
         }
         private async Task RemoveAsync(string token)
         {

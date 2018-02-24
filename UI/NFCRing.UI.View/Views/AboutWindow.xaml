@@ -1,0 +1,52 @@
+﻿<Window x:Class="NFCRing.UI.View.Views.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NFCRing.UI.View.Views"
+        mc:Ignorable="d"
+        WindowStyle="ToolWindow"
+        WindowStartupLocation="CenterScreen"
+        
+        Title="About NFC Ring Fence" Height="400" Width="600">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Image 
+                           Source="/NFCRing.UI.View;component/Assets/nfcring_logo_2x.png"
+                           
+                           Margin="{StaticResource ContentMarginSmallLeftRight}"/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="273*"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            <Label Content="NFC Ring Version:" FontWeight="Bold" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="18"></Label>
+            <Label Content="{Binding VersionInfo}" FontWeight="Bold" Name="lblVersionInfo" Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="18"></Label>
+            <Label Content="Homepage:" FontWeight="Bold" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="18"></Label>
+            <TextBlock Grid.Row="1" Grid.Column="1" FontSize="18" Margin="0,0,0,5" VerticalAlignment="Bottom" HorizontalAlignment="Left">           
+    <Hyperlink NavigateUri="http://nfcring.com/" Hyperlink.RequestNavigate="Hyperlink_RequestNavigate">
+        http://nfcring.com/
+    </Hyperlink>
+            </TextBlock>
+            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+                <Label Content="About NFC Ring Fence" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="18"></Label>
+                <TextBlock Text="NFC Ring Fence provides NFC based login and logout functionality for the Microsoft Windows Operating System. The NFC Ring can be used to make payments, access control, unlock &amp; control mobile devices, transfer information, link people and much more" TextWrapping="Wrap" Margin="10" FontSize="16"></TextBlock>
+                <TextBlock FontWeight="Bold" Text="Discover what your finger's been missing" TextWrapping="Wrap" Margin="10" FontSize="16" Foreground="#EE4623"></TextBlock>
+            </StackPanel>
+            <DockPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+                <TextBlock Text="Copyright © 2018 McLear Ltd" TextWrapping="Wrap" Margin="10" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+                <Button IsDefault="True" IsCancel="True" Content="Close" VerticalAlignment="Center" HorizontalAlignment="Right" Width="50" Height="25" Margin="0,0,10,0"></Button>
+            </DockPanel>
+        </Grid>
+    </Grid>
+</Window>

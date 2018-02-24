@@ -4,6 +4,8 @@ using System.Windows.Threading;
 using Microsoft.Practices.ServiceLocation;
 using NFCRing.UI.ViewModel.ViewModels;
 using NFCRing.UI.ViewModel.Services;
+using GalaSoft.MvvmLight.Messaging;
+using NFCRing.UI.View.Views;
 
 namespace NFCRing.UI.View
 {
@@ -20,10 +22,16 @@ namespace NFCRing.UI.View
         protected override void OnStartup(StartupEventArgs e)
         {
             ServiceLocator.Current.GetInstance<ILogger>().Info("NFC Ring startup");
+            Messenger.Default.Register<AboutViewModel>(this, ProcessAboutMessage);
 
             base.OnStartup(e);
         }
-
+        private void ProcessAboutMessage(AboutViewModel message)
+        {
+            AboutWindow about = new AboutWindow();
+            about.DataContext = message;
+            about.ShowDialog();
+        }
         protected override void OnExit(ExitEventArgs e)
         {
             ServiceLocator.Current.GetInstance<ILogger>().Info("NFC Ring exit");

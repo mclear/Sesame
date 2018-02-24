@@ -87,6 +87,7 @@
     <Compile Include="Services\IUserCredential.cs" />
     <Compile Include="Services\NFCWMQService.cs" />
     <Compile Include="Services\TokenService.cs" />
+    <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\ContentViewModel.cs" />
     <Compile Include="Services\ISynchronizationService.cs" />
     <Compile Include="ViewModels\LoginControlViewModel.cs" />
