@@ -264,7 +264,9 @@ HRESULT NFCCredentialProvider::GetCredentialCount(
 	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::GetCredentialCount");
 
 	*pdwCount = 1;
+	// swap the following line with the one below it to disable loading my credential provider by default
 	*pdwDefault = 0;
+	//*pdwDefault = CREDENTIAL_PROVIDER_NO_DEFAULT;
 	*pbAutoLogonWithDefault = FALSE;
 	return S_OK;
 }
