@@ -2,7 +2,7 @@
 
 #define MyAppName "NFCRing Fence"
 #define GitCommitHash "5afa111"
-#define MyAppVersion "1.0.0.7"
+#define MyAppVersion "1.0.0.9"
 #define MyAppPublisher "McLear Ltd"
 #define MyAppURL "http://www.example.com/"
 #define MyAppExeName "NFCRing.UI.View.exe"
@@ -90,6 +90,7 @@ Source: "..\..\bin\Release\Credential\CredUILauncher.exe"; DestDir: {#ServiceCre
 Source: "..\..\bin\Release\Credential\NFCRingCredentialProvider.dll"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Credential\tileimage.bmp"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Credential\NFCRingCredentialProvider.dll"; DestDir: {sys};
+Source: "..\..\bin\Release\Credential\nfcfencesettings.config"; DestDir: {win}; Flags: ignoreversion
 
 ; Visual C++ 2015
 Source: "vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
@@ -118,7 +119,7 @@ end;
 
 [Run]
 Filename: "{tmp}\vc_redist.x64.exe"; StatusMsg: "{#VCmsg}"; Check: IsWin64 and VCRedistNeedsInstall
-Filename: "{#AppPath}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{#AppPath}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall shellexec skipifsilent
 Filename: "{#ServiceAppPath}\NFCRingServiceHost.exe"; Flags: runascurrentuser; Parameters: "--install"
 
 [UninstallRun]

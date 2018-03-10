@@ -97,6 +97,11 @@ namespace NFCRing.UI.ViewModel.ViewModels
         public RelayCommand AboutCommand { get; }
 
         /// <summary>
+        /// Settings command.
+        /// </summary>
+        public RelayCommand SettingsCommand { get; }
+
+        /// <summary>
         /// Remove ring item command.
         /// </summary>
         public RelayCommand<RingItemViewModel> RemoveCommand { get; }
@@ -153,6 +158,7 @@ namespace NFCRing.UI.ViewModel.ViewModels
             CancelEditNameCommand = new RelayCallbackCommand<object>(CancelEditName);
             RefreshConnectedDevicesCommand = new RelayCallbackCommand<object>(RefreshConnectedDevices);
             AboutCommand=new RelayCommand(AboutCommandMethod);
+            SettingsCommand = new RelayCommand(SettingsCommandMethod);
             PropertyChanged += OnPropertyChanged;
         }
 
@@ -202,7 +208,10 @@ namespace NFCRing.UI.ViewModel.ViewModels
             string version = new Version(System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location).ProductVersion).ToString();
             Messenger.Default.Send(new AboutViewModel() { VersionInfo= version });
         }
-
+        private void SettingsCommandMethod()
+        {
+            Messenger.Default.Send(new SettingsViewModel());
+        }
         private async void Remove(RingItemViewModel item)
         {
             if (item == null)

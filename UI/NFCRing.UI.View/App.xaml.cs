@@ -14,6 +14,7 @@ namespace NFCRing.UI.View
     /// </summary>
     public partial class App
     {
+        SettingsWindow settingsWindow = null;
         public App()
         {
             DispatcherUnhandledException += OnDispatcherUnhandledException;
@@ -23,7 +24,7 @@ namespace NFCRing.UI.View
         {
             ServiceLocator.Current.GetInstance<ILogger>().Info("NFC Ring startup");
             Messenger.Default.Register<AboutViewModel>(this, ProcessAboutMessage);
-
+            Messenger.Default.Register<SettingsViewModel>(this, ProcessSettingsMessage);
             base.OnStartup(e);
         }
         private void ProcessAboutMessage(AboutViewModel message)
@@ -31,6 +32,19 @@ namespace NFCRing.UI.View
             AboutWindow about = new AboutWindow();
             about.DataContext = message;
             about.ShowDialog();
+        }
+        private void ProcessSettingsMessage(SettingsViewModel message)
+        {
+            if (message != null && message.CloseSignal == true)
+            {
+                settingsWindow.Close();
+            }
+            else
+            {
+                settingsWindow = new SettingsWindow();
+                settingsWindow.DataContext = message;
+                settingsWindow.ShowDialog();
+            }
         }
         protected override void OnExit(ExitEventArgs e)
         {

@@ -30,6 +30,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <!-- add new -->
@@ -90,8 +91,36 @@
                 </Grid>
 
 
-                <!-- About -->
+                <!-- Settings -->
                 <Grid Grid.Row="3" Margin="{StaticResource ContentMarginLightRight}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <!-- name -->
+                    <TextBlock VerticalAlignment="Center">
+                        <Hyperlink Command="{Binding SettingsCommand}" TextDecorations="{x:Null}" Foreground="Black">
+                            <StackPanel Orientation="Horizontal">
+
+                               <!-- icon -->
+                    <Image 
+                           Source="/NFCRing.UI.View;component/Assets/settings.png"
+                           Height="16" Width="16"
+                           Margin="{StaticResource ContentMarginSmallLeftRight}"/>
+                                <TextBlock Text="Settings"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           
+                                           FontSize="{StaticResource SmallFontSize}"
+                                           />
+                            </StackPanel>
+                        </Hyperlink>
+                    </TextBlock>
+                </Grid>
+                
+                <!-- About -->
+                <Grid Grid.Row="4" Margin="{StaticResource ContentMarginLightRight}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
@@ -104,7 +133,7 @@
 
                                <!-- icon -->
                     <Image 
-                           Source="/NFCRing.UI.View;component/Assets/abouticon_32.png"
+                           Source="/NFCRing.UI.View;component/Assets/about_light.png"
                            Height="16" Width="16"
                            Margin="{StaticResource ContentMarginSmallLeftRight}"/>
                                 <TextBlock Text="About"
@@ -116,6 +145,8 @@
                         </Hyperlink>
                     </TextBlock>
                 </Grid>
+
+               
             </Grid>
 
             <!-- splitter -->

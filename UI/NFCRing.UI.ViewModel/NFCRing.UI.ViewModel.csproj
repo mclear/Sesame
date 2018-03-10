@@ -96,6 +96,7 @@
     <Compile Include="ViewModels\RingItemViewModel.cs" />
     <Compile Include="Services\IDialogService.cs" />
     <Compile Include="Services\UserCredentials.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Steps\BaseStepViewModel.cs" />
     <Compile Include="ViewModels\Steps\FinishedStepViewModel.cs" />
     <Compile Include="ViewModels\Steps\HelloStepViewModel.cs" />
