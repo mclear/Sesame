@@ -292,7 +292,6 @@ HRESULT NFCCredentialProvider::GetCredentialCount(
 	}
 	*pdwCount = 1;
 	*pdwDefault = li_dec;
-	//*pdwDefault = CREDENTIAL_PROVIDER_NO_DEFAULT;
 	*pbAutoLogonWithDefault = FALSE;
 	return S_OK;
 }
