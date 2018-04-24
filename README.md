@@ -1,3 +1,5 @@
+![Logo of the project](https://raw.githubusercontent.com/mclear/Sesame/blob/master/UI/NFCRing.UI.View/Icon.ico)
+
 NFC Sesame provides NFC based login and logout functionality for the Microsoft Windows Operating System.  
 
 ## Important Disclaimer
