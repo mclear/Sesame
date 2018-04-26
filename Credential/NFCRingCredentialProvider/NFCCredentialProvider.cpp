@@ -9,6 +9,8 @@
 // PasswordResetProvider implements ICredentialProvider, which is the main
 // interface that logonUI uses to decide which tiles to display.
 
+#include "Windows.h"
+#include "VersionHelpers.h"
 #include <credentialprovider.h>
 #include "NFCCredential.h"
 #include "Reader.h"
@@ -47,6 +49,7 @@ void NFCCredentialProvider::OnNFCStatusChanged()
 
 	if (_credentialProviderEvents != NULL)
 	{
+		_defaultProvider = 0;
 		_credentialProviderEvents->CredentialsChanged(_adviseContext);
 	}
 }
@@ -193,7 +196,7 @@ HRESULT NFCCredentialProvider::UnAdvise()
 	//fprintf(filesd,"masher\n");
 	//fclose(filesd);	
 	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::UnAdvise");
-
+	_defaultProvider = CREDENTIAL_PROVIDER_NO_DEFAULT;
 	if (_credentialProviderEvents != NULL)
 		_credentialProviderEvents->Release();
 
@@ -264,9 +267,10 @@ HRESULT NFCCredentialProvider::GetCredentialCount(
 	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::GetCredentialCount");
 
 	*pdwCount = 1;
-	// swap the following line with the one below it to disable loading my credential provider by default
-	*pdwDefault = 0;
-	//*pdwDefault = CREDENTIAL_PROVIDER_NO_DEFAULT;
+	if (IsWindowsVersionOrGreater(10, 0, 0))
+		*pdwDefault = _defaultProvider;
+	else
+		*pdwDefault = 0;
 	*pbAutoLogonWithDefault = FALSE;
 	return S_OK;
 }
