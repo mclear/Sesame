@@ -87,7 +87,7 @@ protected:
 private:
 	LONG              _cRef;
 	NFCCredential*							_pCredential;          // Our "connected" credential.
-
+	BOOL									_defaultProvider = CREDENTIAL_PROVIDER_NO_DEFAULT;
 	CREDENTIAL_PROVIDER_USAGE_SCENARIO      _cpus;
 	ICredentialProviderEvents*				_credentialProviderEvents = NULL;
 	UINT_PTR								_adviseContext = -1;
