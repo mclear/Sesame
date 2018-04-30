@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using Microsoft.Win32;
 using System.Management;
+using NFCRing.Libraries;
 
 namespace NFCRing.Service.Core
 {
@@ -33,8 +34,8 @@ namespace NFCRing.Service.Core
         bool runListenLoops = false;
         //private List<Client> Connections = new List<Client>();
 
-        [DllImport("WinAPIWrapper", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int PCSC_GetID([In, Out] IntPtr id, [In, Out] IntPtr err);
+        //[DllImport("WinAPIWrapper", CallingConvention = CallingConvention.Cdecl)]
+        //public static extern int PCSC_GetID([In, Out] IntPtr id, [In, Out] IntPtr err);
 
         [ImportMany]
         IEnumerable<Lazy<INFCRingServicePlugin>> plugins;
@@ -107,24 +108,27 @@ namespace NFCRing.Service.Core
         private void ScanForId()
         {
             Log("NFC Reading started");
+            Thread.Sleep(10000);
             string currentId = "";
+            SCardContext context = new SCardContext();
             // basically keep running until we're told to stop
             while(state == ServiceState.Starting || state == ServiceState.Running)
             {
                 // start dll and just call it 
-                IntPtr idloc = Marshal.AllocHGlobal(100);
-                IntPtr errloc = Marshal.AllocHGlobal(100);
-                int len = PCSC_GetID(idloc, errloc);
-                string error = Marshal.PtrToStringAnsi(errloc);
-                string id = "";
-                if(len > 0)
-                    id = Marshal.PtrToStringAnsi(idloc, len);
-                //else
-                //    Log("Read error: " + error);
+                //IntPtr idloc = Marshal.AllocHGlobal(100);
+                //IntPtr errloc = Marshal.AllocHGlobal(100);
+                //int len = PCSC_GetID(idloc, errloc);
+                //string error = Marshal.PtrToStringAnsi(errloc);
+                //string id = "";
+                //if(len > 0)
+                //    id = Marshal.PtrToStringAnsi(idloc, len);
+                ////else
+                ////    Log("Read error: " + error);
 
-                Marshal.FreeHGlobal(idloc);
-                Marshal.FreeHGlobal(errloc);
-
+                //Marshal.FreeHGlobal(idloc);
+                //Marshal.FreeHGlobal(errloc);
+                List<string> ls = context.GetIds();
+                string id = ls.FirstOrDefault() ?? "";
                 // check the id of the token
                 if (currentId == "" && id != "")
                 {

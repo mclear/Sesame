@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Client.cs" />
+    <Compile Include="SCardContext.cs" />
     <Compile Include="ServiceCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
