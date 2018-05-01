@@ -109,7 +109,7 @@ namespace NFCRing.Service.Core
         {
             Log("NFC Reading started");
             Thread.Sleep(10000);
-            string currentId = "";
+            List<string> currentTokens = new List<string>();
             SCardContext context = new SCardContext();
             // basically keep running until we're told to stop
             while(state == ServiceState.Starting || state == ServiceState.Running)
@@ -128,54 +128,55 @@ namespace NFCRing.Service.Core
                 //Marshal.FreeHGlobal(idloc);
                 //Marshal.FreeHGlobal(errloc);
                 List<string> ls = context.GetIds();
-                string id = ls.FirstOrDefault() ?? "";
-                // check the id of the token
-                if (currentId == "" && id != "")
+                foreach (string id in ls)
                 {
-                    Log("NFCTagDownEvent");
-                    currentId = id;
-                    // we just got a new token (state change)
+                    //string id = ls.FirstOrDefault() ?? "";
+                    // check the id of the token
+                    if (!currentTokens.Contains(id) && id != "")
+                    {
+                        Log("NFCTagDownEvent");
+                        // we just got a new token (state change)
 
-                    // load parameters from config
-                    if (SystemStatus.AwaitingToken)
-                    {
-                        // this is where we capture it and show the next screen
-                        if(SystemStatus.RegistrationClient != null)
+                        // load parameters from config
+                        if (SystemStatus.AwaitingToken)
                         {
-                            TcpClient c = SystemStatus.RegistrationClient;
-                            ServiceCommunication.SendNetworkMessage(ref c, JsonConvert.SerializeObject(new NetworkMessage() { Type = MessageType.Token, Token = id }));
-                            SystemStatus.RegistrationClient = c;
-                        }
-                    }
-                    else
-                    {
-                        // check config
-                        foreach (User u in ApplicationConfiguration.Users)
-                        {
-                            string hashedToken = Crypto.Hash(Crypto.Hash(id) + u.Salt);
-                            foreach (Event e in u.Events)
+                            // this is where we capture it and show the next screen
+                            if (SystemStatus.RegistrationClient != null)
                             {
-                                if (hashedToken == e.Token)
+                                TcpClient c = SystemStatus.RegistrationClient;
+                                ServiceCommunication.SendNetworkMessage(ref c, JsonConvert.SerializeObject(new NetworkMessage() { Type = MessageType.Token, Token = id }));
+                                SystemStatus.RegistrationClient = c;
+                            }
+                        }
+                        else
+                        {
+                            // check config
+                            foreach (User u in ApplicationConfiguration.Users)
+                            {
+                                string hashedToken = Crypto.Hash(Crypto.Hash(id) + u.Salt);
+                                foreach (Event e in u.Events)
                                 {
-                                    foreach (Lazy<INFCRingServicePlugin> plugin in plugins)
+                                    if (hashedToken == e.Token)
                                     {
-                                        if (plugin.Value.GetPluginName() == e.PluginName)
+                                        foreach (Lazy<INFCRingServicePlugin> plugin in plugins)
                                         {
-                                            plugin.Value.NCFRingDown(id, e.Parameters, SystemStatus);
+                                            if (plugin.Value.GetPluginName() == e.PluginName)
+                                            {
+                                                plugin.Value.NCFRingDown(id, e.Parameters, SystemStatus);
 
-                                            Log("Plugin " + plugin.Value.GetPluginName() + " passed TagDown event");
+                                                Log("Plugin " + plugin.Value.GetPluginName() + " passed TagDown event");
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
                     }
+                    currentTokens.Remove(id);
                 }
-                else if (currentId != "" && id == "") 
+                foreach (string id in currentTokens)
                 {
                     Log("NFCTagUpEvent");
-                    string origId = currentId;
-                    currentId = "";
                     // we just lost the token (state change)
                     if (SystemStatus.AwaitingToken)
                     {
@@ -185,7 +186,7 @@ namespace NFCRing.Service.Core
                     else
                     {
                         // check config
-                        foreach(User u in ApplicationConfiguration.Users)
+                        foreach (User u in ApplicationConfiguration.Users)
                         {
                             string hashedToken = Crypto.Hash(Crypto.Hash(id) + u.Salt);
                             foreach (Event e in u.Events)
@@ -205,6 +206,7 @@ namespace NFCRing.Service.Core
                         }
                     }
                 }
+                currentTokens = ls;
                 // sleep for configured delay?
                 Thread.Sleep(100);
             }
