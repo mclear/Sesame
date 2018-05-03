@@ -110,7 +110,8 @@ namespace NFCRing.Service.Core
             Log("NFC Reading started");
             Thread.Sleep(10000);
             List<string> currentTokens = new List<string>();
-            SCardContext context = new SCardContext();
+            SCardContext sCardContext = new SCardContext();
+            SerialContext serialContext = new SerialContext();
             // basically keep running until we're told to stop
             while(state == ServiceState.Starting || state == ServiceState.Running)
             {
@@ -127,7 +128,8 @@ namespace NFCRing.Service.Core
 
                 //Marshal.FreeHGlobal(idloc);
                 //Marshal.FreeHGlobal(errloc);
-                List<string> ls = context.GetIds();
+                List<string> ls = sCardContext.GetIds();
+                ls = ls.Concat(serialContext.GetIds()).ToList();
                 foreach (string id in ls)
                 {
                     //string id = ls.FirstOrDefault() ?? "";
@@ -210,6 +212,7 @@ namespace NFCRing.Service.Core
                 // sleep for configured delay?
                 Thread.Sleep(100);
             }
+            serialContext.Stop();
             Log("NFC Reading stopped");
         }
 
