@@ -12,48 +12,50 @@ If you are having trouble logging in, open an RDP session from another machine a
 ## Prerequisites
 * Windows 7, 8, 8.1 or 10 64-bit Windows (It will not work on a 32-bit system).
 * [.Net 4.5, included with Windows 8.1 or higher](https://www.microsoft.com/en-au/download/details.aspx?id=40779)
-* [Visual C++ Redistributable Packages for Visual Studio 2013](https://www.microsoft.com/en-us/download/details.aspx?id=40784)
+* [Visual C++ Redistributable Packages for Visual Studio 2015](https://www.microsoft.com/en-au/download/details.aspx?id=48145) and install "vc_redist.x64.exe"
 
 ## Installation Instructions
 
 There are three separate parts to this, if any fails then you will need to check that you have the dependencies correctly installed and are running programs in Administrator mode where applicable.  *These installation instructions are temporary and will be replaced with a simple MSI installer in the future.*
 
-### Registering the credential provider
+### Building the binaries (If you have downloaded the source)
 
-1. Extract ``\NFC Credential\NFCRingCredentialProvider.dll`` and ``\NFC Credential\tileimage.bmp`` to ``C:\Windows\System32``
+1. Open ``\Sesame\Sesame.sln`` with Visual Studio 2015.
 
-1. Run ``Register.reg``. You may need to run it as Administrator. Windows may pop up a smart screen message. You'll need to allow this to run for the provider to function.
+1. Build the entire solution (Release or debug, but only x64). This creates a ``\bin\`` folder in the root Sesame directory.
 
-1. To test the credential provider is installed, Run ``CredUILauncher.exe`` and it should show a login prompt.
+1. For the rest of the instructions, I'll assume you built for Release. If you chose Debug instead, then replace "Release" in the following instructions with "Debug".
 
-1. Because no NFC token is registered yet, click "Cancel" to get rid of this.
+1. Make sure your NFC reader is connected to the PC.
 
-### Registering a token
-
-1. Extract the ``NFC Credential Registration`` folder somewhere. In this folder, right-click and run ``RegistryWriter.exe`` as Administrator
-
-1. While holding your NFC token on the reader, click the "Read NFC Tag" button and it should fill the first field with your token's ID (It'll look something like ``0400AF49363A719000``)
-
-1. Enter your username and password.
-
-1. Click "Enroll", and if successful, you should get a message box that says "Credential saved"
-
-1. Close this application.
-
-To test, run ``CredUILauncher.exe`` from the previous instructions and this time you should be able to swipe your NFC token to close the window.
 
 ### Installing the Service
 
-1. Extract the entire ``NFC Ring Service`` folder somewhere.
+1. Browse to ``\Sesame\bin\Release\Service`` and Right-click "InstallService.bat" and select "Run as Administrator" and accept the UAC prompt. The last line of the command window should say the task completed successfully. 
 
-1. Right-click the ``NFCRingServiceHost.exe`` and all DLL files in the service folder select "Properties". At the bottom of this page, you may need to select "Unblock".
+1. Press any key to exit the command prompt window.
 
-1. In the plugins folder, right-click each file and select "Properties" and "Unblock" as well.
 
-1. In this folder, right-click and run ``InstallService.bat`` as Administrator (the last line of the command window should say the task completed successfully).
+### Registering the credential provider
 
-1. Press any key to close the command window.
+1. Copy ``\Sesame\bin\Release\Credential\NFCRingCredentialProvider.dll`` to ``C:\Windows\System32``.
 
-1. Open the services console (Windows Key + R and type ``services.msc`` without the quotes and press enter) Scroll down to the ``NFCRingService`` and select "Start", its status should change to "Running".
+1. Run ``\Sesame\bin\Release\Credential\Register.reg``. You may need to run it as Administrator. Allow the UAC prompt if it pops up. If unsuccessful, run "regedit.exe" as administrator and select "File -> Import" and browse to "Register.reg"
 
-If you swipe your token now, the system should lock.
+
+### Registering a token
+
+1. Run ``\Sesame\bin\Release\UI\NFCRing.UI.View.exe``.
+
+1. Start by selecting "Add new NFC Ring" and follow the wizard steps.
+
+1. Swipe your ring when prompted.
+
+1. Enter your password.
+
+1. Swipe your ring again to encrypt the password.
+
+
+
+Congratulations, you have now setup NFC Fence. Swipe your ring on your NFC reader to lock the PC. Swipe again to unlock.
+
