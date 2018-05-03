@@ -11,42 +11,66 @@ namespace NFCRing.Service.Core
     public class SerialContext
     {
         private static Dictionary<string, double> CurrentIds = new Dictionary<string, double>();
-        object syncRoot = new object();
+        static object idSyncRoot = new object();
         const int TagTimeoutMS = 200;
 
-        private static Dictionary<string, SerialPort> OpenPorts = new Dictionary<string, SerialPort>();
+        private static Dictionary<string, SerialConnection> OpenPorts = new Dictionary<string, SerialConnection>();
+        static object readerSyncRoot = new object();
+
         DateTime StartTime = DateTime.Now;
+
+        Timer t = null;
 
         public SerialContext()
         {
             EnumeratePorts();
-            foreach (SerialPort sp in OpenPorts.Values)
+            t = new Timer(CheckPorts, new object(), 10000, 5000);
+        }
+
+        private void CheckPorts(object state)
+        {
+            lock(readerSyncRoot)
             {
-                if (sp.IsOpen)
-                    sp.Write("START\n");
+                List<string> deadReaders = new List<string>();
+                foreach(KeyValuePair<string, SerialConnection> kvp in OpenPorts)
+                {
+                    if(!kvp.Value.Port.IsOpen)
+                    {
+                        deadReaders.Add(kvp.Key);
+                    }
+                }
+                foreach(string s in deadReaders)
+                {
+                    OpenPorts.Remove(s);
+                }
+                EnumeratePorts();
             }
         }
 
         public void Stop()
         {
-            lock(syncRoot)
+            lock(readerSyncRoot)
             {
-                foreach (SerialPort sp in OpenPorts.Values)
+                foreach (SerialConnection sp in OpenPorts.Values)
                 {
-                    if (sp.IsOpen)
+                    if (sp.Port.IsOpen)
                     {
-                        sp.Write("STOP\n");
+                        sp.Port.Write("STOP\n");
                     }
                 }
                 Thread.Sleep(500);
-                CurrentIds.Clear();
-                foreach(SerialPort sp in OpenPorts.Values)
+                foreach (SerialConnection sp in OpenPorts.Values)
                 {
-                    sp.DataReceived -= P_DataReceived;
-                    if (sp.IsOpen)
-                        sp.Close();
+                    sp.Port.DataReceived -= P_DataReceived;
+                    if (sp.Port.IsOpen)
+                        sp.Port.Close();
                 }
                 OpenPorts.Clear();
+            }
+
+            lock (idSyncRoot)
+            {                
+                CurrentIds.Clear();
             }
         }
 
@@ -58,38 +82,68 @@ namespace NFCRing.Service.Core
         // I need to re-run this occasionally in case a new device has been added?
         private void EnumeratePorts()
         {
-            string[] ports = SerialPort.GetPortNames();
-            List<string> devices = new List<string>();
-            foreach (string portName in ports)
+            lock (readerSyncRoot)
             {
-                SerialPort p = new SerialPort(portName, 115200);
-                if (!p.IsOpen)
+                string[] ports = SerialPort.GetPortNames();
+                List<string> devices = new List<string>();
+                foreach (string portName in ports)
                 {
-                    try
+                    if (OpenPorts.ContainsKey(portName))
                     {
-                        p.Open();
-                        if (p.IsOpen)
+                        continue;
+                    }
+                    SerialPort p = new SerialPort(portName, 115200);
+                    if (!p.IsOpen)
+                    {
+                        try
                         {
-                            Thread.Sleep(500);
-                            p.Write("SHAKE\n");
-                            string s = p.ReadLine();
-                            if (s.Trim() == "NFC Reader")
+                            p.Open();
+                            if (p.IsOpen)
                             {
-                                p.Write("IDENT\n");
-                                s = p.ReadLine();
-                                devices.Add(s.Trim());
-                                p.DataReceived += P_DataReceived;
-                                OpenPorts.Add(s, p);
-                            }
-                            else
-                            {
-                                p.Close();
+                                Thread.Sleep(500);
+                                p.Write("SHAKE\n");
+                                int i = 0;
+                                while(p.BytesToRead <= 0 && i < 50)
+                                {
+                                    Thread.Sleep(10);
+                                }
+                                if (p.BytesToRead <= 0)
+                                    continue;
+                                string s = p.ReadLine();
+                                if (s.Trim() == "NFC Reader")
+                                {
+                                    p.Write("IDENT\n");
+                                    i = 0;
+                                    while (p.BytesToRead <= 0 && i < 50)
+                                    {
+                                        Thread.Sleep(10);
+                                    }
+                                    if (p.BytesToRead <= 0)
+                                        continue;
+                                    s = p.ReadLine();
+                                    p.Write("START\n");
+                                    i = 0;
+                                    while (p.BytesToRead <= 0 && i < 50)
+                                    {
+                                        Thread.Sleep(10);
+                                    }
+                                    if (p.BytesToRead <= 0)
+                                        continue;
+                                    s = p.ReadLine();
+                                    devices.Add(s.Trim());
+                                    p.DataReceived += P_DataReceived;
+                                    OpenPorts.Add(portName, new SerialConnection() { Port = p, ReaderName = s });
+                                }
+                                else
+                                {
+                                    p.Close();
+                                }
                             }
                         }
-                    }
-                    catch(Exception ex)
-                    {
-                        // couldnt open the port for some reason. already open elsewhere?
+                        catch (Exception ex)
+                        {
+                            // couldnt open the port for some reason. already open elsewhere?
+                        }
                     }
                 }
             }
@@ -101,7 +155,7 @@ namespace NFCRing.Service.Core
             s = s.Trim();
             if (s == "OK")
                 return;
-            lock (syncRoot)
+            lock (idSyncRoot)
             {
                 if (CurrentIds.ContainsKey(s))
                 {
@@ -116,7 +170,7 @@ namespace NFCRing.Service.Core
 
         public List<string> GetIds()
         {
-            lock(syncRoot)
+            lock(idSyncRoot)
             {
                 List<string> deadTokens = new List<string>();
                 foreach(KeyValuePair<string, double> kvp in CurrentIds)
@@ -131,5 +185,11 @@ namespace NFCRing.Service.Core
                 return CurrentIds.Keys.ToList();
             }
         }
+    }
+
+    class SerialConnection
+    {
+        public SerialPort Port { get; set; }
+        public string ReaderName { get; set; }
     }
 }
