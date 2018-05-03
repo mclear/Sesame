@@ -110,7 +110,7 @@ namespace NFCRing.Service.Core
                                 if (p.BytesToRead <= 0)
                                     continue;
                                 string s = p.ReadLine();
-                                if (s.Trim() == "NFC Reader")
+                                if (s.Trim() == "NFC READER")
                                 {
                                     p.Write("IDENT\n");
                                     i = 0;
