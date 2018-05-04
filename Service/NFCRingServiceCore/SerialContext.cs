@@ -62,7 +62,9 @@ namespace NFCRing.Service.Core
 
         public void Stop()
         {
-            lock(readerSyncRoot)
+            reEnumeratePortsTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            clearFailedPortsTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            lock (readerSyncRoot)
             {
                 foreach (SerialConnection sp in OpenPorts.Values)
                 {
