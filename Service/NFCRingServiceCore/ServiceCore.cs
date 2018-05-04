@@ -108,7 +108,7 @@ namespace NFCRing.Service.Core
         private void ScanForId()
         {
             Log("NFC Reading started");
-            Thread.Sleep(10000);
+            //Thread.Sleep(10000);
             List<string> currentTokens = new List<string>();
             SCardContext sCardContext = new SCardContext();
             SerialContext serialContext = new SerialContext();

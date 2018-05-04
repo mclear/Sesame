@@ -12,19 +12,32 @@ namespace NFCRing.Service.Core
     {
         private static Dictionary<string, double> CurrentIds = new Dictionary<string, double>();
         static object idSyncRoot = new object();
-        const int TagTimeoutMS = 200;
+        const int TagTimeoutMS = 500;
 
         private static Dictionary<string, SerialConnection> OpenPorts = new Dictionary<string, SerialConnection>();
         static object readerSyncRoot = new object();
 
+        private static Dictionary<string, int> InaccessiblePorts = new Dictionary<string, int>();
+
         DateTime StartTime = DateTime.Now;
 
-        Timer t = null;
+        Timer reEnumeratePortsTimer = null;
+        Timer clearFailedPortsTimer = null;
 
         public SerialContext()
         {
-            EnumeratePorts();
-            t = new Timer(CheckPorts, new object(), 10000, 5000);
+            // check for new serial devices continuously
+            reEnumeratePortsTimer = new Timer(CheckPorts, new object(), 2000, 5000);
+            // this allows us to retry ports that were blocked out before. It will usually result in 3 "Access exceptions" for ports that are already in use.
+            clearFailedPortsTimer = new Timer(ClearFailedPorts, new object(), 60000, 60000);
+        }
+
+        private void ClearFailedPorts(object state)
+        {
+            lock (readerSyncRoot)
+            {
+                InaccessiblePorts.Clear();
+            }
         }
 
         private void CheckPorts(object state)
@@ -92,6 +105,10 @@ namespace NFCRing.Service.Core
                     {
                         continue;
                     }
+                    if(InaccessiblePorts.ContainsKey(portName) && InaccessiblePorts[portName] > 3)
+                    {
+                        continue;
+                    }
                     SerialPort p = new SerialPort(portName, 115200);
                     if (!p.IsOpen)
                     {
@@ -103,32 +120,46 @@ namespace NFCRing.Service.Core
                                 Thread.Sleep(500);
                                 p.Write("SHAKE\n");
                                 int i = 0;
-                                while(p.BytesToRead <= 0 && i < 50)
+                                while(p.BytesToRead <= 0 && i < 30)
                                 {
                                     Thread.Sleep(10);
+                                    i++;
                                 }
                                 if (p.BytesToRead <= 0)
+                                {
+                                    p.Close();
                                     continue;
+                                }
                                 string s = p.ReadLine();
                                 if (s.Trim() == "NFC READER")
                                 {
+                                    if (InaccessiblePorts.ContainsKey(portName))
+                                        InaccessiblePorts.Remove(portName);
                                     p.Write("IDENT\n");
                                     i = 0;
-                                    while (p.BytesToRead <= 0 && i < 50)
+                                    while (p.BytesToRead <= 0 && i < 25)
                                     {
                                         Thread.Sleep(10);
+                                        i++;
                                     }
                                     if (p.BytesToRead <= 0)
+                                    {
+                                        p.Close();
                                         continue;
+                                    }
                                     s = p.ReadLine();
                                     p.Write("START\n");
                                     i = 0;
-                                    while (p.BytesToRead <= 0 && i < 50)
+                                    while (p.BytesToRead <= 0 && i < 25)
                                     {
                                         Thread.Sleep(10);
+                                        i++;
                                     }
                                     if (p.BytesToRead <= 0)
+                                    {
+                                        p.Close();
                                         continue;
+                                    }
                                     s = p.ReadLine();
                                     devices.Add(s.Trim());
                                     p.DataReceived += P_DataReceived;
@@ -143,6 +174,10 @@ namespace NFCRing.Service.Core
                         catch (Exception ex)
                         {
                             // couldnt open the port for some reason. already open elsewhere?
+                            if (InaccessiblePorts.ContainsKey(portName))
+                                InaccessiblePorts[portName] = InaccessiblePorts[portName] + 1;
+                            else
+                                InaccessiblePorts.Add(portName, 1);
                         }
                     }
                 }
