@@ -1,13 +1,13 @@
 ![Logo](https://github.com/mclear/Sesame/blob/master/UI/NFCRing.UI.View/Icon.png)
 
-NFC Sesame provides NFC based login and logout functionality for the Microsoft Windows Operating System.  
+NFC Fence provides NFC based login and logout functionality for the Microsoft Windows Operating System.  
 
 ## Important Disclaimer
-This software is in active development and should not be used in any environment you need stability.  You may get locked out of your PC.  Your Unicorns may be exploited.  You have been warned.  We're going to be [raising funds](https://www.kickstarter.com/projects/mclear/526261309?token=201aa2e8) to complete development.
+This software is in active development and should not be used in any environment you need stability. Make sure you remember your password as a backup.  Your Unicorns may be exploited.  You have been warned.  We're going to be [raising funds](https://www.kickstarter.com/projects/mclear/526261309?token=201aa2e8) to complete development.
 
 ## In case of emergencies
 
-If you are having trouble logging in, open an RDP session from another machine and then use your username and password to login again.
+If for some reason, no login options are available on your lock screen, open an RDP session from another machine and then use your username and password to login again.
 
 ## Prerequisites
 * Windows 7, 8, 8.1 or 10 64-bit Windows (It will not work on a 32-bit system).
