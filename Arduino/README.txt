@@ -1,6 +1,6 @@
 This is a basic proof of concept example for the Adafruit PN532 shield on an Arduino Uno
 
-The required Adafruit library can bve found at : https://github.com/adafruit/Adafruit-PN532
+The required Adafruit library can be found at : https://github.com/adafruit/Adafruit-PN532
 
 There is a very basic serial protocol. Commands are all in upper-case and are delimited by newline '\n' characters.
 
