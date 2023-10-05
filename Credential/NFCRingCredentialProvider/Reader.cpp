@@ -3,6 +3,7 @@
 #include "sha1.h"
 #include <codecvt>
 #include "log.h"
+#include <string>
 
 
 #include <locale>
