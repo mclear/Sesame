@@ -64,6 +64,8 @@ namespace CredentialRegistration
                 {
                     // still waiting for it to be scanned
                     value += 7;
+                    if (value > 100)
+                        value = 100;
                     ClientCommon.SetControlPropertyThreadSafe(pgbAwaitingToken, "Value", value);
                 }
             }, task, 1000, 1000);

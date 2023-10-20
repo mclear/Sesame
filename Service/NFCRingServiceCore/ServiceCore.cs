@@ -111,7 +111,7 @@ namespace NFCRing.Service.Core
             //Thread.Sleep(10000);
             List<string> currentTokens = new List<string>();
             SCardContext sCardContext = new SCardContext();
-            SerialContext serialContext = new SerialContext();
+            //SerialContext serialContext = new SerialContext();
             // basically keep running until we're told to stop
             while(state == ServiceState.Starting || state == ServiceState.Running)
             {
@@ -129,7 +129,7 @@ namespace NFCRing.Service.Core
                 //Marshal.FreeHGlobal(idloc);
                 //Marshal.FreeHGlobal(errloc);
                 List<string> ls = sCardContext.GetIds();
-                ls = ls.Concat(serialContext.GetIds()).ToList();
+                //ls = ls.Concat(serialContext.GetIds()).ToList();
                 foreach (string id in ls)
                 {
                     //string id = ls.FirstOrDefault() ?? "";
@@ -212,7 +212,7 @@ namespace NFCRing.Service.Core
                 // sleep for configured delay?
                 Thread.Sleep(100);
             }
-            serialContext.Stop();
+            //serialContext.Stop();
             Log("NFC Reading stopped");
         }
 
@@ -603,7 +603,7 @@ namespace NFCRing.Service.Core
 
         private bool SaveConfig()
         {
-            File.WriteAllText(appPath + @"\Application.config", JsonConvert.SerializeObject(ApplicationConfiguration));
+            File.WriteAllText(appPath + @"\Application.config", JsonConvert.SerializeObject(ApplicationConfiguration, Formatting.Indented));
             Log("Configuration saved to " + appPath + @"\Application.config");
             return true;
         }

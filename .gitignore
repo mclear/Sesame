@@ -1,12 +1,15 @@
 *.tlog
 bin/
 obj/
+.vs/
 **obj/**
 *.obj
 *.pdb
 *.res
 *.log
 *.idb
+*.ilk
+*.recipe
 *.pch
 *.sdf
 *.ipch
@@ -16,3 +19,5 @@ obj/
 packages/
 *.opendb
 *.user
+*.vspscc
+*.lib
